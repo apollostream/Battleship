@@ -485,6 +485,60 @@ body{
 .section-rule::before{margin-right:16px}
 .section-rule::after{margin-left:16px}
 
+/* board header with toggle */
+.board-header{
+  display:flex;align-items:center;justify-content:space-between;
+  gap:24px;margin-bottom:14px;flex-wrap:wrap;
+}
+.board-header .section-rule{margin:0;flex:1;min-width:280px}
+
+.mode-toggle{
+  display:inline-flex;
+  border:1.5px solid var(--ink-deep);
+  background:rgba(241,231,207,.7);
+  box-shadow:1px 1px 0 var(--ink-deep);
+  flex-shrink:0;
+}
+.mode-toggle button{
+  background:transparent;border:0;
+  font-family:var(--stamp);font-size:10.5px;
+  letter-spacing:.18em;text-transform:uppercase;
+  padding:7px 16px 6px;cursor:pointer;
+  color:var(--ink-mid);
+  border-right:1px solid var(--ink-deep);
+  transition:background .15s, color .15s;
+}
+.mode-toggle button:last-child{border-right:0}
+.mode-toggle button.active{
+  background:var(--ink-deep);color:var(--paper);
+}
+.mode-toggle button:hover:not(.active){
+  background:rgba(20,30,50,.1);
+  color:var(--ink-deep);
+}
+
+/* play mode: hide ship-truth hatching on un-hit cells */
+.board-pane[data-mode="play"] .cell.ship:not(.hit){
+  background:
+    linear-gradient(rgba(255,255,255,.06),rgba(0,0,0,.03)),
+    repeating-linear-gradient(45deg,transparent 0 6px,rgba(40,55,80,.04) 6px 6.5px);
+  outline:none;
+}
+.board-pane[data-mode="play"] .legend .ship-only{
+  opacity:.35;
+  text-decoration:line-through;
+}
+.board-pane[data-mode="play"] .legend .ship-only::after{
+  content:" — hidden in play";
+  font-style:italic;font-size:9.5px;
+  color:var(--ink-rust);
+  margin-left:4px;
+  text-decoration:none;display:inline-block;
+}
+
+/* current strategy indicator in section title */
+.cur-strat{color:var(--ink-deep);letter-spacing:.06em}
+
 /* CHART BOARD */
 .board-frame{
   border:2px double var(--ink-deep);
@@ -533,15 +587,38 @@ body{
   background:
     radial-gradient(circle, var(--ink-rust) 0 30%, transparent 65%);
   animation:hit-pulse 2.4s ease-in-out infinite;
+  z-index:2;
 }
 @keyframes hit-pulse{
   0%,100%{opacity:.85}50%{opacity:1}
 }
+/* MISS — concentric splash mark, much more visible than the dot */
 .cell.miss::after{
-  content:"·";
-  position:absolute;inset:0;
-  display:flex;align-items:center;justify-content:center;
-  color:var(--ink-mid);font-size:22px;line-height:1;
+  content:"";
+  position:absolute;
+  inset:18%;
+  border-radius:50%;
+  border:1.4px solid var(--ink-mid);
+  background:
+    radial-gradient(circle,
+      var(--ink-deep) 0 18%,
+      transparent 32%,
+      rgba(108,124,149,.22) 32% 70%,
+      transparent 78%);
+  box-shadow:
+    inset 0 0 0 .5px rgba(241,231,207,.6),
+    0 0 0 1px rgba(108,124,149,.25);
+  opacity:.92;
+  z-index:2;
+}
+.cell.miss::before{
+  /* faint splash ripple */
+  content:"";
+  position:absolute;
+  inset:6%;
+  border-radius:50%;
+  border:.5px dashed rgba(108,124,149,.45);
+  z-index:1;
 }
 .cell.target{
   outline:2px solid var(--ink-rust);
@@ -660,6 +737,125 @@ body{
   width:100%;height:24px;display:block;margin-top:6px;grid-column:1/-1;
   opacity:.85;
 }
+
+/* selectable doctrine — clickable card */
+.doctrine{cursor:pointer;transition:transform .15s, box-shadow .15s, background .15s}
+.doctrine:hover{
+  transform:translate(-1px,-1px);
+  box-shadow:3px 3px 0 rgba(20,30,50,.18);
+}
+.doctrine.selected{
+  border-width:2px;
+  background:linear-gradient(to bottom right, rgba(255,238,200,.72), rgba(220,180,120,.32));
+  box-shadow:0 0 0 1px var(--ink-deep), 4px 4px 0 var(--ink-rust);
+}
+.doctrine.selected .stamp{color:var(--ink-deep)}
+.doctrine.selected::before{
+  content:"VIEWING";
+  position:absolute;top:-12px;right:-6px;
+  font-family:var(--stamp);font-size:9px;
+  background:var(--ink-deep);color:var(--paper);
+  padding:3px 10px 2px;
+  letter-spacing:.22em;
+  transform:rotate(3.5deg);
+  box-shadow:1px 1px 0 var(--ink-rust);
+  z-index:3;
+}
+
+/* SHIP'S LOG (collapsible) */
+.doctrine details{
+  grid-column:1/-1;
+  margin-top:10px;
+}
+.doctrine summary{
+  list-style:none;
+  cursor:pointer;
+  font-family:var(--stamp);
+  font-size:10px;
+  letter-spacing:.16em;
+  color:var(--ink-mid);
+  text-transform:uppercase;
+  padding:7px 0 6px;
+  border-top:1px dashed var(--ink-faded);
+  display:flex;align-items:center;gap:8px;
+  user-select:none;
+}
+.doctrine summary::-webkit-details-marker{display:none}
+.doctrine summary::before{
+  content:"▸";color:var(--ink-rust);font-size:11px;
+  transition:transform .15s;
+  display:inline-block;
+}
+.doctrine details[open] summary::before{
+  transform:rotate(90deg);
+}
+.doctrine summary:hover{color:var(--ink-deep)}
+.doctrine summary .count{
+  margin-left:auto;
+  font-family:var(--mono);
+  font-size:9.5px;
+  color:var(--ink-faded);
+  letter-spacing:.04em;
+  text-transform:none;
+}
+.doctrine .log{
+  margin-top:8px;
+  max-height:260px;
+  overflow-y:auto;
+  border:1px solid rgba(40,55,80,.18);
+  background:rgba(255,250,232,.5);
+  font-family:var(--mono);
+  font-size:10.5px;
+}
+.doctrine .log table{
+  width:100%;
+  border-collapse:collapse;
+}
+.doctrine .log th{
+  position:sticky;top:0;
+  background:var(--ink-deep);color:var(--paper);
+  font-family:var(--stamp);font-size:9px;
+  font-weight:400;text-align:left;
+  padding:5px 8px 4px;
+  letter-spacing:.12em;text-transform:uppercase;
+  z-index:1;
+}
+.doctrine .log td{
+  padding:3px 8px;
+  border-bottom:.5px dotted rgba(40,55,80,.18);
+  vertical-align:middle;
+  white-space:nowrap;
+}
+.doctrine .log tr:last-child td{border-bottom:0}
+.doctrine .log tr:hover td{background:rgba(184,146,74,.12)}
+.doctrine .log .t-num{color:var(--ink-faded);width:30px}
+.doctrine .log .act{
+  font-family:var(--stamp);font-size:9px;
+  letter-spacing:.1em;text-transform:uppercase;
+  width:46px;
+}
+.doctrine .log .act.ask{color:var(--ink-mid)}
+.doctrine .log .act.shoot{color:var(--ink-rust)}
+.doctrine .log .tgt{font-weight:500;color:var(--ink-deep);width:54px}
+.doctrine .log .res{
+  font-family:var(--stamp);font-size:9px;
+  letter-spacing:.1em;text-transform:uppercase;
+}
+.doctrine .log .res.hit{color:var(--ink-rust);font-weight:700}
+.doctrine .log .res.miss{color:var(--ink-faded)}
+.doctrine .log .res.yes{color:#1f5b2e}
+.doctrine .log .res.no{color:var(--ink-mid)}
+.doctrine .log .meta{color:var(--ink-faded);font-size:9.5px;text-align:right}
+.doctrine .log tr.pending td{
+  background:rgba(184,146,74,.18);
+  color:var(--ink-rust);
+  font-style:italic;
+}
+
+/* scrollbar styling for log */
+.doctrine .log::-webkit-scrollbar{width:8px}
+.doctrine .log::-webkit-scrollbar-track{background:rgba(108,124,149,.12)}
+.doctrine .log::-webkit-scrollbar-thumb{background:var(--ink-mid);border-radius:0}
 
 /* ============================================================
    BOTTOM ROW — trajectories + soundings
@@ -1286,13 +1482,19 @@ body{
   <!-- ========================== DASHBOARD: BOARD + DOCTRINES ========================== -->
   <section class="dashboard">
 
-    <div class="board-pane">
-      <div class="section-rule">Engagement Chart · Strategy: EIG + MBayes</div>
+    <div class="board-pane" id="boardPane" data-mode="demo">
+      <div class="board-header">
+        <div class="section-rule">Engagement Chart · <span class="cur-strat" id="curStrat">EIG + MBayes</span></div>
+        <div class="mode-toggle" role="tablist" aria-label="View mode">
+          <button class="mt-btn active" data-mode="demo" aria-pressed="true">Demo</button>
+          <button class="mt-btn" data-mode="play" aria-pressed="false">Play</button>
+        </div>
+      </div>
       <div class="board-frame">
         <div class="board-grid" id="board"></div>
       </div>
       <div class="legend">
-        <span><span class="sw ship"></span>ship segment (truth)</span>
+        <span class="ship-only"><span class="sw ship"></span>ship segment (truth)</span>
         <span><span class="sw hit"></span>hit</span>
         <span><span class="sw miss"></span>miss</span>
         <span><span class="sw post"></span>posterior μ(c)</span>
@@ -1303,9 +1505,8 @@ body{
     <div class="doctrines">
       <div class="section-rule">Tactical Doctrines</div>
 
-      <article class="doctrine lead">
+      <article class="doctrine selected" data-strat="eig" tabindex="0">
         <div class="stamp">Doctrine I</div>
-        <div class="lead-mark">Leading</div>
         <h3>EIG · Maximum Bayes</h3>
         <div class="formula">argmaxq Hb(p̄(q)) − Hb(ε)  ·  shoot when max μ(c) ≥ τ</div>
         <div class="desc">Selects the question that most reduces posterior entropy; shoots the cell of highest marginal probability once belief has converged.</div>
@@ -1319,11 +1520,15 @@ body{
           <div><span class="lbl">Turns</span><span class="val">24</span></div>
           <div><span class="lbl">Hits</span><span class="val good">9 / 12</span></div>
           <div><span class="lbl">H(post)</span><span class="val">3.42</span></div>
-          <div><span class="lbl">Action</span><span class="val">Shoot E5</span></div>
+          <div><span class="lbl">Action</span><span class="val">Shoot C8</span></div>
         </div>
+        <details>
+          <summary>Ship's Log <span class="count">24 entries</span></summary>
+          <div class="log"><table><thead><tr><th>T</th><th>Action</th><th>Target</th><th>Result</th><th class="meta">Δ post / H</th></tr></thead><tbody></tbody></table></div>
+        </details>
       </article>
 
-      <article class="doctrine">
+      <article class="doctrine" data-strat="ellr" tabindex="0">
         <div class="stamp">Doctrine II</div>
         <h3>ELLR · Maximum Bayes</h3>
         <div class="formula">argmaxq Σs πs · KL(ps ‖ p̄−s)  ·  same shoot rule</div>
@@ -1340,9 +1545,13 @@ body{
           <div><span class="lbl">H(post)</span><span class="val">3.61</span></div>
           <div><span class="lbl">Action</span><span class="val">Ask Row C</span></div>
         </div>
+        <details>
+          <summary>Ship's Log <span class="count">26 entries</span></summary>
+          <div class="log"><table><thead><tr><th>T</th><th>Action</th><th>Target</th><th>Result</th><th class="meta">Δ post / H</th></tr></thead><tbody></tbody></table></div>
+        </details>
       </article>
 
-      <article class="doctrine">
+      <article class="doctrine" data-strat="bo" tabindex="0">
         <div class="stamp">Doctrine III</div>
         <h3>Bayesian Optimisation · UCB</h3>
         <div class="formula">α(c) = μ(c) + κ σ(c)  ·  no questions, shoots only</div>
@@ -1359,9 +1568,13 @@ body{
           <div><span class="lbl">H(post)</span><span class="val">4.18</span></div>
           <div><span class="lbl">Action</span><span class="val">Shoot G2</span></div>
         </div>
+        <details>
+          <summary>Ship's Log <span class="count">28 entries</span></summary>
+          <div class="log"><table><thead><tr><th>T</th><th>Action</th><th>Target</th><th>Result</th><th class="meta">α(c) / σ(c)</th></tr></thead><tbody></tbody></table></div>
+        </details>
       </article>
 
-      <article class="doctrine">
+      <article class="doctrine" data-strat="user" tabindex="0">
         <div class="stamp">Doctrine IV</div>
         <h3>Captain · User</h3>
         <div class="formula">interactive  ·  human selection</div>
@@ -1371,11 +1584,15 @@ body{
             points="0,22 10,22 20,20 30,20 40,18 50,18 60,15 70,15 80,15 90,13 100,13 110,11 120,11 130,11 140,9 150,9 160,9 170,7 180,7 190,5 200,5"/>
         </svg>
         <div class="stats">
-          <div><span class="lbl">Turns</span><span class="val">—</span></div>
-          <div><span class="lbl">Hits</span><span class="val">—</span></div>
+          <div><span class="lbl">Turns</span><span class="val">18</span></div>
+          <div><span class="lbl">Hits</span><span class="val">6 / 12</span></div>
           <div><span class="lbl">H(post)</span><span class="val">—</span></div>
           <div><span class="lbl">Action</span><span class="val">Awaiting</span></div>
         </div>
+        <details>
+          <summary>Ship's Log <span class="count">18 entries</span></summary>
+          <div class="log"><table><thead><tr><th>T</th><th>Action</th><th>Target</th><th>Result</th><th class="meta">Note</th></tr></thead><tbody></tbody></table></div>
+        </details>
       </article>
     </div>
   </section>
@@ -1455,7 +1672,7 @@ body{
       <div class="sub">Per-cell marginal posterior, EIG · MBayes at turn 24. Darker ink, higher probability of ship-segment.</div>
       <div class="soundings-grid" id="soundings"></div>
       <div class="legend-row" style="margin-top:6px">
-        <span style="font-style:italic">Range observed:&nbsp; 0.00 → 0.84.&nbsp; ESS = 1,847 / 4,096&nbsp; ·&nbsp; H(belief) = 3.42 nats</span>
+        <span style="font-style:italic" id="sndNote">Range observed: 0.00 → 0.94. ESS = 1,847 / 4,096 · H(belief) = 3.42 nats</span>
       </div>
     </div>
   </section>
@@ -1483,80 +1700,317 @@ body{
 
 <script>
 /* ============================================================
-   Generate the 8×8 board with truth ships, hits, misses,
-   posterior μ(c) overlay, and the next-action target marker.
-   This is mock data designed to look like a real mid-game state.
+   STATIC: ground truth (same across all strategies — same trial)
    ============================================================ */
-
-const ROWS = 'ABCDEFGH';
-const board = document.getElementById('board');
-
-// posterior intensity per cell (0..1)  — synthesized realistic mid-game posterior
-const POST = [
-  [.02,.04,.05,.08,.10,.06,.04,.03],
-  [.05,.62,.74,.18,.12,.08,.05,.04],
-  [.04,.10,.12,.20,.36,.84,.32,.08],
-  [.03,.05,.07,.10,.15,.22,.12,.06],
-  [.06,.08,.06,.04,.45,.58,.18,.08],
-  [.10,.46,.40,.08,.05,.05,.04,.04],
-  [.06,.12,.08,.04,.05,.06,.05,.06],
-  [.04,.04,.03,.02,.02,.02,.02,.02],
-];
-
-// truth: 4 ships placed
+const ROWS  = 'ABCDEFGH';
 const SHIPS = new Set([
-  // BB-04 length 4 — row B, cols 1..4 → "B1".."B4"  (using indices 1, c=0..3)  Wait: row index 1, cols 1..4 means B2..B5
-  // Re-doing in (rowLetter+colNum) coords (1-indexed columns)
-  'B2','B3','B4','B5',
-  // CA length 3 — row C, cols 5..7 → C6,C7,C8
-  'C6','D6','E6',
-  // DD length 3 — column 5, rows D..F  → E5,F5
-  // Let's place: F2,F3,F4
-  'F2','F3','F4',
-  // PT length 2 — H7,H8
-  'H7','H8',
+  'B2','B3','B4','B5',         // BB-04 (length 4)
+  'C6','D6','E6',              // CA-12 (length 3)
+  'F2','F3','F4',              // DD-37 (length 3)
+  'H7','H8',                   // PT-08 (length 2)
 ]);
 
-// hits & misses observed so far (turn 24 of EIG strategy)
-const HITS  = new Set(['B2','B3','B4','C6','D6','F2','F3','H7','H8']);  // 9 hits
-const MISSES= new Set(['A1','A4','A7','D8','E1','G3','G6','H1','H3','H5','D2','E3','C2','C5','G8']);
-const TARGET = 'C8';   // next action: shoot C8 (high posterior, would discriminate ship class)
+/* ============================================================
+   PER-STRATEGY state.
+   posterior values for HIT cells = ~1.0 (confirmed),
+   MISS cells = 0.0 (ruled out),
+   unobserved = particle-ensemble estimate.
+   ============================================================ */
+const STRATS = {
+  eig: {
+    label:'EIG + MBayes',
+    soundingsNote:'Range observed: 0.00 → 0.94. ESS = 1,847 / 4,096 · H(belief) = 3.42 nats',
+    hits:['B2','B3','B4','B5','C6','D6','F2','F3','H7'],
+    misses:['A1','A4','A7','C2','C5','C7','D2','D8','E1','G3','G6','H1','H3','H5'],
+    target:'C8',
+    posterior:[
+      [.02,.04,.05,.08,.10,.06,.04,.03],
+      [.05,.98,.98,.98,.98,.08,.05,.04],
+      [.04,.00,.12,.20,.36,.95,.00,.78],
+      [.03,.05,.07,.00,.15,.92,.12,.06],
+      [.06,.08,.06,.04,.45,.84,.18,.08],
+      [.10,.00,.95,.95,.05,.05,.00,.04],
+      [.06,.12,.08,.04,.05,.06,.05,.06],
+      [.00,.04,.00,.02,.00,.02,.95,.95],
+    ],
+    log:[
+      {t:1, act:'ASK', tgt:'Row C', res:'Yes', meta:'Δ +0.42  H 5.21'},
+      {t:2, act:'ASK', tgt:'Col 5', res:'No',  meta:'Δ +0.31  H 4.78'},
+      {t:3, act:'ASK', tgt:'Quad NE', res:'No', meta:'Δ +0.18  H 4.40'},
+      {t:4, act:'SHOOT', tgt:'B3', res:'HIT',  meta:'Δ +0.55'},
+      {t:5, act:'SHOOT', tgt:'B4', res:'HIT',  meta:'Δ +0.21'},
+      {t:6, act:'SHOOT', tgt:'B2', res:'HIT',  meta:'Δ +0.18'},
+      {t:7, act:'SHOOT', tgt:'B5', res:'HIT',  meta:'Δ +0.14'},
+      {t:8, act:'SHOOT', tgt:'B6', res:'MISS', meta:'Δ +0.09  ship sunk'},
+      {t:9, act:'ASK', tgt:'Row F', res:'Yes', meta:'Δ +0.28  H 3.88'},
+      {t:10,act:'SHOOT', tgt:'C6', res:'HIT',  meta:'Δ +0.17'},
+      {t:11,act:'SHOOT', tgt:'D6', res:'HIT',  meta:'Δ +0.14'},
+      {t:12,act:'SHOOT', tgt:'E1', res:'MISS', meta:'Δ +0.06'},
+      {t:13,act:'SHOOT', tgt:'F2', res:'HIT',  meta:'Δ +0.16'},
+      {t:14,act:'SHOOT', tgt:'F3', res:'HIT',  meta:'Δ +0.12'},
+      {t:15,act:'SHOOT', tgt:'D2', res:'MISS', meta:'Δ +0.04'},
+      {t:16,act:'SHOOT', tgt:'C2', res:'MISS', meta:'Δ +0.04'},
+      {t:17,act:'SHOOT', tgt:'C5', res:'MISS', meta:'Δ +0.05'},
+      {t:18,act:'SHOOT', tgt:'D8', res:'MISS', meta:'Δ +0.04'},
+      {t:19,act:'ASK', tgt:'Col 7', res:'Yes', meta:'Δ +0.21  H 3.55'},
+      {t:20,act:'SHOOT', tgt:'H7', res:'HIT',  meta:'Δ +0.11'},
+      {t:21,act:'SHOOT', tgt:'G6', res:'MISS', meta:'Δ +0.04'},
+      {t:22,act:'SHOOT', tgt:'A7', res:'MISS', meta:'Δ +0.03'},
+      {t:23,act:'SHOOT', tgt:'A1', res:'MISS', meta:'Δ +0.02'},
+      {t:24,act:'SHOOT', tgt:'C8', res:'PEND', meta:'μ=0.78  α-best'},
+    ],
+  },
 
-// header row
-board.innerHTML = '<div class="corner"></div>' +
-  Array.from({length:8}, (_,c) => `<div class="col-h">${c+1}</div>`).join('');
+  ellr: {
+    label:'ELLR + MBayes',
+    soundingsNote:'Range observed: 0.00 → 0.91. ESS = 2,104 / 4,096 · H(belief) = 3.61 nats',
+    hits:['B2','B3','B4','B5','C6','D6','F2','F3','H7'],
+    misses:['A2','A5','A8','B7','C4','C7','D3','D7','E2','E5','F6','G1','G4','G7','H4','H6','H8'],
+    target:'E6',
+    posterior:[
+      [.04,.00,.06,.08,.00,.05,.04,.00],
+      [.05,.96,.96,.96,.96,.08,.00,.04],
+      [.04,.10,.00,.00,.18,.91,.00,.42],
+      [.05,.05,.00,.10,.18,.85,.00,.06],
+      [.06,.00,.06,.04,.00,.74,.18,.08],
+      [.10,.45,.88,.85,.06,.00,.04,.05],
+      [.00,.10,.06,.00,.05,.00,.00,.06],
+      [.04,.04,.04,.00,.05,.00,.85,.00],
+    ],
+    log:[
+      {t:1, act:'ASK', tgt:'Cell B3', res:'Yes', meta:'KL +1.84'},
+      {t:2, act:'ASK', tgt:'Row B',   res:'Yes', meta:'KL +1.42'},
+      {t:3, act:'SHOOT', tgt:'B3', res:'HIT',  meta:'Δ +0.41'},
+      {t:4, act:'SHOOT', tgt:'B4', res:'HIT',  meta:'Δ +0.19'},
+      {t:5, act:'SHOOT', tgt:'B2', res:'HIT',  meta:'Δ +0.16'},
+      {t:6, act:'SHOOT', tgt:'B5', res:'HIT',  meta:'Δ +0.13'},
+      {t:7, act:'ASK', tgt:'Cell C6', res:'Yes', meta:'KL +0.92'},
+      {t:8, act:'SHOOT', tgt:'C6', res:'HIT',  meta:'Δ +0.18'},
+      {t:9, act:'SHOOT', tgt:'D6', res:'HIT',  meta:'Δ +0.15'},
+      {t:10,act:'SHOOT', tgt:'B7', res:'MISS', meta:'Δ +0.06'},
+      {t:11,act:'ASK', tgt:'Cell F3', res:'Yes', meta:'KL +0.78'},
+      {t:12,act:'SHOOT', tgt:'F3', res:'HIT',  meta:'Δ +0.13'},
+      {t:13,act:'SHOOT', tgt:'F2', res:'HIT',  meta:'Δ +0.11'},
+      {t:14,act:'SHOOT', tgt:'F4', res:'HIT',  meta:'Δ +0.10'},
+      {t:15,act:'SHOOT', tgt:'C4', res:'MISS', meta:'Δ +0.05'},
+      {t:16,act:'SHOOT', tgt:'D3', res:'MISS', meta:'Δ +0.04'},
+      {t:17,act:'ASK', tgt:'Quad SE', res:'Yes', meta:'KL +0.56'},
+      {t:18,act:'SHOOT', tgt:'H7', res:'HIT',  meta:'Δ +0.10'},
+      {t:19,act:'SHOOT', tgt:'H8', res:'MISS', meta:'PT location err'},
+      {t:20,act:'SHOOT', tgt:'G7', res:'MISS', meta:'Δ +0.04'},
+      {t:21,act:'SHOOT', tgt:'A2', res:'MISS', meta:'Δ +0.03'},
+      {t:22,act:'SHOOT', tgt:'D7', res:'MISS', meta:'Δ +0.04'},
+      {t:23,act:'SHOOT', tgt:'F6', res:'MISS', meta:'Δ +0.04'},
+      {t:24,act:'SHOOT', tgt:'E5', res:'MISS', meta:'Δ +0.03'},
+      {t:25,act:'SHOOT', tgt:'A5', res:'MISS', meta:'Δ +0.03'},
+      {t:26,act:'SHOOT', tgt:'E6', res:'PEND', meta:'μ=0.74'},
+    ],
+  },
 
-for (let r=0; r<8; r++){
-  board.insertAdjacentHTML('beforeend', `<div class="row-h">${ROWS[r]}</div>`);
-  for (let c=0; c<8; c++){
-    const id = ROWS[r] + (c+1);
-    const cls = ['cell'];
-    if (SHIPS.has(id))   cls.push('ship');
-    if (HITS.has(id))    cls.push('hit');
-    if (MISSES.has(id))  cls.push('miss');
-    if (id === TARGET)   cls.push('target');
-    const p = POST[r][c];
-    board.insertAdjacentHTML('beforeend',
-      `<div class="${cls.join(' ')}" data-id="${id}" title="${id} · μ=${p.toFixed(2)}">
-         <div class="post" style="--p:${(p*0.55).toFixed(3)}"></div>
-       </div>`);
+  bo: {
+    label:'BO · UCB (κ = 1.5)',
+    soundingsNote:'Range observed: 0.00 → 0.62. ESS = 2,810 / 4,096 · H(belief) = 4.18 nats',
+    hits:['B3','B4','C6','F3','F2','H7','H8'],
+    misses:['A2','A4','A6','A8','B1','B7','B8','C1','C4','C8','D2','D4','D7','E2','E4','E7','F1','F6','F8','G2','G5'],
+    target:'G2',
+    posterior:[
+      [.16,.00,.18,.00,.20,.00,.18,.00],
+      [.00,.18,.92,.92,.20,.18,.00,.00],
+      [.18,.18,.20,.00,.18,.88,.16,.00],
+      [.18,.00,.18,.00,.18,.62,.18,.00],
+      [.18,.00,.18,.00,.18,.55,.16,.00],
+      [.18,.18,.85,.18,.18,.00,.00,.18],
+      [.18,.42,.18,.16,.00,.16,.00,.18],
+      [.18,.18,.16,.18,.18,.18,.92,.92],
+    ],
+    log:[
+      {t:1, act:'SHOOT', tgt:'D5', res:'MISS', meta:'α=0.18'},
+      {t:2, act:'SHOOT', tgt:'A1', res:'MISS', meta:'α=0.17'},
+      {t:3, act:'SHOOT', tgt:'B3', res:'HIT',  meta:'α=0.16'},
+      {t:4, act:'SHOOT', tgt:'B4', res:'HIT',  meta:'α=0.71'},
+      {t:5, act:'SHOOT', tgt:'B5', res:'MISS', meta:'PT err: BSC flip'},
+      {t:6, act:'SHOOT', tgt:'B2', res:'MISS', meta:'PT err: BSC flip'},
+      {t:7, act:'SHOOT', tgt:'C4', res:'MISS', meta:'α=0.19'},
+      {t:8, act:'SHOOT', tgt:'E4', res:'MISS', meta:'α=0.18'},
+      {t:9, act:'SHOOT', tgt:'C6', res:'HIT',  meta:'α=0.22'},
+      {t:10,act:'SHOOT', tgt:'D6', res:'MISS', meta:'PT err'},
+      {t:11,act:'SHOOT', tgt:'F3', res:'HIT',  meta:'α=0.30'},
+      {t:12,act:'SHOOT', tgt:'F4', res:'MISS', meta:'PT err'},
+      {t:13,act:'SHOOT', tgt:'F2', res:'HIT',  meta:'α=0.42'},
+      {t:14,act:'SHOOT', tgt:'F1', res:'MISS', meta:'α=0.32'},
+      {t:15,act:'SHOOT', tgt:'A6', res:'MISS', meta:'α=0.16'},
+      {t:16,act:'SHOOT', tgt:'D7', res:'MISS', meta:'α=0.16'},
+      {t:17,act:'SHOOT', tgt:'H7', res:'HIT',  meta:'α=0.21'},
+      {t:18,act:'SHOOT', tgt:'H8', res:'HIT',  meta:'α=0.65'},
+      {t:19,act:'SHOOT', tgt:'B7', res:'MISS', meta:'α=0.18'},
+      {t:20,act:'SHOOT', tgt:'B8', res:'MISS', meta:'α=0.17'},
+      {t:21,act:'SHOOT', tgt:'B1', res:'MISS', meta:'α=0.18'},
+      {t:22,act:'SHOOT', tgt:'C1', res:'MISS', meta:'α=0.16'},
+      {t:23,act:'SHOOT', tgt:'C8', res:'MISS', meta:'α=0.18'},
+      {t:24,act:'SHOOT', tgt:'D2', res:'MISS', meta:'α=0.18'},
+      {t:25,act:'SHOOT', tgt:'D4', res:'MISS', meta:'α=0.18'},
+      {t:26,act:'SHOOT', tgt:'E2', res:'MISS', meta:'α=0.18'},
+      {t:27,act:'SHOOT', tgt:'E7', res:'MISS', meta:'α=0.18'},
+      {t:28,act:'SHOOT', tgt:'G2', res:'PEND', meta:'α=0.42  σ-high'},
+    ],
+  },
+
+  user: {
+    label:'Captain · User',
+    soundingsNote:'No posterior — human plays without a particle ensemble. Uniform prior shown for reference.',
+    hits:['B2','B3','C6','D6','F2','H7'],
+    misses:['A4','D5','E5','E8','F5','F7','G2','G4','G7','H2','H4','H5'],
+    target:'B4',
+    /* uniform posterior since the human doesn't compute one */
+    posterior: Array.from({length:8}, () => Array(8).fill(0.156)),
+    log:[
+      {t:1, act:'SHOOT', tgt:'D5', res:'MISS', meta:'gut: centre cell'},
+      {t:2, act:'SHOOT', tgt:'E5', res:'MISS', meta:'adjacent guess'},
+      {t:3, act:'SHOOT', tgt:'F5', res:'MISS', meta:'pattern search'},
+      {t:4, act:'SHOOT', tgt:'C6', res:'HIT',  meta:'random walk'},
+      {t:5, act:'SHOOT', tgt:'D6', res:'HIT',  meta:'extend N'},
+      {t:6, act:'SHOOT', tgt:'B6', res:'MISS', meta:'wrong direction'},
+      {t:7, act:'SHOOT', tgt:'B2', res:'HIT',  meta:'corner sweep'},
+      {t:8, act:'SHOOT', tgt:'B3', res:'HIT',  meta:'extend E'},
+      {t:9, act:'SHOOT', tgt:'A4', res:'MISS', meta:'over-shot'},
+      {t:10,act:'SHOOT', tgt:'F2', res:'HIT',  meta:'edge probe'},
+      {t:11,act:'SHOOT', tgt:'F7', res:'MISS', meta:'lateral hop'},
+      {t:12,act:'SHOOT', tgt:'H2', res:'MISS', meta:'corner probe'},
+      {t:13,act:'SHOOT', tgt:'H7', res:'HIT',  meta:'opposite corner'},
+      {t:14,act:'SHOOT', tgt:'H4', res:'MISS', meta:'extend down col'},
+      {t:15,act:'SHOOT', tgt:'H5', res:'MISS', meta:'continue'},
+      {t:16,act:'SHOOT', tgt:'G7', res:'MISS', meta:'tight box'},
+      {t:17,act:'SHOOT', tgt:'G4', res:'MISS', meta:'guess'},
+      {t:18,act:'SHOOT', tgt:'G2', res:'MISS', meta:'frustration shot'},
+      {t:19,act:'SHOOT', tgt:'B4', res:'PEND', meta:'thinking…'},
+    ],
+  },
+};
+
+/* ============================================================
+   RENDER FUNCTIONS
+   ============================================================ */
+const board     = document.getElementById('board');
+const sndGrid   = document.getElementById('soundings');
+const sndNote   = document.getElementById('sndNote');
+const curStrat  = document.getElementById('curStrat');
+const boardPane = document.getElementById('boardPane');
+
+function renderBoard(strat){
+  const s = STRATS[strat];
+  const hits   = new Set(s.hits);
+  const misses = new Set(s.misses);
+
+  let html = '<div class="corner"></div>';
+  for (let c=0;c<8;c++) html += `<div class="col-h">${c+1}</div>`;
+  for (let r=0; r<8; r++){
+    html += `<div class="row-h">${ROWS[r]}</div>`;
+    for (let c=0; c<8; c++){
+      const id = ROWS[r] + (c+1);
+      const cls = ['cell'];
+      if (SHIPS.has(id))   cls.push('ship');
+      if (hits.has(id))    cls.push('hit');
+      if (misses.has(id))  cls.push('miss');
+      if (id === s.target) cls.push('target');
+      const p = s.posterior[r][c];
+      // Suppress posterior overlay where outcome is observed
+      const pShow = (hits.has(id) || misses.has(id)) ? 0 : p;
+      html += `<div class="${cls.join(' ')}" data-id="${id}" title="${id} · μ=${p.toFixed(2)}">
+                 <div class="post" style="--p:${(pShow*0.6).toFixed(3)}"></div>
+               </div>`;
+    }
   }
+  board.innerHTML = html;
+}
+
+function renderSoundings(strat){
+  const s = STRATS[strat];
+  const hits = new Set(s.hits);
+  const misses = new Set(s.misses);
+  let html = '';
+  for (let r=0; r<8; r++){
+    for (let c=0; c<8; c++){
+      const id = ROWS[r] + (c+1);
+      const p = s.posterior[r][c];
+      const v = (p*100).toFixed(0).padStart(2,'0');
+      const obs = hits.has(id) ? '★' : misses.has(id) ? '×' : v;
+      const dark = p > 0.45;
+      html += `<div class="snd" style="--pp:${(p*0.85).toFixed(3)};color:${dark?'#f1e7cf':'#162338'}" title="${id} · μ=${p.toFixed(2)}">${obs}</div>`;
+    }
+  }
+  sndGrid.innerHTML = html;
+  if (sndNote) sndNote.textContent = s.soundingsNote;
+}
+
+function renderLog(stratEl, strat){
+  const s = STRATS[strat];
+  const tbody = stratEl.querySelector('.log tbody');
+  if (!tbody) return;
+  let html = '';
+  for (const e of s.log){
+    const pending = e.res === 'PEND';
+    const resCls = ({HIT:'hit',MISS:'miss',Yes:'yes',No:'no',PEND:'pend'})[e.res] || '';
+    const actCls = e.act === 'ASK' ? 'ask' : 'shoot';
+    const resTxt = pending ? 'pending' : e.res.toLowerCase();
+    html += `<tr class="${pending?'pending':''}">
+      <td class="t-num">${String(e.t).padStart(2,'0')}</td>
+      <td><span class="act ${actCls}">${e.act}</span></td>
+      <td class="tgt">${e.tgt}</td>
+      <td><span class="res ${resCls}">${resTxt}</span></td>
+      <td class="meta">${e.meta}</td>
+    </tr>`;
+  }
+  tbody.innerHTML = html;
+}
+
+function selectStrategy(strat){
+  // update doctrine card visual state
+  document.querySelectorAll('.doctrine').forEach(d => {
+    d.classList.toggle('selected', d.dataset.strat === strat);
+  });
+  // update board + soundings + label
+  renderBoard(strat);
+  renderSoundings(strat);
+  curStrat.textContent = STRATS[strat].label;
+}
+
+function setMode(mode){
+  boardPane.dataset.mode = mode;
+  document.querySelectorAll('.mode-toggle button').forEach(b => {
+    const active = b.dataset.mode === mode;
+    b.classList.toggle('active', active);
+    b.setAttribute('aria-pressed', active);
+  });
 }
 
 /* ============================================================
-   Soundings grid — same posterior, rendered as numerical chart
+   WIRING
    ============================================================ */
-const snd = document.getElementById('soundings');
-for (let r=0; r<8; r++){
-  for (let c=0; c<8; c++){
-    const p = POST[r][c];
-    const v = (p*100).toFixed(0).padStart(2,'0');
-    snd.insertAdjacentHTML('beforeend',
-      `<div class="snd" style="--pp:${(p*0.85).toFixed(3)};color:${p>0.45?'#f1e7cf':'#162338'}" title="${ROWS[r]}${c+1} · μ=${p.toFixed(2)}">${v}</div>`);
-  }
-}
 
-/* extra glints — random spawn timing */
+// initial render: each doctrine's log + select EIG
+document.querySelectorAll('.doctrine').forEach(d => {
+  renderLog(d, d.dataset.strat);
+  d.addEventListener('click', e => {
+    // don't trigger when clicking inside the details/log
+    if (e.target.closest('details')) return;
+    selectStrategy(d.dataset.strat);
+  });
+  d.addEventListener('keydown', e => {
+    if (e.key === 'Enter' || e.key === ' '){
+      e.preventDefault();
+      selectStrategy(d.dataset.strat);
+    }
+  });
+});
+
+document.querySelectorAll('.mode-toggle button').forEach(b => {
+  b.addEventListener('click', () => setMode(b.dataset.mode));
+});
+
+selectStrategy('eig');
+setMode('demo');
+
+/* glints — random spawn timing */
 document.querySelectorAll('.glint').forEach(g => {
   g.style.animationDelay = (Math.random()*4).toFixed(2) + 's';
 });
