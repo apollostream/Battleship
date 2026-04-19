@@ -1,3 +1,9 @@
+# Battleship Strategy-Comparison Simulator — Design Sketch
+
+_© 2026, Michael L. Thompson. This work is licensed under [CC BY-SA 4.0](http://creativecommons.org/licenses/by-sa/4.0/)._
+
+---
+
 Actually, no research needed here — this is a design-spec sketch that flows from our prior conversation and from the mathematical framework we already worked through. Let me just think it through.
 
 ---
@@ -106,3 +112,7 @@ Key questions to resolve before coding:
 The last one is actually the most important: **an adaptive ask-vs-shoot threshold is the right theoretical approach**, because it turns the whole decision into a unified information-vs-action value comparison. I'd recommend going straight to that.
 
 Want me to tighten this into a proper spec document, or is this sketch enough to hand to Claude Code?
+
+---
+
+**License:** *This work is licensed under [CC BY-SA 4.0](http://creativecommons.org/licenses/by-sa/4.0/).*

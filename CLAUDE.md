@@ -43,6 +43,12 @@ Flag these to the user before implementing — they change the math and the code
 4. Hard turn cap or no cap?
 5. Ask-vs-shoot threshold: fixed or adaptive? (Spec recommends adaptive.)
 
+## Licensing convention
+
+- **Code** is Apache 2.0 (see `LICENSE` at repo root). Any new source files inherit this; no per-file headers required.
+- **Documents and manuals** (specs, derivations, reports, write-ups) are **CC BY-SA 4.0**. When creating a new prose document, include a top-of-file copyright line and a bottom-of-file license footer matching the pattern in `battleship.md` and `transcript.md`. Attribute to "Michael L. Thompson" with the current year.
+- Operational tooling files (`CLAUDE.md`, memory files, `.gitignore`) are not "documents" in this sense and don't need CC footers.
+
 ## Working with the JSX prototypes
 
 The prototypes run in a React sandbox (no local build config exists here). Treat them as executable math specs — when porting to Python, match the formulas in `eig_vs_ellr.jsx:27–65` exactly, then validate the port by reproducing the prototype's simulation outputs on the 4-hypothesis toy problem before scaling to the full 8×8 SMC version.

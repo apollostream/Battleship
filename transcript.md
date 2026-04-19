@@ -5,6 +5,8 @@ output:
 ---
 # EIG and ELLR -- Theory & Battleship Simulator
 
+_© 2026, Michael L. Thompson. This work is licensed under [CC BY-SA 4.0](http://creativecommons.org/licenses/by-sa/4.0/)._
+
 ---
 
 ## Prompt 1
@@ -458,4 +460,6 @@ This reinforces your thread 2 point in a new way. The 0-1 loss argument for ELLR
 So ε can be read as a *trust parameter*: trust the answers and use ELLR; distrust them and use EIG.
 
 ---
+
+**License:** *This work is licensed under [CC BY-SA 4.0](http://creativecommons.org/licenses/by-sa/4.0/).*
 
