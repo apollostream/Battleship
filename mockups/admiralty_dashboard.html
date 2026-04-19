@@ -1,0 +1,1565 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Admiralty Dispatch — Strategy Comparison Trial 0247</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=EB+Garamond:ital,wght@0,400;0,500;0,600;1,400&family=IM+Fell+English+SC&family=JetBrains+Mono:wght@400;500&family=Special+Elite&display=swap" rel="stylesheet">
+<style>
+:root{
+  /* paper / ink palette */
+  --paper:#f1e7cf;
+  --paper-warm:#ecdfc0;
+  --paper-shadow:#c4b48e;
+  --paper-fold:#a89a76;
+  --ink-deep:#162338;
+  --ink-mid:#2a4263;
+  --ink-faded:#6c7c95;
+  --ink-sepia:#5e3f23;
+  --ink-rust:#8a3a25;
+  --gold:#b8924a;
+  --gold-bright:#d4a85f;
+  --crim:#7a2017;
+
+  /* sea / sky palette */
+  --sea-abyss:#08172a;
+  --sea-deep:#102a44;
+  --sea-mid:#1d4670;
+  --sea-light:#3a6f95;
+  --sea-foam:#cfd9d8;
+  --sky-zenith:#5d86ad;
+  --sky-mid:#a9b9c3;
+  --sky-horizon:#f0c483;
+  --sky-flare:#fde5b4;
+  --sun:#ffe6a8;
+
+  /* ship palette */
+  --hull-dark:#1c252e;
+  --hull-mid:#2f3a45;
+  --hull-light:#4b5663;
+  --deck:#3d3025;
+  --brass:#b78a3c;
+  --smoke:#a8a39a;
+  --rust-streak:#5e2a18;
+
+  --serif:"EB Garamond","Adobe Garamond Pro",Georgia,serif;
+  --display:"IM Fell English SC","EB Garamond",Georgia,serif;
+  --mono:"JetBrains Mono","IBM Plex Mono",monospace;
+  --stamp:"Special Elite","Courier New",monospace;
+}
+
+*{box-sizing:border-box;margin:0;padding:0}
+
+html,body{
+  background:#1a1408;
+  color:var(--ink-deep);
+  font-family:var(--serif);
+  font-size:16px;
+  line-height:1.5;
+  min-height:100vh;
+}
+
+body{
+  padding:32px 16px 64px;
+}
+
+/* ============================================================
+   PAPER SHEET — the whole document sits on a parchment slab
+   ============================================================ */
+
+.sheet{
+  max-width:1320px;
+  margin:0 auto;
+  background:
+    radial-gradient(ellipse at 12% 8%, #f6ecd6 0%, transparent 55%),
+    radial-gradient(ellipse at 88% 92%, #e0d2ad 0%, transparent 60%),
+    radial-gradient(ellipse at 50% 50%, #f1e7cf 0%, #e6d8b3 100%);
+  box-shadow:
+    0 1px 0 #fff8e2 inset,
+    0 -1px 0 #b8a880 inset,
+    0 30px 60px -20px rgba(0,0,0,.7),
+    0 0 0 1px #2a1f10;
+  position:relative;
+  overflow:hidden;
+}
+
+/* paper grain — subtle SVG noise overlay */
+.sheet::before{
+  content:"";
+  position:absolute;inset:0;
+  background-image:url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='240' height='240'><filter id='n'><feTurbulence type='fractalNoise' baseFrequency='0.92' numOctaves='2' stitchTiles='stitch'/><feColorMatrix values='0 0 0 0 0.18 0 0 0 0 0.13 0 0 0 0 0.06 0 0 0 0.07 0'/></filter><rect width='100%25' height='100%25' filter='url(%23n)'/></svg>");
+  pointer-events:none;
+  mix-blend-mode:multiply;
+  opacity:.6;
+  z-index:5;
+}
+
+/* foxing spots — age stains */
+.sheet::after{
+  content:"";
+  position:absolute;inset:0;
+  background:
+    radial-gradient(circle at 4% 12%, rgba(120,80,30,.13) 0 6px, transparent 14px),
+    radial-gradient(circle at 96% 4%, rgba(120,80,30,.18) 0 8px, transparent 16px),
+    radial-gradient(circle at 12% 92%, rgba(120,80,30,.12) 0 5px, transparent 12px),
+    radial-gradient(circle at 78% 88%, rgba(120,80,30,.16) 0 7px, transparent 18px),
+    radial-gradient(circle at 2% 60%, rgba(120,80,30,.10) 0 4px, transparent 10px),
+    radial-gradient(circle at 99% 50%, rgba(120,80,30,.14) 0 6px, transparent 14px);
+  pointer-events:none;
+  z-index:5;
+  mix-blend-mode:multiply;
+}
+
+/* ============================================================
+   HEADER CARTOUCHE
+   ============================================================ */
+
+.cartouche{
+  padding:36px 56px 24px;
+  border-bottom:1px double var(--ink-deep);
+  position:relative;
+}
+
+.cartouche-grid{
+  display:grid;
+  grid-template-columns:1fr auto 1fr;
+  gap:32px;
+  align-items:end;
+}
+
+.cart-left{
+  font-family:var(--stamp);
+  font-size:11px;
+  letter-spacing:.04em;
+  color:var(--ink-sepia);
+  line-height:1.7;
+}
+.cart-left .stamp{
+  display:inline-block;
+  padding:3px 9px 2px;
+  border:1.5px solid var(--ink-rust);
+  color:var(--ink-rust);
+  transform:rotate(-2.5deg);
+  font-weight:bold;
+  letter-spacing:.18em;
+  margin-bottom:8px;
+  background:rgba(255,255,255,.15);
+  text-transform:uppercase;
+}
+.cart-left dl{display:grid;grid-template-columns:auto 1fr;gap:2px 12px}
+.cart-left dt{color:var(--ink-faded);font-size:10px;letter-spacing:.1em;text-transform:uppercase}
+.cart-left dd{color:var(--ink-deep);font-family:var(--mono);font-size:10.5px}
+
+.cart-center{
+  text-align:center;
+  position:relative;
+}
+.cart-center .pre-title{
+  font-family:var(--display);
+  font-size:13px;
+  letter-spacing:.45em;
+  color:var(--ink-mid);
+  padding:0 18px;
+  display:inline-block;
+  border-top:1px solid var(--ink-faded);
+  border-bottom:1px solid var(--ink-faded);
+  margin-bottom:14px;
+}
+.cart-center h1{
+  font-family:var(--display);
+  font-weight:400;
+  font-size:54px;
+  line-height:1;
+  letter-spacing:.04em;
+  color:var(--ink-deep);
+  margin-bottom:8px;
+  text-shadow:0 1px 0 rgba(255,250,235,.5);
+}
+.cart-center .subtitle{
+  font-family:var(--serif);
+  font-style:italic;
+  font-size:18px;
+  color:var(--ink-sepia);
+  letter-spacing:.02em;
+}
+.cart-center .flourish{
+  margin:6px auto 0;
+  width:340px;
+  height:18px;
+}
+
+.cart-right{
+  text-align:right;
+  position:relative;
+  min-height:120px;
+}
+.compass{
+  width:120px;height:120px;
+  margin-left:auto;
+  animation:compass-sway 9s ease-in-out infinite;
+  transform-origin:50% 50%;
+  filter:drop-shadow(0 2px 1px rgba(60,40,15,.18));
+}
+@keyframes compass-sway{
+  0%,100%{transform:rotate(-1.4deg)}
+  50%{transform:rotate(1.4deg)}
+}
+
+/* ============================================================
+   OCEAN HERO SCENE
+   ============================================================ */
+
+.hero{
+  height:540px;
+  position:relative;
+  overflow:hidden;
+  border-bottom:1px double var(--ink-deep);
+  background:linear-gradient(to bottom,
+    var(--sky-zenith) 0%,
+    #8aa9c4 36%,
+    var(--sky-mid) 56%,
+    #cdb78c 70%,
+    var(--sky-horizon) 78%);
+}
+
+/* sun + halo */
+.sun-wrap{
+  position:absolute;
+  left:64%;top:40%;
+  transform:translate(-50%,-50%);
+  pointer-events:none;
+}
+.sun{
+  width:96px;height:96px;
+  border-radius:50%;
+  background:radial-gradient(circle at 35% 35%, #fff7d8 0%, var(--sun) 35%, #f5c970 70%, transparent 100%);
+  box-shadow:
+    0 0 60px 30px rgba(255,225,150,.55),
+    0 0 140px 80px rgba(255,210,130,.28),
+    0 0 240px 120px rgba(255,200,110,.15);
+  animation:sun-pulse 6s ease-in-out infinite;
+}
+@keyframes sun-pulse{
+  0%,100%{filter:brightness(1)}
+  50%{filter:brightness(1.08)}
+}
+.sun-rays{
+  position:absolute;left:-160px;top:-160px;
+  width:416px;height:416px;
+  opacity:.45;
+  animation:rays-rot 60s linear infinite;
+}
+@keyframes rays-rot{
+  to{transform:rotate(360deg)}
+}
+
+/* clouds */
+.cloud{
+  position:absolute;
+  filter:blur(.4px);
+  opacity:.75;
+}
+.cloud svg{display:block}
+.cloud.c1{left:6%;top:18%;width:220px;animation:cloud-drift-1 110s linear infinite}
+.cloud.c2{left:34%;top:8%;width:160px;opacity:.55;animation:cloud-drift-2 145s linear infinite}
+.cloud.c3{left:78%;top:22%;width:180px;opacity:.6;animation:cloud-drift-1 130s linear infinite reverse}
+@keyframes cloud-drift-1{
+  to{transform:translateX(-1400px)}
+}
+@keyframes cloud-drift-2{
+  to{transform:translateX(-1800px)}
+}
+
+/* sea — multiple wave layers stacked from horizon to foreground */
+.sea{
+  position:absolute;
+  left:0;right:0;
+  top:65%;bottom:0;
+  background:linear-gradient(to bottom,
+    var(--sea-light) 0%,
+    var(--sea-mid) 30%,
+    var(--sea-deep) 70%,
+    var(--sea-abyss) 100%);
+  overflow:hidden;
+}
+/* sun reflection on water */
+.sun-glitter{
+  position:absolute;
+  left:54%;top:0;
+  width:280px;height:100%;
+  background:radial-gradient(ellipse at center top,
+    rgba(255,225,150,.55) 0%,
+    rgba(255,210,130,.25) 40%,
+    transparent 75%);
+  transform:translateX(-50%);
+  mix-blend-mode:screen;
+  pointer-events:none;
+}
+
+/* glints — small flashes on water */
+.glint{
+  position:absolute;
+  width:8px;height:2px;
+  background:#fff8d6;
+  border-radius:50%;
+  opacity:0;
+  filter:blur(.3px);
+  animation:glint-pulse 4.2s ease-in-out infinite;
+  mix-blend-mode:screen;
+}
+@keyframes glint-pulse{
+  0%,80%,100%{opacity:0;transform:scaleX(.5)}
+  85%{opacity:.95;transform:scaleX(1.2)}
+  90%{opacity:.6;transform:scaleX(.8)}
+}
+
+/* wave layers — animated SVG strips */
+.wave{
+  position:absolute;
+  left:-100%;width:300%;
+  height:100%;
+  pointer-events:none;
+}
+.wave svg{display:block;width:100%;height:100%}
+.wave.w1{top:0;animation:wave-flow 9s linear infinite;opacity:.85}
+.wave.w2{top:6%;animation:wave-flow 13s linear infinite reverse;opacity:.7}
+.wave.w3{top:14%;animation:wave-flow 17s linear infinite;opacity:.6}
+.wave.w4{top:24%;animation:wave-flow 21s linear infinite reverse;opacity:.5}
+.wave.w5{top:36%;animation:wave-flow 27s linear infinite;opacity:.4}
+@keyframes wave-flow{
+  to{transform:translateX(33.333%)}
+}
+
+/* foam crests — sit just on top of waves */
+.crest{
+  position:absolute;
+  left:-100%;width:300%;
+  height:8px;
+  pointer-events:none;
+  opacity:.7;
+}
+.crest.cr1{top:5%;animation:wave-flow 11s linear infinite}
+.crest.cr2{top:18%;animation:wave-flow 19s linear infinite reverse}
+
+/* ============================================================
+   FLEET — ships placed on the water, with flags & smoke
+   ============================================================ */
+
+.fleet{position:absolute;inset:0;pointer-events:none;z-index:4}
+.ship{
+  position:absolute;
+  transform-origin:50% 70%;
+}
+.ship.bob{animation:bob 5s ease-in-out infinite}
+.ship.bob-late{animation:bob 6.4s ease-in-out infinite -1.7s}
+.ship.bob-slow{animation:bob 7.5s ease-in-out infinite -3.1s}
+.ship.bob-quick{animation:bob 4.2s ease-in-out infinite -.8s}
+@keyframes bob{
+  0%,100%{transform:translateY(0) rotate(-.7deg)}
+  50%{transform:translateY(-3px) rotate(.7deg)}
+}
+
+/* flag fluttering — applied to <g class="flag-cloth"> inside ship svg */
+.flag-cloth{
+  transform-origin:left center;
+  animation:flutter 1.6s ease-in-out infinite;
+}
+.flag-cloth.delay-a{animation-delay:-.3s}
+.flag-cloth.delay-b{animation-delay:-.7s}
+.flag-cloth.delay-c{animation-delay:-1.1s}
+@keyframes flutter{
+  0%,100%{transform:skewX(-4deg) scaleX(1)}
+  25%   {transform:skewX(8deg)  scaleX(.94)}
+  50%   {transform:skewX(-2deg) scaleX(1.04)}
+  75%   {transform:skewX(10deg) scaleX(.92)}
+}
+
+/* smoke particles — spawn from stack, rise & fade */
+.smoke-stack{position:relative}
+.puff{
+  position:absolute;
+  bottom:0;left:50%;
+  width:14px;height:14px;
+  border-radius:50%;
+  background:radial-gradient(circle at 30% 30%, #c8c2b6 0%, var(--smoke) 40%, rgba(120,114,103,.0) 75%);
+  transform:translate(-50%,0) scale(.4);
+  opacity:0;
+  filter:blur(.5px);
+  animation:puff-rise 4.8s ease-out infinite;
+}
+.puff.p1{animation-delay:0s}
+.puff.p2{animation-delay:.9s;width:18px;height:18px}
+.puff.p3{animation-delay:1.8s;width:22px;height:22px}
+.puff.p4{animation-delay:2.7s;width:26px;height:26px}
+.puff.p5{animation-delay:3.6s;width:30px;height:30px}
+@keyframes puff-rise{
+  0%  {opacity:0;transform:translate(-50%,0) scale(.4)}
+  10% {opacity:.85}
+  60% {opacity:.5}
+  100%{opacity:0;transform:translate(calc(-50% - 60px),-130px) scale(2.4)}
+}
+
+/* ship reflections in water */
+.reflection{
+  position:absolute;
+  transform:scaleY(-1);
+  opacity:.22;
+  filter:blur(1.5px);
+  mix-blend-mode:multiply;
+  pointer-events:none;
+}
+
+/* ship label cards floating beside each ship */
+.ship-label{
+  position:absolute;
+  font-family:var(--stamp);
+  font-size:9.5px;
+  letter-spacing:.13em;
+  color:var(--ink-deep);
+  background:rgba(241,231,207,.92);
+  border:1px solid var(--ink-deep);
+  padding:3px 7px 2px;
+  white-space:nowrap;
+  box-shadow:1px 1px 0 var(--ink-deep);
+  text-transform:uppercase;
+  z-index:6;
+  pointer-events:auto;
+}
+.ship-label .len{color:var(--ink-rust);margin-left:6px}
+
+/* horizon distant elements */
+.horizon{
+  position:absolute;left:0;right:0;top:64%;
+  height:2px;background:rgba(20,30,50,.18);
+  pointer-events:none;
+}
+.distant-ship{
+  position:absolute;top:62%;
+  width:30px;height:14px;
+  opacity:.5;
+}
+
+/* gulls */
+.gull{
+  position:absolute;
+  width:14px;height:6px;
+  color:var(--ink-deep);
+  opacity:.6;
+  animation:gull-flap .35s ease-in-out infinite, gull-drift 24s linear infinite;
+}
+.gull.g2{top:18%;left:25%;animation-delay:0s,-12s}
+.gull.g3{top:14%;left:42%;animation-delay:-.1s,-6s}
+@keyframes gull-flap{
+  50%{transform:translateY(-2px) scaleY(.6)}
+}
+@keyframes gull-drift{
+  to{transform:translateX(-200px)}
+}
+
+/* ============================================================
+   ANALYTICAL CHART PANEL
+   ============================================================ */
+
+.dashboard{
+  display:grid;
+  grid-template-columns:minmax(0,1.55fr) minmax(0,1fr);
+  gap:32px;
+  padding:36px 56px 28px;
+}
+
+.section-rule{
+  display:flex;align-items:center;
+  font-family:var(--display);
+  font-size:13px;
+  letter-spacing:.4em;
+  color:var(--ink-mid);
+  margin:0 0 16px;
+  text-transform:uppercase;
+}
+.section-rule::before,.section-rule::after{
+  content:"";flex:1;height:1px;
+  background:var(--ink-faded);
+}
+.section-rule::before{margin-right:16px}
+.section-rule::after{margin-left:16px}
+
+/* CHART BOARD */
+.board-frame{
+  border:2px double var(--ink-deep);
+  padding:14px;
+  background:rgba(255,250,232,.4);
+  position:relative;
+}
+.board-frame::after{
+  /* corner brackets */
+  content:"";position:absolute;inset:6px;
+  border:1px solid var(--ink-faded);
+  pointer-events:none;
+}
+
+.board-grid{
+  display:grid;
+  grid-template-columns:24px repeat(8,1fr);
+  grid-template-rows:24px repeat(8,1fr);
+  gap:0;
+  aspect-ratio:9/9;
+  background:#f5ecd5;
+}
+.board-grid .corner{}
+.board-grid .col-h, .board-grid .row-h{
+  display:flex;align-items:center;justify-content:center;
+  font-family:var(--display);font-size:14px;
+  color:var(--ink-mid);
+}
+.cell{
+  border:.5px solid rgba(40,55,80,.22);
+  position:relative;
+  background:
+    linear-gradient(rgba(255,255,255,.06),rgba(0,0,0,.03)),
+    repeating-linear-gradient(45deg,transparent 0 6px,rgba(40,55,80,.04) 6px 6.5px);
+}
+.cell.ship{
+  background:
+    repeating-linear-gradient(45deg,rgba(20,30,50,.18) 0 3px,transparent 3px 6px),
+    rgba(184,146,74,.25);
+  outline:1px solid var(--ink-deep);
+  outline-offset:-2px;
+}
+.cell.hit::after{
+  content:"";
+  position:absolute;inset:18%;
+  background:
+    radial-gradient(circle, var(--ink-rust) 0 30%, transparent 65%);
+  animation:hit-pulse 2.4s ease-in-out infinite;
+}
+@keyframes hit-pulse{
+  0%,100%{opacity:.85}50%{opacity:1}
+}
+.cell.miss::after{
+  content:"·";
+  position:absolute;inset:0;
+  display:flex;align-items:center;justify-content:center;
+  color:var(--ink-mid);font-size:22px;line-height:1;
+}
+.cell.target{
+  outline:2px solid var(--ink-rust);
+  outline-offset:-3px;
+  animation:target-blink 1.3s ease-in-out infinite;
+}
+@keyframes target-blink{
+  0%,100%{outline-color:var(--ink-rust)}
+  50%{outline-color:rgba(138,58,37,.3)}
+}
+.cell .post{
+  position:absolute;inset:1px;
+  background:rgba(20,30,50,var(--p,0));
+  pointer-events:none;
+}
+
+/* legend below board */
+.legend{
+  margin-top:14px;
+  display:flex;flex-wrap:wrap;gap:14px 22px;
+  font-family:var(--mono);
+  font-size:10.5px;color:var(--ink-mid);
+  letter-spacing:.04em;
+}
+.legend .sw{display:inline-block;width:14px;height:14px;margin-right:5px;vertical-align:-3px;border:1px solid var(--ink-deep)}
+.legend .sw.ship{background:repeating-linear-gradient(45deg,rgba(20,30,50,.4) 0 3px,rgba(184,146,74,.3) 3px 6px)}
+.legend .sw.hit{background:radial-gradient(circle,var(--ink-rust) 0 40%,#f5ecd5 65%)}
+.legend .sw.miss{background:#f5ecd5;position:relative}
+.legend .sw.miss::after{content:"·";position:absolute;inset:0;display:flex;align-items:center;justify-content:center;color:var(--ink-mid);font-size:18px}
+.legend .sw.post{background:linear-gradient(to right,#f5ecd5,rgba(20,30,50,.6))}
+.legend .sw.target{background:#f5ecd5;outline:2px solid var(--ink-rust);outline-offset:-2px}
+
+/* DOCTRINES — strategy cards */
+.doctrines{display:flex;flex-direction:column;gap:14px}
+.doctrine{
+  border:1.5px solid var(--ink-deep);
+  background:linear-gradient(to bottom right, rgba(255,250,232,.5), rgba(220,200,160,.18));
+  padding:14px 16px 12px;
+  position:relative;
+  display:grid;
+  grid-template-columns:1fr auto;
+  gap:6px 12px;
+}
+.doctrine.lead{
+  border-width:2px;
+  background:linear-gradient(to bottom right, rgba(255,238,200,.7), rgba(220,180,120,.3));
+  box-shadow:0 0 0 1px var(--ink-deep), 3px 3px 0 rgba(20,30,50,.18);
+}
+.doctrine .stamp{
+  position:absolute;top:-9px;left:14px;
+  font-family:var(--stamp);font-size:10px;
+  background:var(--paper);
+  padding:0 8px;
+  letter-spacing:.18em;
+  color:var(--ink-rust);
+  text-transform:uppercase;
+}
+.doctrine .lead-mark{
+  position:absolute;top:-12px;right:12px;
+  font-family:var(--stamp);font-size:9.5px;
+  background:var(--ink-rust);color:var(--paper);
+  padding:3px 9px 2px;
+  letter-spacing:.22em;
+  transform:rotate(2.5deg);
+  box-shadow:1px 1px 0 var(--ink-deep);
+}
+.doctrine h3{
+  font-family:var(--display);
+  font-weight:400;
+  font-size:20px;
+  letter-spacing:.04em;
+  color:var(--ink-deep);
+  grid-column:1/-1;
+  line-height:1.1;
+  margin-top:2px;
+}
+.doctrine .formula{
+  font-family:var(--mono);
+  font-size:10px;
+  color:var(--ink-faded);
+  grid-column:1/-1;
+  margin-top:-2px;
+}
+.doctrine .desc{
+  font-family:var(--serif);
+  font-style:italic;
+  font-size:13.5px;
+  color:var(--ink-sepia);
+  grid-column:1/-1;
+  margin-top:4px;
+  line-height:1.35;
+}
+.doctrine .stats{
+  grid-column:1/-1;
+  display:grid;
+  grid-template-columns:repeat(4,1fr);
+  gap:8px;
+  font-family:var(--mono);
+  font-size:10.5px;
+  margin-top:8px;
+  border-top:1px dashed var(--ink-faded);
+  padding-top:8px;
+}
+.doctrine .stats div{display:flex;flex-direction:column}
+.doctrine .stats .lbl{
+  color:var(--ink-faded);font-size:9px;text-transform:uppercase;letter-spacing:.1em;
+}
+.doctrine .stats .val{
+  color:var(--ink-deep);font-weight:500;font-size:14px;
+}
+.doctrine .stats .val.good{color:#1f5b2e}
+.doctrine .stats .val.bad{color:var(--ink-rust)}
+
+/* sparkline */
+.spark{
+  width:100%;height:24px;display:block;margin-top:6px;grid-column:1/-1;
+  opacity:.85;
+}
+
+/* ============================================================
+   BOTTOM ROW — trajectories + soundings
+   ============================================================ */
+
+.bottom{
+  display:grid;
+  grid-template-columns:minmax(0,1.55fr) minmax(0,1fr);
+  gap:32px;
+  padding:0 56px 28px;
+}
+
+.trajectory-box, .soundings-box{
+  border:2px double var(--ink-deep);
+  padding:18px 20px 16px;
+  background:rgba(255,250,232,.4);
+}
+.trajectory-box h2,
+.soundings-box h2{
+  font-family:var(--display);
+  font-weight:400;
+  font-size:18px;
+  color:var(--ink-deep);
+  letter-spacing:.04em;
+  margin-bottom:6px;
+}
+.trajectory-box .sub,
+.soundings-box .sub{
+  font-family:var(--serif);
+  font-style:italic;
+  font-size:13px;
+  color:var(--ink-sepia);
+  margin-bottom:14px;
+}
+
+.chart-svg{width:100%;height:220px;display:block}
+
+.legend-row{
+  display:flex;flex-wrap:wrap;gap:8px 18px;margin-top:10px;
+  font-family:var(--mono);font-size:10.5px;color:var(--ink-mid);
+}
+.legend-row .dot{display:inline-block;width:12px;height:2px;margin-right:6px;vertical-align:3px}
+
+.soundings-grid{
+  display:grid;
+  grid-template-columns:repeat(8,1fr);
+  gap:2px;
+  margin-bottom:10px;
+}
+.snd{
+  aspect-ratio:1/1;
+  display:flex;align-items:center;justify-content:center;
+  font-family:var(--mono);font-size:9px;
+  color:var(--paper-warm);
+  font-weight:500;
+  border:.5px solid rgba(40,55,80,.15);
+  position:relative;
+}
+.snd[data-p]{background:rgba(20,30,50,calc(var(--pp) * 1));}
+
+/* ============================================================
+   FOOTER COLOPHON
+   ============================================================ */
+
+.colophon{
+  border-top:1px double var(--ink-deep);
+  padding:20px 56px 32px;
+  display:grid;
+  grid-template-columns:auto 1fr auto;
+  gap:24px;
+  align-items:center;
+  font-family:var(--stamp);
+  font-size:10px;
+  color:var(--ink-sepia);
+  letter-spacing:.08em;
+}
+.colophon .seal{
+  width:64px;height:64px;
+  border:2px solid var(--ink-rust);
+  border-radius:50%;
+  display:flex;align-items:center;justify-content:center;
+  text-align:center;
+  font-family:var(--display);
+  font-size:9px;
+  color:var(--ink-rust);
+  line-height:1;
+  letter-spacing:.05em;
+  transform:rotate(-6deg);
+  background:rgba(255,255,255,.15);
+  box-shadow:inset 0 0 0 4px rgba(241,231,207,.6), inset 0 0 0 5px var(--ink-rust);
+}
+.colophon .ctr{text-align:center;line-height:1.6}
+.colophon a{color:var(--ink-rust);text-decoration:none;border-bottom:1px dotted}
+
+/* ============================================================
+   DECORATIVE — underline flourish, etc
+   ============================================================ */
+.flourish-line{
+  border:0;
+  height:14px;
+  background:url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 200 14'><path d='M2 7 Q 50 1 100 7 T 198 7' stroke='%23162338' fill='none' stroke-width='.6'/><circle cx='100' cy='7' r='1.5' fill='%23162338'/></svg>") center/contain no-repeat;
+}
+
+/* ============================================================
+   RESPONSIVE
+   ============================================================ */
+@media (max-width:980px){
+  .dashboard,.bottom{grid-template-columns:1fr}
+  .cartouche-grid{grid-template-columns:1fr}
+  .cart-right{text-align:left}
+  .compass{margin-left:0}
+  .cart-center h1{font-size:38px}
+}
+</style>
+</head>
+<body>
+
+<!-- ============================================================
+     SVG SPRITES — defined once, used multiple times
+     ============================================================ -->
+<svg width="0" height="0" style="position:absolute" aria-hidden="true">
+<defs>
+  <!-- compass rose -->
+  <symbol id="compass-rose" viewBox="0 0 120 120">
+    <g>
+      <circle cx="60" cy="60" r="56" fill="none" stroke="#162338" stroke-width=".7"/>
+      <circle cx="60" cy="60" r="48" fill="none" stroke="#162338" stroke-width=".4" stroke-dasharray="2 2"/>
+      <circle cx="60" cy="60" r="34" fill="none" stroke="#162338" stroke-width=".5"/>
+      <!-- 32-point ticks -->
+      <g stroke="#162338" stroke-width=".4">
+        <!-- generated wedges -->
+      </g>
+      <!-- main 8 points -->
+      <g fill="#162338">
+        <polygon points="60,8 64,58 60,60 56,58" opacity=".95"/>
+        <polygon points="60,112 56,62 60,60 64,62" opacity=".7"/>
+        <polygon points="8,60 58,56 60,60 58,64" opacity=".7"/>
+        <polygon points="112,60 62,64 60,60 62,56" opacity=".7"/>
+      </g>
+      <g fill="#b78a3c" opacity=".85">
+        <polygon points="60,18 62,58 60,60 58,58"/>
+        <polygon points="60,102 58,62 60,60 62,62"/>
+        <polygon points="18,60 58,58 60,60 58,62"/>
+        <polygon points="102,60 62,62 60,60 62,58"/>
+      </g>
+      <!-- diagonal points -->
+      <g fill="#162338" opacity=".55">
+        <polygon points="22,22 56,56 60,60 56,56" transform="rotate(0 60 60)"/>
+        <polygon points="98,22 64,56 60,60 64,56"/>
+        <polygon points="98,98 64,64 60,60 64,64"/>
+        <polygon points="22,98 56,64 60,60 56,64"/>
+      </g>
+      <!-- N star -->
+      <text x="60" y="6" text-anchor="middle" font-family="IM Fell English SC" font-size="10" fill="#162338">N</text>
+      <text x="60" y="120" text-anchor="middle" font-family="IM Fell English SC" font-size="8" fill="#162338">S</text>
+      <text x="3"  y="63" text-anchor="middle" font-family="IM Fell English SC" font-size="8" fill="#162338">W</text>
+      <text x="117" y="63" text-anchor="middle" font-family="IM Fell English SC" font-size="8" fill="#162338">E</text>
+      <circle cx="60" cy="60" r="3" fill="#b78a3c" stroke="#162338" stroke-width=".5"/>
+    </g>
+  </symbol>
+
+  <!-- flourish ornament -->
+  <symbol id="flourish" viewBox="0 0 340 18">
+    <g fill="none" stroke="#162338" stroke-width=".7">
+      <path d="M2 9 C 40 1, 80 17, 120 9 S 200 1, 240 9 S 320 17, 338 9"/>
+      <circle cx="170" cy="9" r="2.4" fill="#b78a3c" stroke="#162338" stroke-width=".5"/>
+      <circle cx="60" cy="9" r="1.2" fill="#162338"/>
+      <circle cx="280" cy="9" r="1.2" fill="#162338"/>
+    </g>
+  </symbol>
+
+  <!-- cloud shape -->
+  <symbol id="cloud" viewBox="0 0 220 70">
+    <g fill="#fff" opacity=".88">
+      <ellipse cx="50"  cy="44" rx="40" ry="22"/>
+      <ellipse cx="100" cy="32" rx="48" ry="28"/>
+      <ellipse cx="160" cy="42" rx="42" ry="22"/>
+      <ellipse cx="190" cy="50" rx="28" ry="14"/>
+      <ellipse cx="20"  cy="52" rx="22" ry="10"/>
+    </g>
+    <g fill="#5d86ad" opacity=".25">
+      <ellipse cx="50"  cy="56" rx="40" ry="6"/>
+      <ellipse cx="160" cy="56" rx="42" ry="6"/>
+    </g>
+  </symbol>
+
+  <!-- gull -->
+  <symbol id="gull" viewBox="0 0 14 6">
+    <path d="M0 5 Q 3 0 7 4 Q 11 0 14 5" fill="none" stroke="currentColor" stroke-width="1" stroke-linecap="round"/>
+  </symbol>
+
+  <!-- sun rays -->
+  <symbol id="sun-rays" viewBox="0 0 416 416">
+    <g fill="#ffe6a8" opacity=".8">
+      <polygon points="208,0 214,200 202,200"/>
+      <polygon points="416,208 216,214 216,202"/>
+      <polygon points="208,416 202,216 214,216"/>
+      <polygon points="0,208 200,202 200,214"/>
+      <polygon points="356,60 220,200 212,196" opacity=".7"/>
+      <polygon points="60,60 200,200 196,212" opacity=".7"/>
+      <polygon points="356,356 220,216 212,220" opacity=".7"/>
+      <polygon points="60,356 196,220 200,212" opacity=".7"/>
+    </g>
+  </symbol>
+
+  <!-- BATTLESHIP — length 4 (largest), full hyper-detailed silhouette -->
+  <symbol id="ship-4" viewBox="0 0 320 110">
+    <!-- reflection clip rectangle for ripple effect could go here; static render -->
+    <!-- waterline shadow -->
+    <ellipse cx="160" cy="92" rx="155" ry="6" fill="#08172a" opacity=".4"/>
+    <!-- hull main -->
+    <path d="M 12 78 Q 30 90 80 91 L 240 91 Q 290 90 308 78 L 296 70 L 24 70 Z" fill="#1c252e" stroke="#000" stroke-width=".7"/>
+    <!-- hull belt (red anti-foul stripe) -->
+    <path d="M 16 80 Q 32 88 80 89 L 240 89 Q 288 88 304 80 L 24 80 Z" fill="#5e2a18" opacity=".7"/>
+    <!-- waterline streak -->
+    <line x1="20" y1="74" x2="300" y2="74" stroke="#ffffff" stroke-opacity=".25" stroke-width=".5"/>
+    <!-- deck -->
+    <rect x="22" y="66" width="276" height="6" fill="#3d3025"/>
+    <!-- deck planking lines -->
+    <g stroke="#241c14" stroke-width=".3" opacity=".7">
+      <line x1="22" y1="69" x2="298" y2="69"/>
+      <line x1="60" y1="66" x2="60" y2="72"/>
+      <line x1="120" y1="66" x2="120" y2="72"/>
+      <line x1="180" y1="66" x2="180" y2="72"/>
+      <line x1="240" y1="66" x2="240" y2="72"/>
+    </g>
+    <!-- forward turret (twin barrels) -->
+    <g>
+      <rect x="60" y="56" width="34" height="12" fill="#2f3a45" stroke="#000" stroke-width=".4"/>
+      <rect x="58" y="59" width="46" height="6" fill="#3d4a58"/>
+      <rect x="92" y="60" width="40" height="2" fill="#1c252e"/>
+      <rect x="92" y="64" width="40" height="2" fill="#1c252e"/>
+      <rect x="130" y="59.5" width="3" height="3" fill="#0a0e13"/>
+      <rect x="130" y="63.5" width="3" height="3" fill="#0a0e13"/>
+    </g>
+    <!-- aft turret -->
+    <g>
+      <rect x="220" y="56" width="34" height="12" fill="#2f3a45" stroke="#000" stroke-width=".4"/>
+      <rect x="218" y="59" width="46" height="6" fill="#3d4a58"/>
+      <rect x="190" y="60" width="40" height="2" fill="#1c252e"/>
+      <rect x="190" y="64" width="40" height="2" fill="#1c252e"/>
+      <rect x="187" y="59.5" width="3" height="3" fill="#0a0e13"/>
+      <rect x="187" y="63.5" width="3" height="3" fill="#0a0e13"/>
+    </g>
+    <!-- main superstructure / bridge -->
+    <g>
+      <rect x="118" y="40" width="84" height="20" fill="#4b5663" stroke="#000" stroke-width=".4"/>
+      <rect x="124" y="44" width="72" height="3" fill="#1c252e" opacity=".4"/>
+      <!-- portholes -->
+      <g fill="#1c252e">
+        <circle cx="128" cy="52" r="1.6"/>
+        <circle cx="138" cy="52" r="1.6"/>
+        <circle cx="148" cy="52" r="1.6"/>
+        <circle cx="172" cy="52" r="1.6"/>
+        <circle cx="182" cy="52" r="1.6"/>
+        <circle cx="192" cy="52" r="1.6"/>
+      </g>
+      <!-- bridge upper -->
+      <rect x="138" y="28" width="44" height="14" fill="#3d4a58" stroke="#000" stroke-width=".3"/>
+      <rect x="142" y="32" width="36" height="3" fill="#0a0e13" opacity=".5"/>
+      <!-- conning tower top -->
+      <rect x="152" y="20" width="16" height="10" fill="#2f3a45" stroke="#000" stroke-width=".3"/>
+      <!-- mast -->
+      <line x1="160" y1="20" x2="160" y2="2" stroke="#1c252e" stroke-width="1.2"/>
+      <line x1="155" y1="10" x2="165" y2="10" stroke="#1c252e" stroke-width=".4"/>
+      <line x1="158" y1="6" x2="162" y2="6" stroke="#1c252e" stroke-width=".4"/>
+      <!-- crow's nest -->
+      <ellipse cx="160" cy="14" rx="3.5" ry="1.6" fill="#1c252e"/>
+    </g>
+    <!-- smokestacks (two) -->
+    <g class="smoke-stack-area">
+      <rect x="100" y="34" width="14" height="22" fill="#2a3138" stroke="#000" stroke-width=".3"/>
+      <rect x="100" y="32" width="14" height="3" fill="#0a0e13"/>
+      <rect x="100" y="36" width="14" height="2" fill="#b78a3c" opacity=".7"/>
+      <rect x="206" y="34" width="14" height="22" fill="#2a3138" stroke="#000" stroke-width=".3"/>
+      <rect x="206" y="32" width="14" height="3" fill="#0a0e13"/>
+      <rect x="206" y="36" width="14" height="2" fill="#b78a3c" opacity=".7"/>
+    </g>
+    <!-- secondary armament -->
+    <g fill="#1c252e">
+      <rect x="50" y="64" width="6" height="3"/>
+      <rect x="264" y="64" width="6" height="3"/>
+    </g>
+    <!-- forward flagpole + ENSIGN flag (waving) -->
+    <g transform="translate(40 66)">
+      <line x1="0" y1="0" x2="0" y2="-26" stroke="#1c252e" stroke-width="1"/>
+      <g class="flag-cloth delay-a" transform-origin="0 -22">
+        <path d="M 0 -26 L 22 -25 L 22 -16 L 0 -17 Z" fill="#7a2017" stroke="#3a0a05" stroke-width=".3"/>
+        <rect x="0" y="-26" width="11" height="5" fill="#162338"/>
+        <g fill="#fff" font-size="3" font-family="IM Fell English SC">
+          <circle cx="3" cy="-23" r=".5"/>
+          <circle cx="6" cy="-23.5" r=".5"/>
+        </g>
+      </g>
+    </g>
+    <!-- aft flagpole + signal flag -->
+    <g transform="translate(282 66)">
+      <line x1="0" y1="0" x2="0" y2="-30" stroke="#1c252e" stroke-width="1"/>
+      <g class="flag-cloth delay-b" transform-origin="0 -26">
+        <path d="M 0 -30 L 18 -29 L 18 -19 L 0 -20 Z" fill="#162338" stroke="#000" stroke-width=".3"/>
+        <rect x="0" y="-30" width="9" height="11" fill="#f1e7cf"/>
+        <rect x="9" y="-30" width="9" height="11" fill="#7a2017"/>
+      </g>
+    </g>
+    <!-- rust streaks down hull -->
+    <g stroke="#5e2a18" opacity=".5" stroke-width=".5">
+      <line x1="35" y1="71" x2="34" y2="80"/>
+      <line x1="220" y1="71" x2="221" y2="79"/>
+      <line x1="280" y1="71" x2="280" y2="78"/>
+    </g>
+    <!-- bow numerals -->
+    <text x="290" y="78" font-family="JetBrains Mono" font-size="6" fill="#f1e7cf" opacity=".7">BB-04</text>
+  </symbol>
+
+  <!-- CRUISER — length 3 -->
+  <symbol id="ship-3" viewBox="0 0 240 100">
+    <ellipse cx="120" cy="86" rx="118" ry="5" fill="#08172a" opacity=".4"/>
+    <path d="M 8 72 Q 20 84 60 85 L 184 85 Q 220 84 232 72 L 222 64 L 18 64 Z" fill="#1c252e" stroke="#000" stroke-width=".6"/>
+    <path d="M 12 74 Q 22 82 60 83 L 184 83 Q 218 82 228 74 L 18 74 Z" fill="#5e2a18" opacity=".7"/>
+    <line x1="14" y1="68" x2="226" y2="68" stroke="#ffffff" stroke-opacity=".22" stroke-width=".5"/>
+    <rect x="16" y="60" width="208" height="5" fill="#3d3025"/>
+    <g stroke="#241c14" stroke-width=".3" opacity=".7">
+      <line x1="16" y1="63" x2="224" y2="63"/>
+      <line x1="80" y1="60" x2="80" y2="65"/>
+      <line x1="160" y1="60" x2="160" y2="65"/>
+    </g>
+    <!-- forward turret -->
+    <rect x="50" y="50" width="26" height="10" fill="#2f3a45" stroke="#000" stroke-width=".3"/>
+    <rect x="74" y="54" width="28" height="2" fill="#1c252e"/>
+    <rect x="74" y="56" width="28" height="2" fill="#1c252e"/>
+    <!-- aft turret -->
+    <rect x="164" y="50" width="26" height="10" fill="#2f3a45" stroke="#000" stroke-width=".3"/>
+    <rect x="138" y="54" width="28" height="2" fill="#1c252e"/>
+    <rect x="138" y="56" width="28" height="2" fill="#1c252e"/>
+    <!-- bridge -->
+    <rect x="100" y="36" width="40" height="16" fill="#4b5663" stroke="#000" stroke-width=".3"/>
+    <g fill="#1c252e">
+      <circle cx="106" cy="46" r="1.3"/>
+      <circle cx="114" cy="46" r="1.3"/>
+      <circle cx="126" cy="46" r="1.3"/>
+      <circle cx="134" cy="46" r="1.3"/>
+    </g>
+    <rect x="112" y="26" width="16" height="12" fill="#3d4a58" stroke="#000" stroke-width=".3"/>
+    <line x1="120" y1="26" x2="120" y2="6" stroke="#1c252e" stroke-width="1"/>
+    <line x1="116" y1="14" x2="124" y2="14" stroke="#1c252e" stroke-width=".4"/>
+    <ellipse cx="120" cy="18" rx="3" ry="1.4" fill="#1c252e"/>
+    <!-- single smokestack -->
+    <rect x="84" y="30" width="12" height="20" fill="#2a3138" stroke="#000" stroke-width=".3"/>
+    <rect x="84" y="28" width="12" height="3" fill="#0a0e13"/>
+    <rect x="84" y="32" width="12" height="2" fill="#b78a3c" opacity=".7"/>
+    <rect x="148" y="30" width="12" height="20" fill="#2a3138" stroke="#000" stroke-width=".3"/>
+    <rect x="148" y="28" width="12" height="3" fill="#0a0e13"/>
+    <rect x="148" y="32" width="12" height="2" fill="#b78a3c" opacity=".7"/>
+    <!-- flagpole + flag -->
+    <g transform="translate(218 60)">
+      <line x1="0" y1="0" x2="0" y2="-22" stroke="#1c252e" stroke-width="1"/>
+      <g class="flag-cloth delay-c" transform-origin="0 -18">
+        <path d="M 0 -22 L 16 -21 L 16 -14 L 0 -15 Z" fill="#1f5b2e" stroke="#000" stroke-width=".3"/>
+        <line x1="0" y1="-18.5" x2="16" y2="-17.5" stroke="#fff" stroke-opacity=".5" stroke-width=".4"/>
+      </g>
+    </g>
+    <text x="208" y="71" font-family="JetBrains Mono" font-size="5" fill="#f1e7cf" opacity=".7">CA-12</text>
+  </symbol>
+
+  <!-- DESTROYER — length 3 (variant) -->
+  <symbol id="ship-3b" viewBox="0 0 240 100">
+    <ellipse cx="120" cy="86" rx="118" ry="5" fill="#08172a" opacity=".4"/>
+    <path d="M 6 74 Q 22 84 70 85 L 178 85 Q 218 84 234 74 L 222 66 L 18 66 Z" fill="#212b35" stroke="#000" stroke-width=".6"/>
+    <path d="M 10 76 Q 24 82 70 83 L 178 83 Q 216 82 230 76 L 18 76 Z" fill="#5e2a18" opacity=".7"/>
+    <line x1="14" y1="70" x2="226" y2="70" stroke="#ffffff" stroke-opacity=".22" stroke-width=".5"/>
+    <rect x="20" y="62" width="200" height="5" fill="#3d3025"/>
+    <!-- single forward gun -->
+    <rect x="60" y="54" width="22" height="8" fill="#2f3a45" stroke="#000" stroke-width=".3"/>
+    <rect x="80" y="56" width="20" height="2" fill="#1c252e"/>
+    <!-- aft gun -->
+    <rect x="158" y="54" width="22" height="8" fill="#2f3a45" stroke="#000" stroke-width=".3"/>
+    <rect x="140" y="56" width="20" height="2" fill="#1c252e"/>
+    <!-- bridge -->
+    <rect x="96" y="40" width="48" height="14" fill="#4b5663" stroke="#000" stroke-width=".3"/>
+    <g fill="#1c252e">
+      <circle cx="102" cy="48" r="1.2"/>
+      <circle cx="112" cy="48" r="1.2"/>
+      <circle cx="128" cy="48" r="1.2"/>
+      <circle cx="138" cy="48" r="1.2"/>
+    </g>
+    <rect x="110" y="32" width="20" height="10" fill="#3d4a58" stroke="#000" stroke-width=".3"/>
+    <!-- mast tilted -->
+    <line x1="120" y1="32" x2="118" y2="10" stroke="#1c252e" stroke-width="1"/>
+    <line x1="115" y1="18" x2="121" y2="18" stroke="#1c252e" stroke-width=".4"/>
+    <!-- twin slim stacks -->
+    <rect x="84" y="36" width="8" height="20" fill="#2a3138" stroke="#000" stroke-width=".3"/>
+    <rect x="84" y="34" width="8" height="3" fill="#0a0e13"/>
+    <rect x="148" y="36" width="8" height="20" fill="#2a3138" stroke="#000" stroke-width=".3"/>
+    <rect x="148" y="34" width="8" height="3" fill="#0a0e13"/>
+    <g transform="translate(216 62)">
+      <line x1="0" y1="0" x2="0" y2="-22" stroke="#1c252e" stroke-width="1"/>
+      <g class="flag-cloth delay-a" transform-origin="0 -18">
+        <path d="M 0 -22 L 16 -21 L 12 -18 L 16 -15 L 0 -16 Z" fill="#7a2017" stroke="#3a0a05" stroke-width=".3"/>
+      </g>
+    </g>
+    <text x="208" y="73" font-family="JetBrains Mono" font-size="5" fill="#f1e7cf" opacity=".7">DD-37</text>
+  </symbol>
+
+  <!-- PT BOAT — length 2 -->
+  <symbol id="ship-2" viewBox="0 0 160 78">
+    <ellipse cx="80" cy="68" rx="78" ry="4" fill="#08172a" opacity=".4"/>
+    <path d="M 8 56 Q 18 66 50 67 L 116 67 Q 148 66 156 56 L 144 50 L 18 50 Z" fill="#26303a" stroke="#000" stroke-width=".5"/>
+    <path d="M 12 58 Q 20 64 50 65 L 116 65 Q 146 64 152 58 L 18 58 Z" fill="#5e2a18" opacity=".7"/>
+    <line x1="14" y1="53" x2="146" y2="53" stroke="#ffffff" stroke-opacity=".22" stroke-width=".5"/>
+    <rect x="20" y="46" width="120" height="4" fill="#3d3025"/>
+    <!-- pilothouse -->
+    <rect x="62" y="32" width="36" height="14" fill="#4b5663" stroke="#000" stroke-width=".3"/>
+    <rect x="66" y="36" width="28" height="3" fill="#0a0e13" opacity=".5"/>
+    <!-- machine gun forward -->
+    <rect x="40" y="42" width="6" height="4" fill="#1c252e"/>
+    <line x1="46" y1="44" x2="56" y2="44" stroke="#1c252e" stroke-width=".8"/>
+    <!-- mast -->
+    <line x1="80" y1="32" x2="80" y2="10" stroke="#1c252e" stroke-width="1"/>
+    <line x1="76" y1="20" x2="84" y2="20" stroke="#1c252e" stroke-width=".4"/>
+    <!-- single short stack -->
+    <rect x="104" y="36" width="8" height="12" fill="#2a3138" stroke="#000" stroke-width=".3"/>
+    <rect x="104" y="34" width="8" height="3" fill="#0a0e13"/>
+    <!-- flag on mast -->
+    <g transform="translate(80 12)">
+      <g class="flag-cloth delay-b" transform-origin="0 0">
+        <path d="M 0 -2 L 14 -1 L 14 6 L 0 5 Z" fill="#162338" stroke="#000" stroke-width=".3"/>
+        <line x1="0" y1="2" x2="14" y2="3" stroke="#fff" stroke-opacity=".4" stroke-width=".4"/>
+      </g>
+    </g>
+    <text x="138" y="56" font-family="JetBrains Mono" font-size="4.5" fill="#f1e7cf" opacity=".7">PT-08</text>
+  </symbol>
+</defs>
+</svg>
+
+
+<main class="sheet">
+
+  <!-- ========================== HEADER ========================== -->
+  <header class="cartouche">
+    <div class="cartouche-grid">
+      <div class="cart-left">
+        <div class="stamp">Restricted &nbsp;·&nbsp; Office of Tactical Analysis</div>
+        <dl>
+          <dt>Trial</dt><dd>0247-A · April 1926</dd>
+          <dt>Theatre</dt><dd>8 × 8 grid · BSC(ε=0.10)</dd>
+          <dt>Fleet</dt><dd>Ships {4, 3, 3, 2}</dd>
+          <dt>Particles</dt><dd>N = 4,096 (SMC)</dd>
+          <dt>Turn</dt><dd>24 / 80</dd>
+          <dt>Issued</dt><dd>2026-04-19 by M. L. Thompson</dd>
+        </dl>
+      </div>
+
+      <div class="cart-center">
+        <div class="pre-title">Admiralty Dispatch</div>
+        <h1>Strategy Comparison Trial</h1>
+        <div class="subtitle">A side-by-side benchmark of four tactical doctrines under common engagement.</div>
+        <svg class="flourish" aria-hidden="true"><use href="#flourish"/></svg>
+      </div>
+
+      <div class="cart-right">
+        <svg class="compass" aria-hidden="true"><use href="#compass-rose"/></svg>
+      </div>
+    </div>
+  </header>
+
+
+  <!-- ========================== HERO OCEAN ========================== -->
+  <section class="hero" aria-label="Live engagement scene">
+
+    <!-- sun + halo -->
+    <div class="sun-wrap">
+      <svg class="sun-rays"><use href="#sun-rays"/></svg>
+      <div class="sun"></div>
+    </div>
+
+    <!-- clouds -->
+    <div class="cloud c1"><svg viewBox="0 0 220 70"><use href="#cloud"/></svg></div>
+    <div class="cloud c2"><svg viewBox="0 0 220 70"><use href="#cloud"/></svg></div>
+    <div class="cloud c3"><svg viewBox="0 0 220 70"><use href="#cloud"/></svg></div>
+
+    <!-- gulls -->
+    <svg class="gull g2"><use href="#gull"/></svg>
+    <svg class="gull g3"><use href="#gull"/></svg>
+
+    <!-- horizon -->
+    <div class="horizon"></div>
+
+    <!-- distant ship -->
+    <svg class="distant-ship" style="left:18%" viewBox="0 0 30 14">
+      <ellipse cx="15" cy="11" rx="14" ry="2" fill="#0e2237"/>
+      <rect x="9" y="6" width="12" height="3" fill="#0e2237"/>
+      <rect x="13" y="2" width="3" height="6" fill="#0e2237"/>
+    </svg>
+    <svg class="distant-ship" style="left:84%;top:63%" viewBox="0 0 30 14">
+      <ellipse cx="15" cy="11" rx="13" ry="2" fill="#0e2237"/>
+      <rect x="11" y="7" width="9" height="3" fill="#0e2237"/>
+      <rect x="14" y="3" width="2" height="5" fill="#0e2237"/>
+    </svg>
+
+    <!-- the sea -->
+    <div class="sea">
+      <div class="sun-glitter"></div>
+
+      <!-- five wave layers -->
+      <div class="wave w1">
+        <svg viewBox="0 0 1200 100" preserveAspectRatio="none">
+          <path d="M0 50 Q 75 30 150 50 T 300 50 T 450 50 T 600 50 T 750 50 T 900 50 T 1050 50 T 1200 50 V100 H0 Z"
+                fill="#3a6f95"/>
+        </svg>
+      </div>
+      <div class="wave w2">
+        <svg viewBox="0 0 1200 100" preserveAspectRatio="none">
+          <path d="M0 50 Q 100 22 200 50 T 400 50 T 600 50 T 800 50 T 1000 50 T 1200 50 V100 H0 Z"
+                fill="#2c5d80"/>
+        </svg>
+      </div>
+      <div class="wave w3">
+        <svg viewBox="0 0 1200 100" preserveAspectRatio="none">
+          <path d="M0 50 Q 120 28 240 50 T 480 50 T 720 50 T 960 50 T 1200 50 V100 H0 Z"
+                fill="#1d4670"/>
+        </svg>
+      </div>
+      <div class="wave w4">
+        <svg viewBox="0 0 1200 100" preserveAspectRatio="none">
+          <path d="M0 60 Q 150 36 300 60 T 600 60 T 900 60 T 1200 60 V100 H0 Z"
+                fill="#143657"/>
+        </svg>
+      </div>
+      <div class="wave w5">
+        <svg viewBox="0 0 1200 100" preserveAspectRatio="none">
+          <path d="M0 70 Q 200 48 400 70 T 800 70 T 1200 70 V100 H0 Z"
+                fill="#0e2842"/>
+        </svg>
+      </div>
+
+      <!-- foam crests -->
+      <div class="crest cr1">
+        <svg viewBox="0 0 1200 8" preserveAspectRatio="none">
+          <path d="M0 4 Q 40 1 80 4 T 160 4 T 240 4 T 320 4 T 400 4 T 480 4 T 560 4 T 640 4 T 720 4 T 800 4 T 880 4 T 960 4 T 1040 4 T 1120 4 T 1200 4"
+                stroke="#cfd9d8" stroke-width="1.4" fill="none" opacity=".7"/>
+        </svg>
+      </div>
+      <div class="crest cr2">
+        <svg viewBox="0 0 1200 8" preserveAspectRatio="none">
+          <path d="M0 4 Q 60 0 120 4 T 240 4 T 360 4 T 480 4 T 600 4 T 720 4 T 840 4 T 960 4 T 1080 4 T 1200 4"
+                stroke="#dfe7e6" stroke-width="1" fill="none" opacity=".55"/>
+        </svg>
+      </div>
+
+      <!-- glints -->
+      <div class="glint" style="left:20%;top:30%;animation-delay:.4s"></div>
+      <div class="glint" style="left:42%;top:46%;animation-delay:1.2s"></div>
+      <div class="glint" style="left:58%;top:18%;animation-delay:2.1s"></div>
+      <div class="glint" style="left:73%;top:38%;animation-delay:.9s"></div>
+      <div class="glint" style="left:38%;top:62%;animation-delay:2.6s"></div>
+      <div class="glint" style="left:88%;top:54%;animation-delay:1.7s"></div>
+      <div class="glint" style="left:14%;top:70%;animation-delay:3.2s"></div>
+      <div class="glint" style="left:64%;top:74%;animation-delay:.2s"></div>
+    </div>
+
+    <!-- THE FLEET -->
+    <div class="fleet">
+
+      <!-- BB-04 — flagship, length 4 -->
+      <div class="ship bob" style="left:6%;top:60%;width:300px">
+        <!-- smoke spawned in-place behind front stack -->
+        <div class="smoke-stack" style="position:absolute;left:36%;top:0;width:0;height:0">
+          <div class="puff p1"></div><div class="puff p2"></div><div class="puff p3"></div>
+          <div class="puff p4"></div><div class="puff p5"></div>
+        </div>
+        <div class="smoke-stack" style="position:absolute;left:69%;top:2px;width:0;height:0">
+          <div class="puff p2"></div><div class="puff p3"></div><div class="puff p4"></div>
+        </div>
+        <svg viewBox="0 0 320 110" style="display:block;width:100%;height:auto;filter:drop-shadow(0 4px 2px rgba(8,23,42,.45))">
+          <use href="#ship-4"/>
+        </svg>
+      </div>
+      <div class="ship-label" style="left:6%;top:55%;transform:translateY(-100%)">F.S. <em>Bayes Royal</em><span class="len">·  L4</span></div>
+
+      <!-- CA-12 — cruiser, length 3 -->
+      <div class="ship bob-late" style="left:42%;top:64%;width:230px">
+        <div class="smoke-stack" style="position:absolute;left:38%;top:0">
+          <div class="puff p1"></div><div class="puff p2"></div><div class="puff p3"></div><div class="puff p4"></div>
+        </div>
+        <div class="smoke-stack" style="position:absolute;left:64%;top:2px">
+          <div class="puff p2"></div><div class="puff p3"></div>
+        </div>
+        <svg viewBox="0 0 240 100" style="display:block;width:100%;height:auto;filter:drop-shadow(0 4px 2px rgba(8,23,42,.45))">
+          <use href="#ship-3"/>
+        </svg>
+      </div>
+      <div class="ship-label" style="left:42%;top:60%;transform:translateY(-100%)">C.S. <em>Posterior</em><span class="len">·  L3</span></div>
+
+      <!-- DD-37 — destroyer, length 3 -->
+      <div class="ship bob-slow" style="left:67%;top:74%;width:200px">
+        <div class="smoke-stack" style="position:absolute;left:38%;top:0">
+          <div class="puff p1"></div><div class="puff p2"></div><div class="puff p3"></div>
+        </div>
+        <div class="smoke-stack" style="position:absolute;left:65%;top:2px">
+          <div class="puff p2"></div><div class="puff p4"></div>
+        </div>
+        <svg viewBox="0 0 240 100" style="display:block;width:100%;height:auto;filter:drop-shadow(0 4px 2px rgba(8,23,42,.45))">
+          <use href="#ship-3b"/>
+        </svg>
+      </div>
+      <div class="ship-label" style="left:67%;top:71%;transform:translateY(-100%)">D.D. <em>Likelihood</em><span class="len">·  L3</span></div>
+
+      <!-- PT-08 — picket boat, length 2 -->
+      <div class="ship bob-quick" style="left:23%;top:80%;width:140px">
+        <div class="smoke-stack" style="position:absolute;left:68%;top:8px">
+          <div class="puff p1"></div><div class="puff p3"></div>
+        </div>
+        <svg viewBox="0 0 160 78" style="display:block;width:100%;height:auto;filter:drop-shadow(0 4px 2px rgba(8,23,42,.45))">
+          <use href="#ship-2"/>
+        </svg>
+      </div>
+      <div class="ship-label" style="left:23%;top:77%;transform:translateY(-100%)">P.T. <em>Particle</em><span class="len">·  L2</span></div>
+
+    </div>
+
+  </section>
+
+
+  <!-- ========================== DASHBOARD: BOARD + DOCTRINES ========================== -->
+  <section class="dashboard">
+
+    <div class="board-pane">
+      <div class="section-rule">Engagement Chart · Strategy: EIG + MBayes</div>
+      <div class="board-frame">
+        <div class="board-grid" id="board"></div>
+      </div>
+      <div class="legend">
+        <span><span class="sw ship"></span>ship segment (truth)</span>
+        <span><span class="sw hit"></span>hit</span>
+        <span><span class="sw miss"></span>miss</span>
+        <span><span class="sw post"></span>posterior μ(c)</span>
+        <span><span class="sw target"></span>next action</span>
+      </div>
+    </div>
+
+    <div class="doctrines">
+      <div class="section-rule">Tactical Doctrines</div>
+
+      <article class="doctrine lead">
+        <div class="stamp">Doctrine I</div>
+        <div class="lead-mark">Leading</div>
+        <h3>EIG · Maximum Bayes</h3>
+        <div class="formula">argmaxq Hb(p̄(q)) − Hb(ε)  ·  shoot when max μ(c) ≥ τ</div>
+        <div class="desc">Selects the question that most reduces posterior entropy; shoots the cell of highest marginal probability once belief has converged.</div>
+        <svg class="spark" viewBox="0 0 200 24" preserveAspectRatio="none">
+          <polyline fill="none" stroke="#162338" stroke-width="1.4"
+            points="0,22 10,21 20,19 30,18 40,16 50,15 60,13 70,12 80,10 90,9 100,8 110,7 120,6 130,5 140,4 150,3.5 160,3 170,2.6 180,2.4 190,2.2 200,2"/>
+          <polyline fill="none" stroke="#7a2017" stroke-width=".8" stroke-dasharray="2 2"
+            points="0,12 200,12"/>
+        </svg>
+        <div class="stats">
+          <div><span class="lbl">Turns</span><span class="val">24</span></div>
+          <div><span class="lbl">Hits</span><span class="val good">9 / 12</span></div>
+          <div><span class="lbl">H(post)</span><span class="val">3.42</span></div>
+          <div><span class="lbl">Action</span><span class="val">Shoot E5</span></div>
+        </div>
+      </article>
+
+      <article class="doctrine">
+        <div class="stamp">Doctrine II</div>
+        <h3>ELLR · Maximum Bayes</h3>
+        <div class="formula">argmaxq Σs πs · KL(ps ‖ p̄−s)  ·  same shoot rule</div>
+        <div class="desc">Picks the question whose answer most distinguishes the leading hypothesis from its rivals.</div>
+        <svg class="spark" viewBox="0 0 200 24" preserveAspectRatio="none">
+          <polyline fill="none" stroke="#162338" stroke-width="1.4"
+            points="0,22 10,21 20,20 30,18 40,17 50,15 60,14 70,12 80,11 90,10 100,9 110,8 120,7 130,7 140,6 150,5 160,5 170,4 180,4 190,3.5 200,3"/>
+          <polyline fill="none" stroke="#7a2017" stroke-width=".8" stroke-dasharray="2 2"
+            points="0,12 200,12"/>
+        </svg>
+        <div class="stats">
+          <div><span class="lbl">Turns</span><span class="val">26</span></div>
+          <div><span class="lbl">Hits</span><span class="val">9 / 12</span></div>
+          <div><span class="lbl">H(post)</span><span class="val">3.61</span></div>
+          <div><span class="lbl">Action</span><span class="val">Ask Row C</span></div>
+        </div>
+      </article>
+
+      <article class="doctrine">
+        <div class="stamp">Doctrine III</div>
+        <h3>Bayesian Optimisation · UCB</h3>
+        <div class="formula">α(c) = μ(c) + κ σ(c)  ·  no questions, shoots only</div>
+        <div class="desc">Forgoes ask-actions; trades exploration against exploitation through the posterior variance term σ(c).</div>
+        <svg class="spark" viewBox="0 0 200 24" preserveAspectRatio="none">
+          <polyline fill="none" stroke="#162338" stroke-width="1.4"
+            points="0,22 10,21 20,21 30,19 40,18 50,17 60,16 70,16 80,14 90,13 100,12 110,11 120,10 130,9 140,8.5 150,7.5 160,7 170,6 180,5.5 190,5 200,4.5"/>
+          <polyline fill="none" stroke="#7a2017" stroke-width=".8" stroke-dasharray="2 2"
+            points="0,12 200,12"/>
+        </svg>
+        <div class="stats">
+          <div><span class="lbl">Turns</span><span class="val">28</span></div>
+          <div><span class="lbl">Hits</span><span class="val bad">7 / 12</span></div>
+          <div><span class="lbl">H(post)</span><span class="val">4.18</span></div>
+          <div><span class="lbl">Action</span><span class="val">Shoot G2</span></div>
+        </div>
+      </article>
+
+      <article class="doctrine">
+        <div class="stamp">Doctrine IV</div>
+        <h3>Captain · User</h3>
+        <div class="formula">interactive  ·  human selection</div>
+        <div class="desc">A flesh-and-blood operator. Calibrated on intuition, vulnerable to fatigue, indispensable for ground truth.</div>
+        <svg class="spark" viewBox="0 0 200 24" preserveAspectRatio="none">
+          <polyline fill="none" stroke="#162338" stroke-width="1.4"
+            points="0,22 10,22 20,20 30,20 40,18 50,18 60,15 70,15 80,15 90,13 100,13 110,11 120,11 130,11 140,9 150,9 160,9 170,7 180,7 190,5 200,5"/>
+        </svg>
+        <div class="stats">
+          <div><span class="lbl">Turns</span><span class="val">—</span></div>
+          <div><span class="lbl">Hits</span><span class="val">—</span></div>
+          <div><span class="lbl">H(post)</span><span class="val">—</span></div>
+          <div><span class="lbl">Action</span><span class="val">Awaiting</span></div>
+        </div>
+      </article>
+    </div>
+  </section>
+
+
+  <!-- ========================== BOTTOM ROW ========================== -->
+  <section class="bottom">
+
+    <div class="trajectory-box">
+      <h2>Trajectory of Engagement — Hits over Turns</h2>
+      <div class="sub">All four doctrines, common ground-truth board, common BSC noise channel.</div>
+      <svg class="chart-svg" viewBox="0 0 700 220" preserveAspectRatio="none">
+        <!-- chart frame -->
+        <rect x="40" y="10" width="650" height="180" fill="none" stroke="#6c7c95" stroke-width=".5"/>
+        <!-- gridlines -->
+        <g stroke="#6c7c95" stroke-width=".3" stroke-dasharray="2 4">
+          <line x1="40" y1="40"  x2="690" y2="40"/>
+          <line x1="40" y1="70"  x2="690" y2="70"/>
+          <line x1="40" y1="100" x2="690" y2="100"/>
+          <line x1="40" y1="130" x2="690" y2="130"/>
+          <line x1="40" y1="160" x2="690" y2="160"/>
+        </g>
+        <!-- y-axis labels -->
+        <g font-family="JetBrains Mono" font-size="9" fill="#162338" text-anchor="end">
+          <text x="36" y="14">12</text>
+          <text x="36" y="44">10</text>
+          <text x="36" y="74">8</text>
+          <text x="36" y="104">6</text>
+          <text x="36" y="134">4</text>
+          <text x="36" y="164">2</text>
+          <text x="36" y="194">0</text>
+        </g>
+        <!-- x-axis labels -->
+        <g font-family="JetBrains Mono" font-size="9" fill="#162338" text-anchor="middle">
+          <text x="40" y="208">0</text>
+          <text x="170" y="208">10</text>
+          <text x="300" y="208">20</text>
+          <text x="430" y="208">30</text>
+          <text x="560" y="208">40</text>
+          <text x="690" y="208">50</text>
+        </g>
+        <!-- axis titles -->
+        <text x="365" y="218" font-family="IM Fell English SC" font-size="11" fill="#162338" text-anchor="middle">turns elapsed</text>
+        <text x="14" y="100" font-family="IM Fell English SC" font-size="11" fill="#162338" text-anchor="middle" transform="rotate(-90 14 100)">cumulative hits</text>
+
+        <!-- doctrine I — EIG, leading (smooth, fastest) -->
+        <polyline fill="none" stroke="#162338" stroke-width="1.6"
+          points="40,190 53,190 66,178 79,178 92,178 105,166 118,154 131,154 144,142 157,130 170,118 183,118 196,106 209,94 222,82 235,70 248,70 261,58 274,58 287,46 300,34 313,34"/>
+        <!-- doctrine II — ELLR, slightly behind -->
+        <polyline fill="none" stroke="#5e3f23" stroke-width="1.4" stroke-dasharray="4 2"
+          points="40,190 53,190 66,190 79,178 92,178 105,178 118,166 131,154 144,142 157,142 170,130 183,118 196,118 209,106 222,94 235,82 248,82 261,70 274,58 287,58 300,46 313,46 326,34"/>
+        <!-- doctrine III — BO/UCB, trailing -->
+        <polyline fill="none" stroke="#7a2017" stroke-width="1.4" stroke-dasharray="2 3"
+          points="40,190 53,178 66,178 79,166 92,166 105,166 118,154 131,154 144,142 157,142 170,130 183,130 196,130 209,118 222,118 235,106 248,106 261,94 274,82 287,82 300,70 313,70 326,58 339,46"/>
+        <!-- doctrine IV — captain, hand-drawn-feel -->
+        <polyline fill="none" stroke="#1f5b2e" stroke-width="1.4"
+          points="40,190 53,190 66,178 79,178 92,166 105,154 118,142 131,142 144,142 157,130 170,118 183,118 196,118 209,106 222,94 235,94 248,82 261,82 274,70 287,58 300,58 313,46 326,46 339,34 352,34"/>
+
+        <!-- annotations -->
+        <g font-family="EB Garamond" font-size="10" fill="#162338" font-style="italic">
+          <text x="320" y="38">EIG ·  24 turns →</text>
+          <text x="335" y="50">ELLR ·  26</text>
+          <text x="350" y="62">User ·  29</text>
+          <text x="350" y="74">UCB ·  32</text>
+        </g>
+      </svg>
+      <div class="legend-row">
+        <span><span class="dot" style="background:#162338"></span>EIG · MBayes (Doctrine I)</span>
+        <span><span class="dot" style="background:#5e3f23;border-top:1px dashed #5e3f23"></span>ELLR · MBayes (II)</span>
+        <span><span class="dot" style="background:#7a2017;border-top:1px dotted #7a2017"></span>BO · UCB (III)</span>
+        <span><span class="dot" style="background:#1f5b2e"></span>Captain (IV)</span>
+      </div>
+    </div>
+
+    <div class="soundings-box">
+      <h2>Posterior Soundings — μ(c)</h2>
+      <div class="sub">Per-cell marginal posterior, EIG · MBayes at turn 24. Darker ink, higher probability of ship-segment.</div>
+      <div class="soundings-grid" id="soundings"></div>
+      <div class="legend-row" style="margin-top:6px">
+        <span style="font-style:italic">Range observed:&nbsp; 0.00 → 0.84.&nbsp; ESS = 1,847 / 4,096&nbsp; ·&nbsp; H(belief) = 3.42 nats</span>
+      </div>
+    </div>
+  </section>
+
+
+  <!-- ========================== COLOPHON ========================== -->
+  <footer class="colophon">
+    <div class="seal">OFFICE<br>OF · TACTICAL<br>ANALYSIS<br>· EST · 1926 ·</div>
+    <div class="ctr">
+      <div>© 2026, MICHAEL L. THOMPSON ·  ADMIRALTY DISPATCH No. 0247-A</div>
+      <div style="margin-top:4px;font-style:italic;font-family:var(--serif);text-transform:none;letter-spacing:0">
+        This document is licensed under
+        <a href="http://creativecommons.org/licenses/by-sa/4.0/">CC BY-SA 4.0</a>.
+        Code in the surrounding repository is licensed under Apache 2.0.
+      </div>
+    </div>
+    <div style="font-family:var(--mono);font-size:10px;line-height:1.5;text-align:right;color:var(--ink-mid)">
+      sheet 1 of 1<br>
+      rev · γ<br>
+      filed 19·iv·26
+    </div>
+  </footer>
+
+</main>
+
+<script>
+/* ============================================================
+   Generate the 8×8 board with truth ships, hits, misses,
+   posterior μ(c) overlay, and the next-action target marker.
+   This is mock data designed to look like a real mid-game state.
+   ============================================================ */
+
+const ROWS = 'ABCDEFGH';
+const board = document.getElementById('board');
+
+// posterior intensity per cell (0..1)  — synthesized realistic mid-game posterior
+const POST = [
+  [.02,.04,.05,.08,.10,.06,.04,.03],
+  [.05,.62,.74,.18,.12,.08,.05,.04],
+  [.04,.10,.12,.20,.36,.84,.32,.08],
+  [.03,.05,.07,.10,.15,.22,.12,.06],
+  [.06,.08,.06,.04,.45,.58,.18,.08],
+  [.10,.46,.40,.08,.05,.05,.04,.04],
+  [.06,.12,.08,.04,.05,.06,.05,.06],
+  [.04,.04,.03,.02,.02,.02,.02,.02],
+];
+
+// truth: 4 ships placed
+const SHIPS = new Set([
+  // BB-04 length 4 — row B, cols 1..4 → "B1".."B4"  (using indices 1, c=0..3)  Wait: row index 1, cols 1..4 means B2..B5
+  // Re-doing in (rowLetter+colNum) coords (1-indexed columns)
+  'B2','B3','B4','B5',
+  // CA length 3 — row C, cols 5..7 → C6,C7,C8
+  'C6','D6','E6',
+  // DD length 3 — column 5, rows D..F  → E5,F5
+  // Let's place: F2,F3,F4
+  'F2','F3','F4',
+  // PT length 2 — H7,H8
+  'H7','H8',
+]);
+
+// hits & misses observed so far (turn 24 of EIG strategy)
+const HITS  = new Set(['B2','B3','B4','C6','D6','F2','F3','H7','H8']);  // 9 hits
+const MISSES= new Set(['A1','A4','A7','D8','E1','G3','G6','H1','H3','H5','D2','E3','C2','C5','G8']);
+const TARGET = 'C8';   // next action: shoot C8 (high posterior, would discriminate ship class)
+
+// header row
+board.innerHTML = '<div class="corner"></div>' +
+  Array.from({length:8}, (_,c) => `<div class="col-h">${c+1}</div>`).join('');
+
+for (let r=0; r<8; r++){
+  board.insertAdjacentHTML('beforeend', `<div class="row-h">${ROWS[r]}</div>`);
+  for (let c=0; c<8; c++){
+    const id = ROWS[r] + (c+1);
+    const cls = ['cell'];
+    if (SHIPS.has(id))   cls.push('ship');
+    if (HITS.has(id))    cls.push('hit');
+    if (MISSES.has(id))  cls.push('miss');
+    if (id === TARGET)   cls.push('target');
+    const p = POST[r][c];
+    board.insertAdjacentHTML('beforeend',
+      `<div class="${cls.join(' ')}" data-id="${id}" title="${id} · μ=${p.toFixed(2)}">
+         <div class="post" style="--p:${(p*0.55).toFixed(3)}"></div>
+       </div>`);
+  }
+}
+
+/* ============================================================
+   Soundings grid — same posterior, rendered as numerical chart
+   ============================================================ */
+const snd = document.getElementById('soundings');
+for (let r=0; r<8; r++){
+  for (let c=0; c<8; c++){
+    const p = POST[r][c];
+    const v = (p*100).toFixed(0).padStart(2,'0');
+    snd.insertAdjacentHTML('beforeend',
+      `<div class="snd" style="--pp:${(p*0.85).toFixed(3)};color:${p>0.45?'#f1e7cf':'#162338'}" title="${ROWS[r]}${c+1} · μ=${p.toFixed(2)}">${v}</div>`);
+  }
+}
+
+/* extra glints — random spawn timing */
+document.querySelectorAll('.glint').forEach(g => {
+  g.style.animationDelay = (Math.random()*4).toFixed(2) + 's';
+});
+</script>
+</body>
+</html>
