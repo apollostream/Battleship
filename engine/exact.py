@@ -69,6 +69,10 @@ class ExactPosterior:
         self.weights: np.ndarray = np.full(self._count, 1.0 / self._count, dtype=np.float64)
         # Lazy per-question answer cache — bool (|S|,) arrays.
         self._answers: dict[str, np.ndarray] = {}
+        # Lazy stacked answer matrix for vectorised question scoring.
+        # Keyed by tuple-of-question-ids so shortlists / partial catalogues can
+        # cache independently of the full one.
+        self._answer_matrices: dict[tuple[str, ...], np.ndarray] = {}
 
     # ------------------------------------------------------------------
     # Properties / accessors
@@ -94,16 +98,49 @@ class ExactPosterior:
     # ------------------------------------------------------------------
 
     def cell_marginal_grid(self) -> np.ndarray:
-        """μ(r, c) = Σ_i w_i · 1[config i occupies (r, c)].  Shape (8, 8)."""
-        # bool × float64 dot — numpy casts bool → float64 in a generic loop;
-        # for |S|≈5M this takes ~200 ms.  Acceptable for per-turn use.
-        mu_flat = np.dot(self.weights, self._cells_matrix)
+        """μ(r, c) = Σ_i w_i · 1[config i occupies (r, c)].  Shape (8, 8).
+
+        Sparsified on zero-weight rows: once shots have collapsed the posterior,
+        most weights are exactly 0 and we copy the active rows into a float64
+        matrix for BLAS, turning a ~200 ms bool×f64 loop into a sub-10 ms
+        f64×f64 matmul.  Cold start (uniform) falls through the bool path.
+        """
+        mask = self.weights > 0.0
+        if bool(mask.all()):
+            mu_flat = np.dot(self.weights, self._cells_matrix)
+        else:
+            w = self.weights[mask]
+            cells = self._cells_matrix[mask].astype(np.float64)
+            mu_flat = w @ cells
         return mu_flat.reshape(BOARD_SIZE, BOARD_SIZE)
 
     def cell_marginal(self, cell: Cell) -> float:
         r, c = cell
         column = self._cells_matrix[:, r * BOARD_SIZE + c]
         return float(np.dot(self.weights, column))
+
+    # ------------------------------------------------------------------
+    # Posterior sampling — supports the approximate strategies
+    # ------------------------------------------------------------------
+
+    def sample_configs(self, *, K: int, rng: np.random.Generator) -> np.ndarray:
+        """Draw K configuration indices from the posterior (with replacement).
+
+        Fast path once the posterior has collapsed: the cumulative sum under
+        ``rng.choice`` scales with the input length, so after shots have
+        zeroed most weights we sample from the active subset and remap —
+        turning a per-turn 300 ms sampler into a sub-ms one.  Cold start
+        samples the full length.
+        """
+        if K <= 0:
+            raise ValueError(f"K must be positive, got {K}")
+        mask = self.weights > 0.0
+        if bool(mask.all()):
+            return rng.choice(self._count, size=K, replace=True, p=self.weights)
+        active_idx = np.nonzero(mask)[0]
+        active_w = self.weights[active_idx]
+        local_idx = rng.choice(len(active_idx), size=K, replace=True, p=active_w)
+        return active_idx[local_idx]
 
     def ess(self) -> float:
         return float(1.0 / np.sum(self.weights ** 2))
@@ -135,6 +172,24 @@ class ExactPosterior:
             bit = np.uint8(1 << HPARITY_BIT[q.length])
             return (self._hparity & bit) != np.uint8(0)
         raise ValueError(f"unknown question kind: {q.kind}")
+
+    def build_answer_matrix(self, questions: tuple[Question, ...]) -> np.ndarray:
+        """Stack of answer columns for the given questions.
+
+        Returned as bool (|S|, |Q|).  Cached by question-id tuple so a
+        shortlist's matrix doesn't invalidate the catalogue's, and vice versa.
+        Build cost is dominated by the 64-iteration bit-shift in
+        ``_compute_answers`` for cell questions; ~6 s for the full 87-question
+        catalogue, then free for the lifetime of the posterior.
+        """
+        key = tuple(q.id for q in questions)
+        cached = self._answer_matrices.get(key)
+        if cached is not None:
+            return cached
+        cols = [self.answers_for(q) for q in questions]
+        mat = np.column_stack(cols)
+        self._answer_matrices[key] = mat
+        return mat
 
     # ------------------------------------------------------------------
     # Reweighting

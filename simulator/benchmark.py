@@ -50,6 +50,10 @@ def _summarise(per_trial: list[dict[str, Any]]) -> dict[str, Any]:
         "mean_turns_if_sank": mean_turns_if_sank,
         "best_score_key": list(min(keys)),
         "worst_score_key": list(max(keys)),
+        "mean_n_shots": sum(t["n_shots"] for t in per_trial) / n,
+        "mean_n_asks": sum(t["n_asks"] for t in per_trial) / n,
+        "mean_n_misses": sum(t["n_misses"] for t in per_trial) / n,
+        "mean_net_reward": sum(t["net_reward"] for t in per_trial) / n,
     }
 
 
@@ -98,11 +102,16 @@ def run_benchmark(
             )
             dt = time.perf_counter() - g0
             game_idx += 1
+            term = traj["terminal"]
             res = {
-                "hits": traj["terminal"]["hits"],
-                "turns": traj["terminal"]["turns"],
-                "sank": traj["terminal"]["sank"],
-                "score_key": traj["terminal"]["score_key"],
+                "hits": term["hits"],
+                "turns": term["turns"],
+                "sank": term["sank"],
+                "score_key": term["score_key"],
+                "n_shots": term["n_shots"],
+                "n_asks": term["n_asks"],
+                "n_misses": term["n_misses"],
+                "net_reward": term["net_reward"],
             }
             results[name] = res
             per_strategy[name].append(res)
@@ -112,7 +121,9 @@ def run_benchmark(
                 progress(
                     f"[{game_idx:>3}/{total_games}] "
                     f"trial {trial_idx+1:>2}/{num_trials} · {name:>8} · "
-                    f"H={res['hits']:>2}/12 T={res['turns']:>3} · "
+                    f"H={res['hits']:>2}/12 T={res['turns']:>3} "
+                    f"S={res['n_shots']:>3} A={res['n_asks']:>3} "
+                    f"R={res['net_reward']:+5.1f} · "
                     f"{dt:4.1f}s · ETA {eta:5.0f}s"
                 )
 
@@ -159,18 +170,27 @@ def _parse_args(argv: list[str] | None = None) -> argparse.Namespace:
                    help="output path for benchmark JSON; '-' for stdout")
     p.add_argument("--quiet", action="store_true",
                    help="suppress per-game progress lines on stderr")
+    p.add_argument("--approx", action="store_true",
+                   help="substitute sample-based variants for 'eig'→'eig_approx' "
+                        "and 'ellr'→'ellr_approx' in --strategies")
     return p.parse_args(argv)
+
+
+_APPROX_MAP = {"eig": "eig_approx", "ellr": "ellr_approx"}
 
 
 def main(argv: list[str] | None = None) -> int:
     args = _parse_args(argv)
+    strategies = list(args.strategies)
+    if args.approx:
+        strategies = [_APPROX_MAP.get(s, s) for s in strategies]
 
     def _progress(line: str) -> None:
         sys.stderr.write(line + "\n")
         sys.stderr.flush()
 
     result = run_benchmark(
-        strategies=args.strategies, num_trials=args.trials,
+        strategies=strategies, num_trials=args.trials,
         t_max=args.t_max, N=args.N, eps=args.eps, seed=args.seed,
         progress=None if args.quiet else _progress,
     )
@@ -187,7 +207,8 @@ def main(argv: list[str] | None = None) -> int:
             mt_s = f"{mt:.1f}" if mt is not None else "—"
             sys.stderr.write(
                 f"{name:>10}: sink={s['sink_rate']:.2f}  "
-                f"mean_hits={s['mean_hits']:.2f}  mean_T|sank={mt_s}\n"
+                f"mean_hits={s['mean_hits']:.2f}  mean_T|sank={mt_s}  "
+                f"asks={s['mean_n_asks']:.1f}  net_R={s['mean_net_reward']:+.1f}\n"
             )
     return 0
 

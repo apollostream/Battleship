@@ -27,10 +27,67 @@ import pytest
 
 from engine.metrics import (
     binary_entropy,
+    eig_of_all_asks,
     eig_of_ask,
     ellr_of_ask,
     shoot_information_value,
 )
+
+
+# --------------------------------------------------------------------------
+# eig_of_all_asks — vectorised block matmul over a stack of questions
+# --------------------------------------------------------------------------
+
+class TestEIGOfAllAsks:
+    def test_matches_per_question_dense(self):
+        """Vectorised path agrees with the per-question scalar fn to ~1e-12."""
+        rng = np.random.default_rng(0)
+        n, q = 200, 17
+        weights = rng.dirichlet(np.ones(n))
+        A = rng.integers(0, 2, size=(n, q)).astype(bool)
+        eps = 0.10
+        v = eig_of_all_asks(answers_matrix=A, weights=weights, eps=eps)
+        ref = np.array([
+            eig_of_ask(answers=A[:, j], weights=weights, eps=eps) for j in range(q)
+        ])
+        np.testing.assert_allclose(v, ref, atol=1e-12)
+
+    def test_matches_per_question_sparse(self):
+        """Sparsified active path also agrees — exercises the masked branch."""
+        rng = np.random.default_rng(1)
+        n, q = 500, 13
+        # Only 5% of weights are non-zero — forces the active-subset code path.
+        w_full = np.zeros(n)
+        idx = rng.choice(n, n // 20, replace=False)
+        w_full[idx] = rng.dirichlet(np.ones(len(idx)))
+        A = rng.integers(0, 2, size=(n, q)).astype(bool)
+        eps = 0.05
+        v = eig_of_all_asks(answers_matrix=A, weights=w_full, eps=eps)
+        ref = np.array([
+            eig_of_ask(answers=A[:, j], weights=w_full, eps=eps) for j in range(q)
+        ])
+        np.testing.assert_allclose(v, ref, atol=1e-12)
+
+    def test_eps_validation(self):
+        with pytest.raises(ValueError, match="epsilon"):
+            eig_of_all_asks(
+                answers_matrix=np.zeros((3, 2), dtype=bool),
+                weights=np.array([0.5, 0.5, 0.0]),
+                eps=1.5,
+            )
+
+    def test_eps_zero_and_one(self):
+        """At ε=0 EIG = H(μ_q); at ε=1 the channel is a deterministic flip → also H(μ_q)."""
+        rng = np.random.default_rng(2)
+        n, q = 100, 7
+        weights = rng.dirichlet(np.ones(n))
+        A = rng.integers(0, 2, size=(n, q)).astype(bool)
+        v0 = eig_of_all_asks(answers_matrix=A, weights=weights, eps=0.0)
+        v1 = eig_of_all_asks(answers_matrix=A, weights=weights, eps=1.0)
+        ref0 = np.array([eig_of_ask(answers=A[:, j], weights=weights, eps=0.0) for j in range(q)])
+        ref1 = np.array([eig_of_ask(answers=A[:, j], weights=weights, eps=1.0) for j in range(q)])
+        np.testing.assert_allclose(v0, ref0, atol=1e-12)
+        np.testing.assert_allclose(v1, ref1, atol=1e-12)
 
 
 # --------------------------------------------------------------------------

@@ -27,5 +27,14 @@ Action = Union[ShotAction, AskAction]
 
 
 class Strategy(Protocol):
+    """Implementations must set ``last_decision_value`` during ``choose_action``.
+
+    The value is the strategy's own expected-utility estimate at the chosen
+    action: μ(c*) for shots (probability the cell is occupied) and the
+    information-theoretic metric for asks (EIG or ELLR in nats).  The runner
+    records it per turn so we can audit decision quality post-hoc.
+    """
+    last_decision_value: float
+
     def choose_action(self, shots_fired: FrozenSet[Cell], turn: int) -> Action: ...
     def observe(self, action: Action, observed: int) -> None: ...

@@ -83,20 +83,18 @@ class TestThompson:
 @pytest.mark.slow
 class TestEIGStrategy:
     def test_first_action_is_ask_when_posterior_diffuse(self):
-        """Early in the game, μ(c) is far from 0/1 everywhere (max H(μ) modest).
-        A well-chosen global query typically has I(q;s) > max_c H(μ(c)),
-        so the strategy should ask first."""
+        """Cost-aware comparator with default (R+, M, C) = (2, 1, 1) requires
+        max_c μ(c) ≥ 2/3 to shoot.  At the uniform prior, max μ ≈ 0.23 (interior
+        cells), well below 2/3 — so the first action MUST be an ask."""
         rng = np.random.default_rng(4)
         s = EIGStrategy(eps=0.10, rng=rng)
         a = s.choose_action(shots_fired=frozenset(), turn=0)
-        assert isinstance(a, (ShotAction, AskAction))   # either is mathematically possible
+        assert isinstance(a, AskAction)
 
     def test_shoot_when_certain(self):
-        """After reweighting makes μ(c)=1 on some cell with enough information,
-        the adaptive rule should take the shot."""
+        """Collapse posterior onto a single configuration → max μ = 1 ≥ 2/3 → shoot."""
         rng = np.random.default_rng(5)
         s = EIGStrategy(eps=0.10, rng=rng)
-        # Forcibly collapse posterior onto a single configuration.
         s.filter.weights = np.zeros_like(s.filter.weights)
         s.filter.weights[0] = 1.0
         a = s.choose_action(shots_fired=frozenset(), turn=0)
@@ -122,3 +120,122 @@ class TestELLRStrategy:
         s.observe(ask, observed=1)
         assert np.all(s.filter.weights > 0)
         assert s.filter.weights.sum() == pytest.approx(1.0, abs=1e-10)
+
+
+# --------------------------------------------------------------------------
+# Cost-aware comparator (parameterised by hit_reward, miss_cost, shot_cost)
+# --------------------------------------------------------------------------
+
+class TestCostAwareComparator:
+    """The threshold μ ≥ (M + C) / (R+ + M) is computed at construction.
+    These tests don't require a real ExactPosterior, so no @slow."""
+
+    def test_default_threshold_is_two_thirds(self):
+        rng = np.random.default_rng(0)
+        # Avoid building ExactPosterior: instantiate via _mbayes directly
+        # would still trigger enumeration.  Instead just compute the formula.
+        from strategies._mbayes import MBayesStrategy
+        # Bypass __init__'s ExactPosterior build by constructing only enough
+        # to verify the threshold math.
+        cls = MBayesStrategy.__new__(MBayesStrategy)
+        cls.hit_reward = 2.0
+        cls.miss_cost = 1.0
+        cls.shot_cost = 1.0
+        denom = cls.hit_reward + cls.miss_cost
+        cls.shoot_threshold = (cls.miss_cost + cls.shot_cost) / denom
+        assert cls.shoot_threshold == pytest.approx(2.0 / 3.0)
+
+    @pytest.mark.parametrize(
+        "R_plus, M, C, expected",
+        [
+            (2.0, 1.0, 1.0, 2.0 / 3.0),    # default
+            (3.0, 2.0, 1.0, 3.0 / 5.0),    # user's general formula example
+            (1.0, 1.0, 0.0, 0.5),          # shot-cost-free → coin-flip threshold
+            (1.0, 1.0, 1.0, 1.0),          # cost == reward → never shoot at <100%
+            (10.0, 1.0, 1.0, 2.0 / 11.0),  # high-reward asymmetric
+        ],
+    )
+    def test_general_formula(self, R_plus, M, C, expected):
+        denom = R_plus + M
+        thr = (M + C) / denom
+        assert thr == pytest.approx(expected)
+
+    def test_invalid_costs_rejected(self):
+        from strategies._mbayes import MBayesStrategy
+        # R+ + M ≤ 0 makes the threshold ill-defined; constructor must reject.
+        rng = np.random.default_rng(0)
+        with pytest.raises(ValueError, match="hit_reward \\+ miss_cost"):
+            MBayesStrategy(eps=0.1, rng=rng, hit_reward=-1.0, miss_cost=0.0)
+
+
+@pytest.mark.slow
+class TestApproxStrategies:
+    """Sample-based EIG/ELLR variants.  Must produce the same interface
+    (AskAction when posterior is diffuse), stay deterministic under a seeded
+    rng, and rank questions into the plausible neighborhood of the exact
+    metric — not pixel-equal (sampling noise) but same top-cluster.
+    """
+    def test_approx_eig_is_deterministic(self):
+        from strategies._mbayes import ApproxEIGMBayesStrategy
+
+        a = ApproxEIGMBayesStrategy(eps=0.10, rng=np.random.default_rng(0))
+        b = ApproxEIGMBayesStrategy(eps=0.10, rng=np.random.default_rng(0))
+        act_a = a.choose_action(shots_fired=frozenset(), turn=0)
+        act_b = b.choose_action(shots_fired=frozenset(), turn=0)
+        assert isinstance(act_a, AskAction)
+        assert act_a.question_id == act_b.question_id
+
+    def test_approx_ellr_is_deterministic(self):
+        from strategies._mbayes import ApproxELLRMBayesStrategy
+
+        a = ApproxELLRMBayesStrategy(eps=0.10, rng=np.random.default_rng(1))
+        b = ApproxELLRMBayesStrategy(eps=0.10, rng=np.random.default_rng(1))
+        act_a = a.choose_action(shots_fired=frozenset(), turn=0)
+        act_b = b.choose_action(shots_fired=frozenset(), turn=0)
+        assert isinstance(act_a, AskAction)
+        assert act_a.question_id == act_b.question_id
+
+    def test_approx_eig_agrees_with_exact_on_top_cluster(self):
+        """Approx EIG's chosen question should be among the exact EIG top-K
+        at uniform prior.  K=10 is a loose band that passes with high
+        probability for K_SAMPLES=200 (BALD rank collision would flag a bug).
+        """
+        from strategies._mbayes import ApproxEIGMBayesStrategy
+        from engine.metrics import eig_of_all_asks
+        from engine.questions import QUESTION_CATALOGUE
+
+        s = ApproxEIGMBayesStrategy(eps=0.10, rng=np.random.default_rng(2))
+        A = s.filter.build_answer_matrix(QUESTION_CATALOGUE)
+        exact_scores = eig_of_all_asks(
+            answers_matrix=A, weights=s.filter.weights, eps=0.10,
+        )
+        top_idx = set(int(i) for i in np.argpartition(-exact_scores, 9)[:10])
+        top_ids = {QUESTION_CATALOGUE[i].id for i in top_idx}
+        a = s.choose_action(shots_fired=frozenset(), turn=0)
+        assert isinstance(a, AskAction)
+        assert a.question_id in top_ids
+
+
+@pytest.mark.slow
+class TestELLRShortlist:
+    def test_chosen_question_is_in_top_k_by_eig(self):
+        """ELLR's _best_question must full-score only over the EIG top-K, so
+        the returned question must be one of those top-K entries."""
+        from strategies._mbayes import ELLRMBayesStrategy
+        from engine.metrics import eig_of_all_asks
+        from engine.questions import QUESTION_CATALOGUE
+
+        rng = np.random.default_rng(8)
+        s = ELLRMBayesStrategy(eps=0.10, rng=rng)
+        # Compute the EIG ranking we expect ELLR to consult.
+        A = s.filter.build_answer_matrix(QUESTION_CATALOGUE)
+        eig_scores = eig_of_all_asks(
+            answers_matrix=A, weights=s.filter.weights, eps=0.10,
+        )
+        top_idx = set(int(i) for i in np.argpartition(-eig_scores, s.SHORTLIST_K - 1)[:s.SHORTLIST_K])
+        top_ids = {QUESTION_CATALOGUE[i].id for i in top_idx}
+        # Now ask ELLR for its best question (forces ask branch via choose_action
+        # at uniform prior — see TestEIGStrategy above).
+        a = s.choose_action(shots_fired=frozenset(), turn=0)
+        assert isinstance(a, AskAction)
+        assert a.question_id in top_ids

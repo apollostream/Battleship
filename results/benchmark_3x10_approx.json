@@ -1,0 +1,835 @@
+{
+  "config": {
+    "strategies": [
+      "thompson",
+      "eig_approx",
+      "ellr_approx"
+    ],
+    "num_trials": 10,
+    "t_max": 80,
+    "N": 256,
+    "eps": 0.1,
+    "seed": 0
+  },
+  "trials": [
+    {
+      "trial_idx": 0,
+      "truth_seed": 7983530521593947393,
+      "truth": {
+        "ships": [
+          {
+            "length": 4,
+            "row": 6,
+            "col": 3,
+            "orientation": "H"
+          },
+          {
+            "length": 3,
+            "row": 1,
+            "col": 4,
+            "orientation": "V"
+          },
+          {
+            "length": 3,
+            "row": 5,
+            "col": 0,
+            "orientation": "V"
+          },
+          {
+            "length": 2,
+            "row": 3,
+            "col": 2,
+            "orientation": "V"
+          }
+        ]
+      },
+      "results": {
+        "thompson": {
+          "hits": 12,
+          "turns": 24,
+          "sank": true,
+          "score_key": [
+            0,
+            24,
+            -12
+          ],
+          "n_shots": 24,
+          "n_asks": 0,
+          "n_misses": 12,
+          "net_reward": -12.0
+        },
+        "eig_approx": {
+          "hits": 12,
+          "turns": 41,
+          "sank": true,
+          "score_key": [
+            0,
+            41,
+            -12
+          ],
+          "n_shots": 14,
+          "n_asks": 27,
+          "n_misses": 2,
+          "net_reward": 8.0
+        },
+        "ellr_approx": {
+          "hits": 12,
+          "turns": 38,
+          "sank": true,
+          "score_key": [
+            0,
+            38,
+            -12
+          ],
+          "n_shots": 16,
+          "n_asks": 22,
+          "n_misses": 4,
+          "net_reward": 4.0
+        }
+      }
+    },
+    {
+      "trial_idx": 1,
+      "truth_seed": 4414747005048550103,
+      "truth": {
+        "ships": [
+          {
+            "length": 4,
+            "row": 6,
+            "col": 3,
+            "orientation": "H"
+          },
+          {
+            "length": 3,
+            "row": 4,
+            "col": 4,
+            "orientation": "H"
+          },
+          {
+            "length": 3,
+            "row": 3,
+            "col": 0,
+            "orientation": "V"
+          },
+          {
+            "length": 2,
+            "row": 1,
+            "col": 4,
+            "orientation": "V"
+          }
+        ]
+      },
+      "results": {
+        "thompson": {
+          "hits": 12,
+          "turns": 41,
+          "sank": true,
+          "score_key": [
+            0,
+            41,
+            -12
+          ],
+          "n_shots": 41,
+          "n_asks": 0,
+          "n_misses": 29,
+          "net_reward": -46.0
+        },
+        "eig_approx": {
+          "hits": 12,
+          "turns": 38,
+          "sank": true,
+          "score_key": [
+            0,
+            38,
+            -12
+          ],
+          "n_shots": 16,
+          "n_asks": 22,
+          "n_misses": 4,
+          "net_reward": 4.0
+        },
+        "ellr_approx": {
+          "hits": 12,
+          "turns": 36,
+          "sank": true,
+          "score_key": [
+            0,
+            36,
+            -12
+          ],
+          "n_shots": 13,
+          "n_asks": 23,
+          "n_misses": 1,
+          "net_reward": 10.0
+        }
+      }
+    },
+    {
+      "trial_idx": 2,
+      "truth_seed": 9145175567083171326,
+      "truth": {
+        "ships": [
+          {
+            "length": 4,
+            "row": 2,
+            "col": 3,
+            "orientation": "V"
+          },
+          {
+            "length": 3,
+            "row": 3,
+            "col": 5,
+            "orientation": "V"
+          },
+          {
+            "length": 3,
+            "row": 7,
+            "col": 0,
+            "orientation": "H"
+          },
+          {
+            "length": 2,
+            "row": 4,
+            "col": 0,
+            "orientation": "H"
+          }
+        ]
+      },
+      "results": {
+        "thompson": {
+          "hits": 12,
+          "turns": 33,
+          "sank": true,
+          "score_key": [
+            0,
+            33,
+            -12
+          ],
+          "n_shots": 33,
+          "n_asks": 0,
+          "n_misses": 21,
+          "net_reward": -30.0
+        },
+        "eig_approx": {
+          "hits": 12,
+          "turns": 37,
+          "sank": true,
+          "score_key": [
+            0,
+            37,
+            -12
+          ],
+          "n_shots": 15,
+          "n_asks": 22,
+          "n_misses": 3,
+          "net_reward": 6.0
+        },
+        "ellr_approx": {
+          "hits": 12,
+          "turns": 44,
+          "sank": true,
+          "score_key": [
+            0,
+            44,
+            -12
+          ],
+          "n_shots": 15,
+          "n_asks": 29,
+          "n_misses": 3,
+          "net_reward": 6.0
+        }
+      }
+    },
+    {
+      "trial_idx": 3,
+      "truth_seed": 275466205493771538,
+      "truth": {
+        "ships": [
+          {
+            "length": 4,
+            "row": 3,
+            "col": 2,
+            "orientation": "V"
+          },
+          {
+            "length": 3,
+            "row": 5,
+            "col": 6,
+            "orientation": "V"
+          },
+          {
+            "length": 3,
+            "row": 0,
+            "col": 7,
+            "orientation": "V"
+          },
+          {
+            "length": 2,
+            "row": 5,
+            "col": 4,
+            "orientation": "V"
+          }
+        ]
+      },
+      "results": {
+        "thompson": {
+          "hits": 12,
+          "turns": 33,
+          "sank": true,
+          "score_key": [
+            0,
+            33,
+            -12
+          ],
+          "n_shots": 33,
+          "n_asks": 0,
+          "n_misses": 21,
+          "net_reward": -30.0
+        },
+        "eig_approx": {
+          "hits": 12,
+          "turns": 37,
+          "sank": true,
+          "score_key": [
+            0,
+            37,
+            -12
+          ],
+          "n_shots": 14,
+          "n_asks": 23,
+          "n_misses": 2,
+          "net_reward": 8.0
+        },
+        "ellr_approx": {
+          "hits": 12,
+          "turns": 40,
+          "sank": true,
+          "score_key": [
+            0,
+            40,
+            -12
+          ],
+          "n_shots": 13,
+          "n_asks": 27,
+          "n_misses": 1,
+          "net_reward": 10.0
+        }
+      }
+    },
+    {
+      "trial_idx": 4,
+      "truth_seed": 1875569263246586543,
+      "truth": {
+        "ships": [
+          {
+            "length": 4,
+            "row": 0,
+            "col": 3,
+            "orientation": "V"
+          },
+          {
+            "length": 3,
+            "row": 3,
+            "col": 6,
+            "orientation": "V"
+          },
+          {
+            "length": 3,
+            "row": 7,
+            "col": 1,
+            "orientation": "H"
+          },
+          {
+            "length": 2,
+            "row": 7,
+            "col": 6,
+            "orientation": "H"
+          }
+        ]
+      },
+      "results": {
+        "thompson": {
+          "hits": 12,
+          "turns": 43,
+          "sank": true,
+          "score_key": [
+            0,
+            43,
+            -12
+          ],
+          "n_shots": 43,
+          "n_asks": 0,
+          "n_misses": 31,
+          "net_reward": -50.0
+        },
+        "eig_approx": {
+          "hits": 12,
+          "turns": 48,
+          "sank": true,
+          "score_key": [
+            0,
+            48,
+            -12
+          ],
+          "n_shots": 13,
+          "n_asks": 35,
+          "n_misses": 1,
+          "net_reward": 10.0
+        },
+        "ellr_approx": {
+          "hits": 12,
+          "turns": 45,
+          "sank": true,
+          "score_key": [
+            0,
+            45,
+            -12
+          ],
+          "n_shots": 14,
+          "n_asks": 31,
+          "n_misses": 2,
+          "net_reward": 8.0
+        }
+      }
+    },
+    {
+      "trial_idx": 5,
+      "truth_seed": 6682594639653833795,
+      "truth": {
+        "ships": [
+          {
+            "length": 4,
+            "row": 2,
+            "col": 3,
+            "orientation": "V"
+          },
+          {
+            "length": 3,
+            "row": 0,
+            "col": 0,
+            "orientation": "V"
+          },
+          {
+            "length": 3,
+            "row": 1,
+            "col": 6,
+            "orientation": "V"
+          },
+          {
+            "length": 2,
+            "row": 5,
+            "col": 6,
+            "orientation": "V"
+          }
+        ]
+      },
+      "results": {
+        "thompson": {
+          "hits": 12,
+          "turns": 28,
+          "sank": true,
+          "score_key": [
+            0,
+            28,
+            -12
+          ],
+          "n_shots": 28,
+          "n_asks": 0,
+          "n_misses": 16,
+          "net_reward": -20.0
+        },
+        "eig_approx": {
+          "hits": 12,
+          "turns": 37,
+          "sank": true,
+          "score_key": [
+            0,
+            37,
+            -12
+          ],
+          "n_shots": 15,
+          "n_asks": 22,
+          "n_misses": 3,
+          "net_reward": 6.0
+        },
+        "ellr_approx": {
+          "hits": 12,
+          "turns": 50,
+          "sank": true,
+          "score_key": [
+            0,
+            50,
+            -12
+          ],
+          "n_shots": 16,
+          "n_asks": 34,
+          "n_misses": 4,
+          "net_reward": 4.0
+        }
+      }
+    },
+    {
+      "trial_idx": 6,
+      "truth_seed": 3459691894527412906,
+      "truth": {
+        "ships": [
+          {
+            "length": 4,
+            "row": 1,
+            "col": 4,
+            "orientation": "H"
+          },
+          {
+            "length": 3,
+            "row": 4,
+            "col": 4,
+            "orientation": "V"
+          },
+          {
+            "length": 3,
+            "row": 3,
+            "col": 6,
+            "orientation": "V"
+          },
+          {
+            "length": 2,
+            "row": 1,
+            "col": 0,
+            "orientation": "H"
+          }
+        ]
+      },
+      "results": {
+        "thompson": {
+          "hits": 12,
+          "turns": 34,
+          "sank": true,
+          "score_key": [
+            0,
+            34,
+            -12
+          ],
+          "n_shots": 34,
+          "n_asks": 0,
+          "n_misses": 22,
+          "net_reward": -32.0
+        },
+        "eig_approx": {
+          "hits": 12,
+          "turns": 36,
+          "sank": true,
+          "score_key": [
+            0,
+            36,
+            -12
+          ],
+          "n_shots": 13,
+          "n_asks": 23,
+          "n_misses": 1,
+          "net_reward": 10.0
+        },
+        "ellr_approx": {
+          "hits": 12,
+          "turns": 39,
+          "sank": true,
+          "score_key": [
+            0,
+            39,
+            -12
+          ],
+          "n_shots": 16,
+          "n_asks": 23,
+          "n_misses": 4,
+          "net_reward": 4.0
+        }
+      }
+    },
+    {
+      "trial_idx": 7,
+      "truth_seed": 4257838872777659808,
+      "truth": {
+        "ships": [
+          {
+            "length": 4,
+            "row": 4,
+            "col": 6,
+            "orientation": "V"
+          },
+          {
+            "length": 3,
+            "row": 5,
+            "col": 4,
+            "orientation": "V"
+          },
+          {
+            "length": 3,
+            "row": 3,
+            "col": 1,
+            "orientation": "H"
+          },
+          {
+            "length": 2,
+            "row": 6,
+            "col": 0,
+            "orientation": "H"
+          }
+        ]
+      },
+      "results": {
+        "thompson": {
+          "hits": 12,
+          "turns": 29,
+          "sank": true,
+          "score_key": [
+            0,
+            29,
+            -12
+          ],
+          "n_shots": 29,
+          "n_asks": 0,
+          "n_misses": 17,
+          "net_reward": -22.0
+        },
+        "eig_approx": {
+          "hits": 12,
+          "turns": 39,
+          "sank": true,
+          "score_key": [
+            0,
+            39,
+            -12
+          ],
+          "n_shots": 13,
+          "n_asks": 26,
+          "n_misses": 1,
+          "net_reward": 10.0
+        },
+        "ellr_approx": {
+          "hits": 12,
+          "turns": 39,
+          "sank": true,
+          "score_key": [
+            0,
+            39,
+            -12
+          ],
+          "n_shots": 14,
+          "n_asks": 25,
+          "n_misses": 2,
+          "net_reward": 8.0
+        }
+      }
+    },
+    {
+      "trial_idx": 8,
+      "truth_seed": 4945298374186123557,
+      "truth": {
+        "ships": [
+          {
+            "length": 4,
+            "row": 0,
+            "col": 1,
+            "orientation": "V"
+          },
+          {
+            "length": 3,
+            "row": 7,
+            "col": 4,
+            "orientation": "H"
+          },
+          {
+            "length": 3,
+            "row": 3,
+            "col": 5,
+            "orientation": "H"
+          },
+          {
+            "length": 2,
+            "row": 6,
+            "col": 1,
+            "orientation": "V"
+          }
+        ]
+      },
+      "results": {
+        "thompson": {
+          "hits": 12,
+          "turns": 34,
+          "sank": true,
+          "score_key": [
+            0,
+            34,
+            -12
+          ],
+          "n_shots": 34,
+          "n_asks": 0,
+          "n_misses": 22,
+          "net_reward": -32.0
+        },
+        "eig_approx": {
+          "hits": 12,
+          "turns": 36,
+          "sank": true,
+          "score_key": [
+            0,
+            36,
+            -12
+          ],
+          "n_shots": 15,
+          "n_asks": 21,
+          "n_misses": 3,
+          "net_reward": 6.0
+        },
+        "ellr_approx": {
+          "hits": 12,
+          "turns": 62,
+          "sank": true,
+          "score_key": [
+            0,
+            62,
+            -12
+          ],
+          "n_shots": 17,
+          "n_asks": 45,
+          "n_misses": 5,
+          "net_reward": 2.0
+        }
+      }
+    },
+    {
+      "trial_idx": 9,
+      "truth_seed": 8233725577172620162,
+      "truth": {
+        "ships": [
+          {
+            "length": 4,
+            "row": 4,
+            "col": 4,
+            "orientation": "V"
+          },
+          {
+            "length": 3,
+            "row": 5,
+            "col": 0,
+            "orientation": "V"
+          },
+          {
+            "length": 3,
+            "row": 1,
+            "col": 4,
+            "orientation": "H"
+          },
+          {
+            "length": 2,
+            "row": 0,
+            "col": 1,
+            "orientation": "V"
+          }
+        ]
+      },
+      "results": {
+        "thompson": {
+          "hits": 12,
+          "turns": 29,
+          "sank": true,
+          "score_key": [
+            0,
+            29,
+            -12
+          ],
+          "n_shots": 29,
+          "n_asks": 0,
+          "n_misses": 17,
+          "net_reward": -22.0
+        },
+        "eig_approx": {
+          "hits": 12,
+          "turns": 40,
+          "sank": true,
+          "score_key": [
+            0,
+            40,
+            -12
+          ],
+          "n_shots": 15,
+          "n_asks": 25,
+          "n_misses": 3,
+          "net_reward": 6.0
+        },
+        "ellr_approx": {
+          "hits": 12,
+          "turns": 35,
+          "sank": true,
+          "score_key": [
+            0,
+            35,
+            -12
+          ],
+          "n_shots": 15,
+          "n_asks": 20,
+          "n_misses": 3,
+          "net_reward": 6.0
+        }
+      }
+    }
+  ],
+  "summary": {
+    "thompson": {
+      "sink_rate": 1.0,
+      "mean_hits": 12.0,
+      "mean_turns_if_sank": 32.8,
+      "best_score_key": [
+        0,
+        24,
+        -12
+      ],
+      "worst_score_key": [
+        0,
+        43,
+        -12
+      ],
+      "mean_n_shots": 32.8,
+      "mean_n_asks": 0.0,
+      "mean_n_misses": 20.8,
+      "mean_net_reward": -29.6
+    },
+    "eig_approx": {
+      "sink_rate": 1.0,
+      "mean_hits": 12.0,
+      "mean_turns_if_sank": 38.9,
+      "best_score_key": [
+        0,
+        36,
+        -12
+      ],
+      "worst_score_key": [
+        0,
+        48,
+        -12
+      ],
+      "mean_n_shots": 14.3,
+      "mean_n_asks": 24.6,
+      "mean_n_misses": 2.3,
+      "mean_net_reward": 7.4
+    },
+    "ellr_approx": {
+      "sink_rate": 1.0,
+      "mean_hits": 12.0,
+      "mean_turns_if_sank": 42.8,
+      "best_score_key": [
+        0,
+        35,
+        -12
+      ],
+      "worst_score_key": [
+        0,
+        62,
+        -12
+      ],
+      "mean_n_shots": 14.9,
+      "mean_n_asks": 27.9,
+      "mean_n_misses": 2.9,
+      "mean_net_reward": 6.2
+    }
+  }
+}

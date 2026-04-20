@@ -52,6 +52,7 @@ from engine.board import (
 from engine.questions import evaluate, question_by_id
 from engine.smc import sample_configuration
 from strategies.base import AskAction, ShotAction
+from strategies._mbayes import ApproxEIGMBayesStrategy, ApproxELLRMBayesStrategy
 from strategies.eig import EIGStrategy
 from strategies.ellr import ELLRStrategy
 from strategies.thompson import ThompsonStrategy
@@ -60,6 +61,10 @@ _STRATEGY_REGISTRY = {
     "thompson": ThompsonStrategy,
     "eig": EIGStrategy,
     "ellr": ELLRStrategy,
+    # Approximate variants — K-sample posterior draws replace the exact
+    # |S|×|Q| matmul.  See strategies/_mbayes.py for the BALD/KL derivations.
+    "eig_approx": ApproxEIGMBayesStrategy,
+    "ellr_approx": ApproxELLRMBayesStrategy,
 }
 
 
@@ -107,19 +112,25 @@ def run_game(
 
     turns: list[dict[str, Any]] = []
 
+    cum_net_reward = 0.0
     while not state.terminated:
         action = strategy.choose_action(
             shots_fired=state.shots_fired, turn=state.turn,
         )
+        decision_value = float(strategy.last_decision_value)
         if isinstance(action, ShotAction):
             observed = truth.X(action.cell)
             result = state.apply_shot(action.cell)
             strategy.observe(action, observed=observed)
+            # Canonical (R+, M, C) = (2, 1, 1): hit = +2, miss = -1, shot cost = -1.
+            cum_net_reward += (2.0 if observed == 1 else -1.0) - 1.0
             turns.append({
                 "turn": state.turn - 1,
                 "action": {"kind": "shot", "cell": [action.cell[0], action.cell[1]]},
                 "observed": int(observed),
                 "result": result.value,
+                "decision_value": decision_value,
+                "cum_net_reward": cum_net_reward,
             })
         elif isinstance(action, AskAction):
             q = question_by_id(action.question_id)
@@ -127,16 +138,26 @@ def run_game(
             observed = _flip_bit(truth_answer, eps, ask_noise_rng)
             state.apply_ask(action.question_id, observed)
             strategy.observe(action, observed=observed)
+            # Asks have zero immediate reward and zero cost — running total unchanged.
             turns.append({
                 "turn": state.turn - 1,
                 "action": {"kind": "ask", "question_id": action.question_id},
                 "observed": int(observed),
+                "decision_value": decision_value,
+                "cum_net_reward": cum_net_reward,
             })
         else:
             raise TypeError(f"unexpected action type: {type(action)!r}")
 
     key = score_comparison_key(hits=state.hits, turns=state.turn, t_max=t_max)
     final_mu = strategy.filter.cell_marginal_grid().tolist()
+    n_shots = sum(1 for x in turns if x["action"]["kind"] == "shot")
+    n_asks = state.turn - n_shots
+    n_misses = n_shots - state.hits
+    # Canonical scoring for telemetry: (R+, M, C) = (2, 1, 1).  Keeps the
+    # benchmark's net_reward apples-to-apples regardless of any per-strategy
+    # cost-parameter overrides.
+    net_reward = 2.0 * state.hits - 1.0 * n_misses - 1.0 * n_shots
     return {
         "strategy": strategy_name,
         "seed": seed,
@@ -151,6 +172,10 @@ def run_game(
             "turns": state.turn,
             "sank": state.hits == sum(s.length for s in truth.ships),
             "score_key": list(key),
+            "n_shots": n_shots,
+            "n_asks": n_asks,
+            "n_misses": n_misses,
+            "net_reward": net_reward,
         },
     }
 

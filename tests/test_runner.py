@@ -85,6 +85,8 @@ class TestTrajectoryShape:
             assert "turn" in rec
             assert "action" in rec
             assert "observed" in rec
+            assert "decision_value" in rec
+            assert "cum_net_reward" in rec
             kind = rec["action"]["kind"]
             assert kind in ("shot", "ask")
             if kind == "shot":
@@ -93,6 +95,16 @@ class TestTrajectoryShape:
                 assert rec["result"] in ("HIT", "MISS")
             else:
                 assert "question_id" in rec["action"]
+
+    def test_cum_net_reward_matches_terminal(self, truth):
+        """cum_net_reward at the last turn should equal terminal.net_reward."""
+        traj = run_game(
+            strategy_name="thompson", truth=truth,
+            t_max=10, N=32, eps=0.10, seed=5,
+        )
+        if traj["turns"]:
+            last_cum = traj["turns"][-1]["cum_net_reward"]
+            assert last_cum == traj["terminal"]["net_reward"]
 
     def test_terminal_block_shape(self, truth):
         traj = run_game(
