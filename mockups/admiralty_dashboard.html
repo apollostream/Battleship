@@ -1169,11 +1169,12 @@ body{
 }
 
 /* ============================================================
-   SETTINGS — floating brass cog + right-hand drawer
+   SETTINGS — floating brass cog on the left (drawer still slides
+   in from the right edge).
    ============================================================ */
 .settings-toggle{
   position:fixed;
-  top:22px;right:22px;
+  top:22px;left:132px;
   z-index:60;
   width:52px;height:52px;
   border-radius:50%;
@@ -1457,14 +1458,13 @@ body[data-settings="open"] .settings-panel{transform:translateX(0)}
 .sr[data-lock="true"] .sr-value{opacity:.38;pointer-events:none}
 
 /* ============================================================
-   TRAJECTORY LOADER — sibling brass button to the left of cog.
-   Default offset reserves space for the cog (right:22); the live
-   button overrides to right:242.  The era toggle is pinned to
-   the left edge (see #eraToggle inline style).
+   TRAJECTORY LOADER — brass button at the right edge.  Live
+   button overrides to right:132.  The era toggle and settings
+   cog are pinned to the left edge (see #eraToggle / #settingsToggle).
    ============================================================ */
 .traj-toggle{
   position:fixed;
-  top:22px;right:132px;
+  top:22px;right:22px;
   z-index:60;
   width:52px;height:52px;
   border-radius:50%;
@@ -1532,7 +1532,7 @@ body[data-settings="open"] .settings-panel{transform:translateX(0)}
 <!-- ============================================================
      LIVE SESSION — run a new game against the FastAPI bridge
      ============================================================ -->
-<button class="traj-toggle live-toggle" id="liveOpen" aria-label="Start live session" title="Start a live game against the bridge" style="right:242px">
+<button class="traj-toggle live-toggle" id="liveOpen" aria-label="Start live session" title="Start a live game against the bridge" style="right:132px">
   <svg viewBox="0 0 32 32" aria-hidden="true">
     <g fill="#1a120a">
       <!-- play triangle inside circle -->
