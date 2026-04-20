@@ -1458,12 +1458,13 @@ body[data-settings="open"] .settings-panel{transform:translateX(0)}
 
 /* ============================================================
    TRAJECTORY LOADER — sibling brass button to the left of cog.
-   Default offset reserves space for the cog (right:22) and the
-   era toggle (right:132); live button overrides to right:352.
+   Default offset reserves space for the cog (right:22); the live
+   button overrides to right:242.  The era toggle is pinned to
+   the left edge (see #eraToggle inline style).
    ============================================================ */
 .traj-toggle{
   position:fixed;
-  top:22px;right:242px;
+  top:22px;right:132px;
   z-index:60;
   width:52px;height:52px;
   border-radius:50%;
@@ -1531,7 +1532,7 @@ body[data-settings="open"] .settings-panel{transform:translateX(0)}
 <!-- ============================================================
      LIVE SESSION — run a new game against the FastAPI bridge
      ============================================================ -->
-<button class="traj-toggle live-toggle" id="liveOpen" aria-label="Start live session" title="Start a live game against the bridge" style="right:352px">
+<button class="traj-toggle live-toggle" id="liveOpen" aria-label="Start live session" title="Start a live game against the bridge" style="right:242px">
   <svg viewBox="0 0 32 32" aria-hidden="true">
     <g fill="#1a120a">
       <!-- play triangle inside circle -->
@@ -1545,7 +1546,7 @@ body[data-settings="open"] .settings-panel{transform:translateX(0)}
 <!-- ============================================================
      ERA TOGGLE — swap fleet graphics between tall-ship and steam-era
      ============================================================ -->
-<button class="traj-toggle era-toggle" id="eraToggle" aria-label="Toggle fleet era" title="Toggle fleet era: tall-mast ⇌ steam-era" style="right:132px">
+<button class="traj-toggle era-toggle" id="eraToggle" aria-label="Toggle fleet era" title="Toggle fleet era: tall-mast ⇌ steam-era" style="right:auto;left:22px">
   <svg viewBox="0 0 32 32" aria-hidden="true">
     <g fill="#1a120a">
       <!-- tiny mast + smokestack with swap arrows between -->
