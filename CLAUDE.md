@@ -28,7 +28,7 @@ Core rules: 8×8 grid, ships {4,3,3,2}, each turn pick **ask** (binary question,
 
 ## Architectural constraints that must carry through any implementation
 
-- **Hypothesis space is not enumerable.** ~millions of legal placements on 8×8. Use sequential Monte Carlo with N≈2000–5000 particles; reweight on each observation; resample on low ESS. Do not attempt to enumerate — the toy JSX prototype enumerates only because it has 4 hypotheses, and that approach does not scale.
+- **Hypothesis space is enumerable after all.** `engine/enumerate.py` computes $|\mathcal{S}| = 5{,}174{,}944$ exactly in ~30s via bitmask backtracking. SMC is still present (`engine/smc.py`) as a conceptual baseline and a fallback for fleet/board changes that blow the budget, but for the current 8×8 / {4,3,3,2} problem, **exact inference is feasible** — a precomputed $|S|\times 64$ occupancy matrix plus $|S|\times|Q|$ question-truth matrix turns each observation into a vectorised $O(|\mathcal{S}|)$ weight update and each question-scoring pass into a matrix multiply. When adding new strategies or question types, prefer the exact path; only fall back to SMC if profile-driven.
 - **Cell marginals come from the particle ensemble:** μ(c) = Σᵢ wᵢ · 𝟙[particle i has ship at c]. MBayes shot selection uses argmax μ(c); BO acquisition functions should use both μ(c) and its variance σ(c) across particles (otherwise EI on a Bernoulli degenerates to greedy MAP — see `battleship.md:45`).
 - **EIG ≤ E[log LR] always.** The gap is O(Σ πₛ²) and the two reference distributions differ by whether board s is included in the mixture. Both must be implemented with natural log (nats) to match `transcript.md`; the JSX uses log₂ for EIG and natural log for ELLR, so a Python port should standardize.
 - **Proposed layout** (from `battleship.md:80`): `engine/` (board, questions, smc, metrics) + `strategies/` (one file per strategy, common `choose_action` interface) + `simulator/` (single-run + multi-trial benchmark) + `ui/` as a separate consumer. A Python-only benchmark-mode MVP is the fastest path to producing comparison data; add UI only after the strategies work.
@@ -37,11 +37,15 @@ Core rules: 8×8 grid, ships {4,3,3,2}, each turn pick **ask** (binary question,
 
 Flag these to the user before implementing — they change the math and the code:
 
-1. Noiseless shots, or BSC(ε) on shots too?
-2. Ships allowed to touch, or forbidden?
-3. BO-with-EI: pure greedy MAP, UCB with exploration bonus, or Thompson sampling?
-4. Hard turn cap or no cap?
-5. Ask-vs-shoot threshold: fixed or adaptive? (Spec recommends adaptive.)
+1. ~~Noiseless shots, or BSC(ε) on shots too?~~ **Resolved: shots noiseless (delta likelihood); BSC(ε) on queries only.** Asks model uncertain intel, shots model direct observation. Update `engine/board.py` and `engine/questions.py` accordingly.
+2. ~~Ships allowed to touch, or forbidden?~~ **Resolved: forbidden** (encoded in $\mathcal{S}$).
+3. ~~BO-with-EI: pure greedy MAP, UCB with exploration bonus, or Thompson sampling?~~ **Resolved: Thompson sampling.** Doctrine III file is `strategies/thompson.py`, not `bo_ei.py`.
+4. ~~Hard turn cap or no cap?~~ **Resolved: hard cap** $T_{\max}$ (default 80, user-configurable in UI). Trajectory score is the pair $(H, T)$ — hits in $\{0,\ldots,12\}$ and turns in $\{1,\ldots,T_{\max}\}$. Benchmark sort: primary by $T$ when $H=12$, else by $H$.
+5. ~~Ask-vs-shoot threshold: fixed or adaptive?~~ **Resolved: adaptive, information-vs-action comparison.** Shoot iff $\max_c H(\mu(c)) \ge \max_q I(q;s\mid\mathcal{O})$ (both in nats, $H$ = binary entropy). Parameter-free. Applies to EIG + MBayes and ELLR + MBayes; Thompson sampling always shoots (no ask branch).
+
+**Deferred (not MVP):** POMCP / determinized-rollout 5th doctrine as a *performance ceiling* baseline. Add only after the four primary doctrines are validated end-to-end.
+
+**SMC sampler must sample uniformly over $\mathcal{S}$.** Naive sequential placement biases toward configurations where early ships didn't block later ones; use rejection sampling (~5–10% acceptance on 8×8/{2,3,3,4}) or importance-weighted sequential. Validate against the enumerated $\mu_0(c)$ — corners ≈ 0.13, edges ≈ 0.16–0.18, interior ≈ 0.20–0.23, board mean exactly $12/64 = 0.1875$. See `battleship.md` "Prior cell marginal" section for full derivation.
 
 ## Licensing convention
 

@@ -1,0 +1,182 @@
+"""Tests for engine.metrics — binary entropy, EIG, ELLR.
+
+All quantities in NATS (natural log).
+
+Key formulas:
+    H(p)        = -p log p - (1-p) log(1-p)
+    I(q; s|O)   = H(p̄) - E_π[H(p_s)]                                   (EIG)
+    where p_s = (1-ε) if Q(s)=1 else ε   (BSC forward likelihood)
+    and   p̄   = (1-ε)·μ_q + ε·(1-μ_q),   μ_q = Σ_i w_i · 1[Q(s_i)=1]
+
+    E[log LR](q) = Σ_s w_s · KL(p_s || p̄_{-s})                          (ELLR)
+    where p̄_{-s} excludes s from the mixture.
+
+    EIG ≤ ELLR always.
+
+Adaptive ask-vs-shoot uses:
+    V_ask   = max_q I(q; s|O)   (in nats)
+    V_shoot = max_c H(μ(c))     (binary entropy of the unshot cell marginal)
+    Shoot iff V_shoot ≥ V_ask.
+"""
+from __future__ import annotations
+
+import math
+
+import numpy as np
+import pytest
+
+from engine.metrics import (
+    binary_entropy,
+    eig_of_ask,
+    ellr_of_ask,
+    shoot_information_value,
+)
+
+
+# --------------------------------------------------------------------------
+# binary_entropy — in nats
+# --------------------------------------------------------------------------
+
+class TestBinaryEntropy:
+    def test_boundary_zero(self):
+        assert binary_entropy(0.0) == 0.0
+        assert binary_entropy(1.0) == 0.0
+
+    def test_midpoint_is_log_2(self):
+        assert binary_entropy(0.5) == pytest.approx(math.log(2))
+
+    def test_symmetry(self):
+        for p in (0.1, 0.25, 0.4, 0.73):
+            assert binary_entropy(p) == pytest.approx(binary_entropy(1 - p))
+
+    def test_monotone_on_halves(self):
+        # Increasing on [0, 0.5], decreasing on [0.5, 1].
+        xs = [0.01, 0.1, 0.3, 0.5, 0.7, 0.9, 0.99]
+        hs = [binary_entropy(x) for x in xs]
+        up = hs[:4]
+        down = hs[3:]
+        assert up == sorted(up)
+        assert down == sorted(down, reverse=True)
+
+    def test_out_of_range_rejected(self):
+        with pytest.raises(ValueError):
+            binary_entropy(-0.01)
+        with pytest.raises(ValueError):
+            binary_entropy(1.0001)
+
+
+# --------------------------------------------------------------------------
+# eig_of_ask — expected information gain of a binary question
+# --------------------------------------------------------------------------
+
+class TestEIG:
+    def test_zero_info_when_all_particles_agree(self):
+        """If every particle has the same Q(s), asking gives no information."""
+        weights = np.array([0.25, 0.25, 0.25, 0.25])
+        answers = np.array([1, 1, 1, 1])
+        assert eig_of_ask(answers=answers, weights=weights, eps=0.10) == pytest.approx(0.0, abs=1e-12)
+
+    def test_half_half_noiseless_is_log_2(self):
+        """μ_q = 0.5, ε = 0 ⇒ EIG = H(0.5) - 0 = log 2."""
+        weights = np.array([0.5, 0.5])
+        answers = np.array([1, 0])
+        assert eig_of_ask(answers=answers, weights=weights, eps=0.0) == pytest.approx(math.log(2))
+
+    def test_half_half_noisy_is_less_than_log_2(self):
+        weights = np.array([0.5, 0.5])
+        answers = np.array([1, 0])
+        eig_noisy = eig_of_ask(answers=answers, weights=weights, eps=0.10)
+        assert 0.0 < eig_noisy < math.log(2)
+
+    def test_eig_at_epsilon_half_is_zero(self):
+        """ε = 0.5 ⇒ BSC is uninformative ⇒ EIG = 0 regardless of μ_q."""
+        weights = np.array([0.3, 0.3, 0.4])
+        answers = np.array([1, 0, 1])
+        assert eig_of_ask(answers=answers, weights=weights, eps=0.5) == pytest.approx(0.0, abs=1e-12)
+
+    def test_eig_non_negative(self):
+        rng = np.random.default_rng(11)
+        for _ in range(20):
+            N = rng.integers(3, 20)
+            w = rng.random(N)
+            w /= w.sum()
+            a = rng.integers(0, 2, size=N)
+            eps = float(rng.uniform(0.01, 0.45))
+            assert eig_of_ask(answers=a, weights=w, eps=eps) >= -1e-12
+
+
+# --------------------------------------------------------------------------
+# ellr_of_ask — expected log-likelihood ratio (weighted KL against mixture)
+# --------------------------------------------------------------------------
+
+class TestELLR:
+    def test_zero_info_when_all_particles_agree(self):
+        weights = np.array([0.25, 0.25, 0.25, 0.25])
+        answers = np.array([0, 0, 0, 0])
+        assert ellr_of_ask(answers=answers, weights=weights, eps=0.10) == pytest.approx(0.0, abs=1e-12)
+
+    def test_ellr_non_negative(self):
+        rng = np.random.default_rng(23)
+        for _ in range(20):
+            N = rng.integers(3, 20)
+            w = rng.random(N)
+            w /= w.sum()
+            a = rng.integers(0, 2, size=N)
+            eps = float(rng.uniform(0.01, 0.45))
+            assert ellr_of_ask(answers=a, weights=w, eps=eps) >= -1e-12
+
+    def test_ellr_at_epsilon_half_is_zero(self):
+        weights = np.array([0.4, 0.6])
+        answers = np.array([1, 0])
+        assert ellr_of_ask(answers=answers, weights=weights, eps=0.5) == pytest.approx(0.0, abs=1e-12)
+
+
+# --------------------------------------------------------------------------
+# Key invariant: EIG ≤ ELLR (from transcript.md / CLAUDE.md)
+# --------------------------------------------------------------------------
+
+class TestEIGVsELLR:
+    def test_eig_le_ellr_random_cases(self):
+        rng = np.random.default_rng(47)
+        for _ in range(200):
+            N = int(rng.integers(3, 40))
+            w = rng.random(N)
+            w /= w.sum()
+            a = rng.integers(0, 2, size=N)
+            eps = float(rng.uniform(0.01, 0.45))
+            eig = eig_of_ask(answers=a, weights=w, eps=eps)
+            ellr = ellr_of_ask(answers=a, weights=w, eps=eps)
+            assert eig <= ellr + 1e-10, f"EIG={eig} > ELLR={ellr} at w={w}, a={a}, eps={eps}"
+
+
+# --------------------------------------------------------------------------
+# shoot_information_value — max_c H(μ(c)) over unshot cells
+# --------------------------------------------------------------------------
+
+class TestShootInformationValue:
+    def test_empty_mu_grid_empty_shots_returns_zero_when_all_hit_or_miss(self):
+        """If every unshot cell is deterministic, shoot value is zero."""
+        mu = np.zeros((8, 8))   # every cell is μ=0 ⇒ H(0)=0
+        assert shoot_information_value(mu=mu, shots_fired=frozenset()) == 0.0
+
+    def test_excludes_shot_cells(self):
+        mu = np.zeros((8, 8))
+        mu[0, 0] = 0.5   # H(0.5)=log 2
+        mu[1, 1] = 0.3   # H(0.3)=something smaller than log 2
+        v = shoot_information_value(mu=mu, shots_fired=frozenset({(0, 0)}))
+        # (0,0) is excluded, so the best unshot cell is (1,1) with μ=0.3
+        assert v == pytest.approx(binary_entropy(0.3))
+
+    def test_picks_max_entropy_cell(self):
+        mu = np.zeros((8, 8))
+        mu[3, 3] = 0.9
+        mu[3, 4] = 0.5
+        mu[3, 5] = 0.1
+        v = shoot_information_value(mu=mu, shots_fired=frozenset())
+        assert v == pytest.approx(math.log(2))  # H(0.5) = log 2
+
+    def test_returns_zero_when_no_cells_available(self):
+        mu = np.zeros((8, 8))
+        mu[:] = 0.5
+        all_cells = frozenset((r, c) for r in range(8) for c in range(8))
+        assert shoot_information_value(mu=mu, shots_fired=all_cells) == 0.0

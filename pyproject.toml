@@ -1,0 +1,33 @@
+[build-system]
+requires = ["setuptools>=68", "wheel"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "battleship-strategy-comparison"
+version = "0.1.0"
+description = "Sequential-Monte-Carlo benchmark of EIG / ELLR / Thompson doctrines on 8x8 Battleship."
+readme = "battleship.md"
+requires-python = ">=3.11"
+license = { text = "Apache-2.0" }
+authors = [{ name = "Michael L. Thompson" }]
+dependencies = [
+    "numpy>=1.26",
+]
+
+[project.optional-dependencies]
+dev = [
+    "pytest>=8.0",
+    "pytest-cov>=5.0",
+]
+
+[tool.setuptools.packages.find]
+include = ["engine*", "strategies*", "simulator*"]
+exclude = ["tests*", "mockups*", ".venv*"]
+
+[tool.pytest.ini_options]
+testpaths = ["tests"]
+python_files = ["test_*.py"]
+addopts = "-ra -q --strict-markers"
+markers = [
+    "slow: tests that take more than a second (enumeration fixtures, etc.)",
+]
