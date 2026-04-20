@@ -1733,231 +1733,343 @@ body[data-settings="open"] .settings-panel{transform:translateX(0)}
     </g>
   </symbol>
 
-  <!-- BATTLESHIP — length 4 (largest), full hyper-detailed silhouette -->
+  <!-- FIRST-RATE SHIP-OF-THE-LINE — length 4 (flagship) -->
   <symbol id="ship-4" viewBox="0 0 320 110">
-    <!-- reflection clip rectangle for ripple effect could go here; static render -->
-    <!-- waterline shadow -->
-    <ellipse cx="160" cy="92" rx="155" ry="6" fill="#08172a" opacity=".4"/>
-    <!-- hull main -->
-    <path d="M 12 78 Q 30 90 80 91 L 240 91 Q 290 90 308 78 L 296 70 L 24 70 Z" fill="#1c252e" stroke="#000" stroke-width=".7"/>
-    <!-- hull belt (red anti-foul stripe) -->
-    <path d="M 16 80 Q 32 88 80 89 L 240 89 Q 288 88 304 80 L 24 80 Z" fill="#5e2a18" opacity=".7"/>
-    <!-- waterline streak -->
-    <line x1="20" y1="74" x2="300" y2="74" stroke="#ffffff" stroke-opacity=".25" stroke-width=".5"/>
-    <!-- deck -->
-    <rect x="22" y="66" width="276" height="6" fill="#3d3025"/>
-    <!-- deck planking lines -->
-    <g stroke="#241c14" stroke-width=".3" opacity=".7">
-      <line x1="22" y1="69" x2="298" y2="69"/>
-      <line x1="60" y1="66" x2="60" y2="72"/>
-      <line x1="120" y1="66" x2="120" y2="72"/>
-      <line x1="180" y1="66" x2="180" y2="72"/>
-      <line x1="240" y1="66" x2="240" y2="72"/>
+    <!-- water shadow -->
+    <ellipse cx="160" cy="96" rx="150" ry="4.5" fill="#050d18" opacity=".5"/>
+
+    <!-- HULL: bow at left, raised quarterdeck + stern gallery at right -->
+    <path d="M 28 60 Q 22 72 30 84 L 38 92 L 60 94 L 250 94 Q 284 92 298 86 L 302 78 L 306 54 L 294 56 L 282 60 Z"
+          fill="#2d1f10" stroke="#120902" stroke-width=".7"/>
+
+    <!-- upper gun deck: yellow chequer band (Nelson livery) -->
+    <rect x="38" y="66" width="254" height="10" fill="#c89b3d"/>
+    <g fill="#0a0806">
+      <rect x="48" y="69" width="4" height="5"/><rect x="64" y="69" width="4" height="5"/>
+      <rect x="80" y="69" width="4" height="5"/><rect x="96" y="69" width="4" height="5"/>
+      <rect x="112" y="69" width="4" height="5"/><rect x="128" y="69" width="4" height="5"/>
+      <rect x="144" y="69" width="4" height="5"/><rect x="160" y="69" width="4" height="5"/>
+      <rect x="176" y="69" width="4" height="5"/><rect x="192" y="69" width="4" height="5"/>
+      <rect x="208" y="69" width="4" height="5"/><rect x="224" y="69" width="4" height="5"/>
+      <rect x="240" y="69" width="4" height="5"/><rect x="256" y="69" width="4" height="5"/>
+      <rect x="272" y="69" width="4" height="5"/>
     </g>
-    <!-- forward turret (twin barrels) -->
-    <g>
-      <rect x="60" y="56" width="34" height="12" fill="#2f3a45" stroke="#000" stroke-width=".4"/>
-      <rect x="58" y="59" width="46" height="6" fill="#3d4a58"/>
-      <rect x="92" y="60" width="40" height="2" fill="#1c252e"/>
-      <rect x="92" y="64" width="40" height="2" fill="#1c252e"/>
-      <rect x="130" y="59.5" width="3" height="3" fill="#0a0e13"/>
-      <rect x="130" y="63.5" width="3" height="3" fill="#0a0e13"/>
+    <!-- pale divider stripe + implied lower gun deck -->
+    <rect x="38" y="76" width="254" height="1.6" fill="#e8dcb8" opacity=".9"/>
+    <rect x="38" y="77.5" width="254" height="6" fill="#0a0806" opacity=".85"/>
+    <g fill="#c89b3d" opacity=".4">
+      <rect x="56" y="79.5" width="3.5" height="3"/><rect x="72" y="79.5" width="3.5" height="3"/>
+      <rect x="88" y="79.5" width="3.5" height="3"/><rect x="104" y="79.5" width="3.5" height="3"/>
+      <rect x="120" y="79.5" width="3.5" height="3"/><rect x="136" y="79.5" width="3.5" height="3"/>
+      <rect x="152" y="79.5" width="3.5" height="3"/><rect x="168" y="79.5" width="3.5" height="3"/>
+      <rect x="184" y="79.5" width="3.5" height="3"/><rect x="200" y="79.5" width="3.5" height="3"/>
+      <rect x="216" y="79.5" width="3.5" height="3"/><rect x="232" y="79.5" width="3.5" height="3"/>
+      <rect x="248" y="79.5" width="3.5" height="3"/><rect x="264" y="79.5" width="3.5" height="3"/>
     </g>
-    <!-- aft turret -->
-    <g>
-      <rect x="220" y="56" width="34" height="12" fill="#2f3a45" stroke="#000" stroke-width=".4"/>
-      <rect x="218" y="59" width="46" height="6" fill="#3d4a58"/>
-      <rect x="190" y="60" width="40" height="2" fill="#1c252e"/>
-      <rect x="190" y="64" width="40" height="2" fill="#1c252e"/>
-      <rect x="187" y="59.5" width="3" height="3" fill="#0a0e13"/>
-      <rect x="187" y="63.5" width="3" height="3" fill="#0a0e13"/>
+
+    <!-- stern gallery windows -->
+    <rect x="296" y="60" width="10" height="16" fill="#4a3520" stroke="#120a04" stroke-width=".4"/>
+    <g fill="#9ecbe5" opacity=".55">
+      <rect x="297.5" y="62" width="3" height="4.5"/><rect x="301.5" y="62" width="3" height="4.5"/>
+      <rect x="297.5" y="68" width="3" height="4.5"/><rect x="301.5" y="68" width="3" height="4.5"/>
     </g>
-    <!-- main superstructure / bridge -->
-    <g>
-      <rect x="118" y="40" width="84" height="20" fill="#4b5663" stroke="#000" stroke-width=".4"/>
-      <rect x="124" y="44" width="72" height="3" fill="#1c252e" opacity=".4"/>
-      <!-- portholes -->
-      <g fill="#1c252e">
-        <circle cx="128" cy="52" r="1.6"/>
-        <circle cx="138" cy="52" r="1.6"/>
-        <circle cx="148" cy="52" r="1.6"/>
-        <circle cx="172" cy="52" r="1.6"/>
-        <circle cx="182" cy="52" r="1.6"/>
-        <circle cx="192" cy="52" r="1.6"/>
-      </g>
-      <!-- bridge upper -->
-      <rect x="138" y="28" width="44" height="14" fill="#3d4a58" stroke="#000" stroke-width=".3"/>
-      <rect x="142" y="32" width="36" height="3" fill="#0a0e13" opacity=".5"/>
-      <!-- conning tower top -->
-      <rect x="152" y="20" width="16" height="10" fill="#2f3a45" stroke="#000" stroke-width=".3"/>
-      <!-- mast -->
-      <line x1="160" y1="20" x2="160" y2="2" stroke="#1c252e" stroke-width="1.2"/>
-      <line x1="155" y1="10" x2="165" y2="10" stroke="#1c252e" stroke-width=".4"/>
-      <line x1="158" y1="6" x2="162" y2="6" stroke="#1c252e" stroke-width=".4"/>
-      <!-- crow's nest -->
-      <ellipse cx="160" cy="14" rx="3.5" ry="1.6" fill="#1c252e"/>
+    <!-- tiny gold figurehead at bow -->
+    <path d="M 28 58 L 24 55 L 22 58 L 25 61 Z" fill="#c89b3d" stroke="#2a1c0a" stroke-width=".3"/>
+
+    <!-- BOWSPRIT + jib sails -->
+    <line x1="34" y1="63" x2="2" y2="52" stroke="#2a1c0a" stroke-width="1.7" stroke-linecap="round"/>
+    <path d="M 34 63 L 6 53 L 24 62 Z" fill="#e8dcb8" stroke="#241810" stroke-width=".35" opacity=".95"/>
+    <path d="M 34 63 L 24 62 L 18 58 Z" fill="#c9b98c" opacity=".4"/>
+    <path d="M 42 52 L 10 52 L 40 62 Z" fill="#e8dcb8" stroke="#241810" stroke-width=".3" opacity=".9"/>
+
+    <!-- FOREMAST x=80 -->
+    <line x1="80" y1="65" x2="80" y2="3" stroke="#3d2a15" stroke-width="2.4"/>
+    <line x1="80" y1="30" x2="80" y2="3" stroke="#3d2a15" stroke-width="1.6"/>
+    <line x1="54" y1="36" x2="106" y2="36" stroke="#2a1c0a" stroke-width="1.4" stroke-linecap="round"/>
+    <line x1="60" y1="20" x2="100" y2="20" stroke="#2a1c0a" stroke-width="1.1" stroke-linecap="round"/>
+    <line x1="66" y1="8" x2="94" y2="8" stroke="#2a1c0a" stroke-width=".8" stroke-linecap="round"/>
+    <path d="M 54 37 L 106 37 L 108 52 Q 80 56 52 52 Z" fill="#e8dcb8" stroke="#241810" stroke-width=".35"/>
+    <path d="M 80 37 L 106 37 L 108 52 Q 94 54 80 52 Z" fill="#c9b98c" opacity=".35"/>
+    <path d="M 60 21 L 100 21 L 102 34 Q 80 37 58 34 Z" fill="#e8dcb8" stroke="#241810" stroke-width=".35"/>
+    <path d="M 80 21 L 100 21 L 102 34 Q 92 36 80 34 Z" fill="#c9b98c" opacity=".35"/>
+    <path d="M 66 9 L 94 9 L 96 18 Q 80 20 64 18 Z" fill="#e8dcb8" stroke="#241810" stroke-width=".3"/>
+
+    <!-- MAINMAST x=160 (tallest) -->
+    <line x1="160" y1="65" x2="160" y2="0" stroke="#3d2a15" stroke-width="2.8"/>
+    <line x1="160" y1="26" x2="160" y2="0" stroke="#3d2a15" stroke-width="1.8"/>
+    <line x1="128" y1="40" x2="192" y2="40" stroke="#2a1c0a" stroke-width="1.6" stroke-linecap="round"/>
+    <line x1="134" y1="22" x2="186" y2="22" stroke="#2a1c0a" stroke-width="1.2" stroke-linecap="round"/>
+    <line x1="142" y1="8" x2="178" y2="8" stroke="#2a1c0a" stroke-width=".9" stroke-linecap="round"/>
+    <path d="M 128 41 L 192 41 L 194 58 Q 160 63 126 58 Z" fill="#e8dcb8" stroke="#241810" stroke-width=".4"/>
+    <path d="M 160 41 L 192 41 L 194 58 Q 178 61 160 58 Z" fill="#c9b98c" opacity=".35"/>
+    <path d="M 134 23 L 186 23 L 188 38 Q 160 41 132 38 Z" fill="#e8dcb8" stroke="#241810" stroke-width=".35"/>
+    <path d="M 160 23 L 186 23 L 188 38 Q 174 40 160 38 Z" fill="#c9b98c" opacity=".35"/>
+    <path d="M 142 9 L 178 9 L 180 20 Q 160 23 140 20 Z" fill="#e8dcb8" stroke="#241810" stroke-width=".3"/>
+
+    <!-- MIZZENMAST x=240 -->
+    <line x1="240" y1="60" x2="240" y2="6" stroke="#3d2a15" stroke-width="2.2"/>
+    <line x1="240" y1="30" x2="240" y2="6" stroke="#3d2a15" stroke-width="1.5"/>
+    <line x1="216" y1="34" x2="264" y2="34" stroke="#2a1c0a" stroke-width="1.3" stroke-linecap="round"/>
+    <line x1="222" y1="20" x2="258" y2="20" stroke="#2a1c0a" stroke-width="1" stroke-linecap="round"/>
+    <path d="M 216 35 L 264 35 L 266 48 Q 240 52 214 48 Z" fill="#e8dcb8" stroke="#241810" stroke-width=".35"/>
+    <path d="M 240 35 L 264 35 L 266 48 Q 253 50 240 48 Z" fill="#c9b98c" opacity=".35"/>
+    <path d="M 222 21 L 258 21 L 260 32 Q 240 34 220 32 Z" fill="#e8dcb8" stroke="#241810" stroke-width=".3"/>
+    <!-- spanker (fore-and-aft) -->
+    <path d="M 240 56 L 240 42 L 276 48 L 270 62 Z" fill="#e8dcb8" stroke="#241810" stroke-width=".35"/>
+    <path d="M 240 56 L 240 42 L 276 48 Z" fill="#c9b98c" opacity=".3"/>
+
+    <!-- rigging: shrouds + fore-and-aft stays -->
+    <g stroke="#1a120a" stroke-width=".35" opacity=".75" fill="none">
+      <line x1="66" y1="65" x2="80" y2="28"/><line x1="72" y1="65" x2="80" y2="30"/>
+      <line x1="94" y1="65" x2="80" y2="28"/><line x1="88" y1="65" x2="80" y2="30"/>
+      <line x1="144" y1="65" x2="160" y2="26"/><line x1="150" y1="65" x2="160" y2="28"/>
+      <line x1="176" y1="65" x2="160" y2="26"/><line x1="170" y1="65" x2="160" y2="28"/>
+      <line x1="226" y1="62" x2="240" y2="30"/><line x1="254" y1="62" x2="240" y2="30"/>
+      <line x1="4" y1="52" x2="80" y2="14"/>
+      <line x1="80" y1="8" x2="160" y2="6"/>
+      <line x1="160" y1="8" x2="240" y2="16"/>
     </g>
-    <!-- smokestacks (two) -->
-    <g class="smoke-stack-area">
-      <rect x="100" y="34" width="14" height="22" fill="#2a3138" stroke="#000" stroke-width=".3"/>
-      <rect x="100" y="32" width="14" height="3" fill="#0a0e13"/>
-      <rect x="100" y="36" width="14" height="2" fill="#b78a3c" opacity=".7"/>
-      <rect x="206" y="34" width="14" height="22" fill="#2a3138" stroke="#000" stroke-width=".3"/>
-      <rect x="206" y="32" width="14" height="3" fill="#0a0e13"/>
-      <rect x="206" y="36" width="14" height="2" fill="#b78a3c" opacity=".7"/>
+
+    <!-- commissioning pennant at mainmast peak -->
+    <g class="flag-cloth delay-a" transform-origin="160 0">
+      <path d="M 160 0 L 210 2 L 215 4 L 210 6 L 160 3 Z" fill="#7a2017" stroke="#3a0a05" stroke-width=".25"/>
+      <rect x="160" y="0" width="7" height="4" fill="#e8dcb8"/>
+      <path d="M 160 0 L 167 2 L 160 4 M 163 0 L 167 2 L 163 4" stroke="#7a2017" stroke-width=".35" fill="none"/>
     </g>
-    <!-- secondary armament -->
-    <g fill="#1c252e">
-      <rect x="50" y="64" width="6" height="3"/>
-      <rect x="264" y="64" width="6" height="3"/>
+    <!-- ensign at stern jackstaff -->
+    <g class="flag-cloth delay-b" transform-origin="302 48">
+      <line x1="302" y1="54" x2="302" y2="30" stroke="#2a1c0a" stroke-width=".8"/>
+      <path d="M 302 30 L 322 32 L 322 42 L 302 40 Z" fill="#7a2017" stroke="#3a0a05" stroke-width=".3"/>
+      <rect x="302" y="30" width="9" height="6" fill="#162338"/>
+      <path d="M 302 30 L 311 36 M 302 36 L 311 30" stroke="#e8dcb8" stroke-width=".5"/>
     </g>
-    <!-- forward flagpole + ENSIGN flag (waving) -->
-    <g transform="translate(40 66)">
-      <line x1="0" y1="0" x2="0" y2="-26" stroke="#1c252e" stroke-width="1"/>
-      <g class="flag-cloth delay-a" transform-origin="0 -22">
-        <path d="M 0 -26 L 22 -25 L 22 -16 L 0 -17 Z" fill="#7a2017" stroke="#3a0a05" stroke-width=".3"/>
-        <rect x="0" y="-26" width="11" height="5" fill="#162338"/>
-        <g fill="#fff" font-size="3" font-family="IM Fell English SC">
-          <circle cx="3" cy="-23" r=".5"/>
-          <circle cx="6" cy="-23.5" r=".5"/>
-        </g>
-      </g>
-    </g>
-    <!-- aft flagpole + signal flag -->
-    <g transform="translate(282 66)">
-      <line x1="0" y1="0" x2="0" y2="-30" stroke="#1c252e" stroke-width="1"/>
-      <g class="flag-cloth delay-b" transform-origin="0 -26">
-        <path d="M 0 -30 L 18 -29 L 18 -19 L 0 -20 Z" fill="#162338" stroke="#000" stroke-width=".3"/>
-        <rect x="0" y="-30" width="9" height="11" fill="#f1e7cf"/>
-        <rect x="9" y="-30" width="9" height="11" fill="#7a2017"/>
-      </g>
-    </g>
-    <!-- rust streaks down hull -->
-    <g stroke="#5e2a18" opacity=".5" stroke-width=".5">
-      <line x1="35" y1="71" x2="34" y2="80"/>
-      <line x1="220" y1="71" x2="221" y2="79"/>
-      <line x1="280" y1="71" x2="280" y2="78"/>
-    </g>
-    <!-- bow numerals -->
-    <text x="290" y="78" font-family="JetBrains Mono" font-size="6" fill="#f1e7cf" opacity=".7">BB-04</text>
+
+    <!-- stern rating scroll -->
+    <text x="274" y="73" font-family="IM Fell English SC, serif" font-size="4" fill="#e8dcb8" opacity=".8">I · L4</text>
   </symbol>
 
-  <!-- CRUISER — length 3 -->
+  <!-- FRIGATE — length 3 (three-masted, single gun deck) -->
   <symbol id="ship-3" viewBox="0 0 240 100">
-    <ellipse cx="120" cy="86" rx="118" ry="5" fill="#08172a" opacity=".4"/>
-    <path d="M 8 72 Q 20 84 60 85 L 184 85 Q 220 84 232 72 L 222 64 L 18 64 Z" fill="#1c252e" stroke="#000" stroke-width=".6"/>
-    <path d="M 12 74 Q 22 82 60 83 L 184 83 Q 218 82 228 74 L 18 74 Z" fill="#5e2a18" opacity=".7"/>
-    <line x1="14" y1="68" x2="226" y2="68" stroke="#ffffff" stroke-opacity=".22" stroke-width=".5"/>
-    <rect x="16" y="60" width="208" height="5" fill="#3d3025"/>
-    <g stroke="#241c14" stroke-width=".3" opacity=".7">
-      <line x1="16" y1="63" x2="224" y2="63"/>
-      <line x1="80" y1="60" x2="80" y2="65"/>
-      <line x1="160" y1="60" x2="160" y2="65"/>
+    <ellipse cx="120" cy="90" rx="116" ry="4" fill="#050d18" opacity=".5"/>
+
+    <!-- sleek frigate hull -->
+    <path d="M 18 60 Q 14 70 22 80 L 28 86 L 48 88 L 188 88 Q 214 86 224 82 L 226 76 L 228 54 L 218 56 L 208 60 Z"
+          fill="#2d1f10" stroke="#120902" stroke-width=".65"/>
+
+    <rect x="28" y="64" width="192" height="9" fill="#c89b3d"/>
+    <g fill="#0a0806">
+      <rect x="36" y="67" width="4" height="4.5"/><rect x="52" y="67" width="4" height="4.5"/>
+      <rect x="68" y="67" width="4" height="4.5"/><rect x="84" y="67" width="4" height="4.5"/>
+      <rect x="100" y="67" width="4" height="4.5"/><rect x="116" y="67" width="4" height="4.5"/>
+      <rect x="132" y="67" width="4" height="4.5"/><rect x="148" y="67" width="4" height="4.5"/>
+      <rect x="164" y="67" width="4" height="4.5"/><rect x="180" y="67" width="4" height="4.5"/>
+      <rect x="196" y="67" width="4" height="4.5"/>
     </g>
-    <!-- forward turret -->
-    <rect x="50" y="50" width="26" height="10" fill="#2f3a45" stroke="#000" stroke-width=".3"/>
-    <rect x="74" y="54" width="28" height="2" fill="#1c252e"/>
-    <rect x="74" y="56" width="28" height="2" fill="#1c252e"/>
-    <!-- aft turret -->
-    <rect x="164" y="50" width="26" height="10" fill="#2f3a45" stroke="#000" stroke-width=".3"/>
-    <rect x="138" y="54" width="28" height="2" fill="#1c252e"/>
-    <rect x="138" y="56" width="28" height="2" fill="#1c252e"/>
-    <!-- bridge -->
-    <rect x="100" y="36" width="40" height="16" fill="#4b5663" stroke="#000" stroke-width=".3"/>
-    <g fill="#1c252e">
-      <circle cx="106" cy="46" r="1.3"/>
-      <circle cx="114" cy="46" r="1.3"/>
-      <circle cx="126" cy="46" r="1.3"/>
-      <circle cx="134" cy="46" r="1.3"/>
+    <rect x="28" y="73.5" width="192" height="1.4" fill="#e8dcb8" opacity=".9"/>
+    <rect x="28" y="75" width="192" height="4.5" fill="#0a0806" opacity=".8"/>
+
+    <!-- stern gallery -->
+    <rect x="222" y="58" width="8" height="14" fill="#4a3520" stroke="#120a04" stroke-width=".35"/>
+    <g fill="#9ecbe5" opacity=".5">
+      <rect x="223" y="60" width="2.5" height="4"/><rect x="226.5" y="60" width="2.5" height="4"/>
+      <rect x="223" y="66" width="2.5" height="4"/><rect x="226.5" y="66" width="2.5" height="4"/>
     </g>
-    <rect x="112" y="26" width="16" height="12" fill="#3d4a58" stroke="#000" stroke-width=".3"/>
-    <line x1="120" y1="26" x2="120" y2="6" stroke="#1c252e" stroke-width="1"/>
-    <line x1="116" y1="14" x2="124" y2="14" stroke="#1c252e" stroke-width=".4"/>
-    <ellipse cx="120" cy="18" rx="3" ry="1.4" fill="#1c252e"/>
-    <!-- single smokestack -->
-    <rect x="84" y="30" width="12" height="20" fill="#2a3138" stroke="#000" stroke-width=".3"/>
-    <rect x="84" y="28" width="12" height="3" fill="#0a0e13"/>
-    <rect x="84" y="32" width="12" height="2" fill="#b78a3c" opacity=".7"/>
-    <rect x="148" y="30" width="12" height="20" fill="#2a3138" stroke="#000" stroke-width=".3"/>
-    <rect x="148" y="28" width="12" height="3" fill="#0a0e13"/>
-    <rect x="148" y="32" width="12" height="2" fill="#b78a3c" opacity=".7"/>
-    <!-- flagpole + flag -->
-    <g transform="translate(218 60)">
-      <line x1="0" y1="0" x2="0" y2="-22" stroke="#1c252e" stroke-width="1"/>
-      <g class="flag-cloth delay-c" transform-origin="0 -18">
-        <path d="M 0 -22 L 16 -21 L 16 -14 L 0 -15 Z" fill="#1f5b2e" stroke="#000" stroke-width=".3"/>
-        <line x1="0" y1="-18.5" x2="16" y2="-17.5" stroke="#fff" stroke-opacity=".5" stroke-width=".4"/>
-      </g>
+
+    <!-- bowsprit + jibs -->
+    <line x1="24" y1="61" x2="0" y2="50" stroke="#2a1c0a" stroke-width="1.5" stroke-linecap="round"/>
+    <path d="M 24 61 L 2 50 L 16 60 Z" fill="#e8dcb8" stroke="#241810" stroke-width=".3" opacity=".95"/>
+    <path d="M 32 50 L 6 50 L 30 60 Z" fill="#e8dcb8" stroke="#241810" stroke-width=".3" opacity=".9"/>
+
+    <!-- foremast x=58 -->
+    <line x1="58" y1="62" x2="58" y2="4" stroke="#3d2a15" stroke-width="2"/>
+    <line x1="58" y1="26" x2="58" y2="4" stroke="#3d2a15" stroke-width="1.3"/>
+    <line x1="36" y1="34" x2="80" y2="34" stroke="#2a1c0a" stroke-width="1.2" stroke-linecap="round"/>
+    <line x1="42" y1="20" x2="74" y2="20" stroke="#2a1c0a" stroke-width=".9" stroke-linecap="round"/>
+    <path d="M 36 35 L 80 35 L 82 50 Q 58 54 34 50 Z" fill="#e8dcb8" stroke="#241810" stroke-width=".35"/>
+    <path d="M 58 35 L 80 35 L 82 50 Q 70 52 58 50 Z" fill="#c9b98c" opacity=".35"/>
+    <path d="M 42 21 L 74 21 L 76 32 Q 58 34 40 32 Z" fill="#e8dcb8" stroke="#241810" stroke-width=".3"/>
+
+    <!-- mainmast x=118 -->
+    <line x1="118" y1="62" x2="118" y2="0" stroke="#3d2a15" stroke-width="2.2"/>
+    <line x1="118" y1="24" x2="118" y2="0" stroke="#3d2a15" stroke-width="1.4"/>
+    <line x1="90" y1="36" x2="146" y2="36" stroke="#2a1c0a" stroke-width="1.3" stroke-linecap="round"/>
+    <line x1="96" y1="20" x2="140" y2="20" stroke="#2a1c0a" stroke-width="1" stroke-linecap="round"/>
+    <line x1="104" y1="6" x2="132" y2="6" stroke="#2a1c0a" stroke-width=".7" stroke-linecap="round"/>
+    <path d="M 90 37 L 146 37 L 148 54 Q 118 58 88 54 Z" fill="#e8dcb8" stroke="#241810" stroke-width=".4"/>
+    <path d="M 118 37 L 146 37 L 148 54 Q 133 56 118 54 Z" fill="#c9b98c" opacity=".35"/>
+    <path d="M 96 21 L 140 21 L 142 34 Q 118 36 94 34 Z" fill="#e8dcb8" stroke="#241810" stroke-width=".35"/>
+    <path d="M 118 21 L 140 21 L 142 34 Q 130 35 118 34 Z" fill="#c9b98c" opacity=".35"/>
+    <path d="M 104 7 L 132 7 L 134 18 Q 118 20 102 18 Z" fill="#e8dcb8" stroke="#241810" stroke-width=".3"/>
+
+    <!-- mizzen x=180 + spanker -->
+    <line x1="180" y1="58" x2="180" y2="6" stroke="#3d2a15" stroke-width="1.8"/>
+    <line x1="180" y1="28" x2="180" y2="6" stroke="#3d2a15" stroke-width="1.2"/>
+    <line x1="160" y1="32" x2="200" y2="32" stroke="#2a1c0a" stroke-width="1.1" stroke-linecap="round"/>
+    <line x1="166" y1="18" x2="194" y2="18" stroke="#2a1c0a" stroke-width=".85" stroke-linecap="round"/>
+    <path d="M 160 33 L 200 33 L 202 46 Q 180 50 158 46 Z" fill="#e8dcb8" stroke="#241810" stroke-width=".35"/>
+    <path d="M 180 33 L 200 33 L 202 46 Q 190 48 180 46 Z" fill="#c9b98c" opacity=".35"/>
+    <path d="M 166 19 L 194 19 L 196 30 Q 180 32 164 30 Z" fill="#e8dcb8" stroke="#241810" stroke-width=".3"/>
+    <path d="M 180 54 L 180 40 L 212 46 L 206 58 Z" fill="#e8dcb8" stroke="#241810" stroke-width=".35"/>
+    <path d="M 180 54 L 180 40 L 212 46 Z" fill="#c9b98c" opacity=".3"/>
+
+    <g stroke="#1a120a" stroke-width=".35" opacity=".7" fill="none">
+      <line x1="46" y1="62" x2="58" y2="26"/><line x1="52" y1="62" x2="58" y2="28"/>
+      <line x1="70" y1="62" x2="58" y2="26"/><line x1="64" y1="62" x2="58" y2="28"/>
+      <line x1="104" y1="62" x2="118" y2="24"/><line x1="110" y1="62" x2="118" y2="26"/>
+      <line x1="132" y1="62" x2="118" y2="24"/><line x1="126" y1="62" x2="118" y2="26"/>
+      <line x1="168" y1="58" x2="180" y2="28"/><line x1="192" y1="58" x2="180" y2="28"/>
+      <line x1="2" y1="50" x2="58" y2="14"/>
+      <line x1="58" y1="8" x2="118" y2="6"/>
+      <line x1="118" y1="8" x2="180" y2="14"/>
     </g>
-    <text x="208" y="71" font-family="JetBrains Mono" font-size="5" fill="#f1e7cf" opacity=".7">CA-12</text>
+
+    <!-- masthead pennant (long blue) -->
+    <g class="flag-cloth delay-a" transform-origin="118 0">
+      <path d="M 118 0 L 156 2 L 160 3 L 156 4 L 118 3 Z" fill="#162338" stroke="#000" stroke-width=".25"/>
+    </g>
+    <!-- white ensign at stern -->
+    <g class="flag-cloth delay-c" transform-origin="226 42">
+      <line x1="226" y1="48" x2="226" y2="30" stroke="#2a1c0a" stroke-width=".7"/>
+      <path d="M 226 30 L 244 32 L 244 40 L 226 38 Z" fill="#e8dcb8" stroke="#2a1c0a" stroke-width=".3"/>
+      <rect x="226" y="30" width="8" height="5" fill="#162338"/>
+      <path d="M 226 30 L 234 35 M 226 35 L 234 30" stroke="#7a2017" stroke-width=".4"/>
+    </g>
+
+    <text x="208" y="70" font-family="IM Fell English SC, serif" font-size="3.5" fill="#e8dcb8" opacity=".75">V · L3</text>
   </symbol>
 
-  <!-- DESTROYER — length 3 (variant) -->
+  <!-- BRIG-SLOOP — length 3 variant (two-masted, square-rigged) -->
   <symbol id="ship-3b" viewBox="0 0 240 100">
-    <ellipse cx="120" cy="86" rx="118" ry="5" fill="#08172a" opacity=".4"/>
-    <path d="M 6 74 Q 22 84 70 85 L 178 85 Q 218 84 234 74 L 222 66 L 18 66 Z" fill="#212b35" stroke="#000" stroke-width=".6"/>
-    <path d="M 10 76 Q 24 82 70 83 L 178 83 Q 216 82 230 76 L 18 76 Z" fill="#5e2a18" opacity=".7"/>
-    <line x1="14" y1="70" x2="226" y2="70" stroke="#ffffff" stroke-opacity=".22" stroke-width=".5"/>
-    <rect x="20" y="62" width="200" height="5" fill="#3d3025"/>
-    <!-- single forward gun -->
-    <rect x="60" y="54" width="22" height="8" fill="#2f3a45" stroke="#000" stroke-width=".3"/>
-    <rect x="80" y="56" width="20" height="2" fill="#1c252e"/>
-    <!-- aft gun -->
-    <rect x="158" y="54" width="22" height="8" fill="#2f3a45" stroke="#000" stroke-width=".3"/>
-    <rect x="140" y="56" width="20" height="2" fill="#1c252e"/>
-    <!-- bridge -->
-    <rect x="96" y="40" width="48" height="14" fill="#4b5663" stroke="#000" stroke-width=".3"/>
-    <g fill="#1c252e">
-      <circle cx="102" cy="48" r="1.2"/>
-      <circle cx="112" cy="48" r="1.2"/>
-      <circle cx="128" cy="48" r="1.2"/>
-      <circle cx="138" cy="48" r="1.2"/>
+    <ellipse cx="120" cy="90" rx="115" ry="4" fill="#050d18" opacity=".5"/>
+
+    <!-- blunter hull, heavier stern -->
+    <path d="M 22 62 Q 18 72 26 80 L 32 86 L 52 88 L 192 88 Q 214 86 224 80 L 224 56 L 212 58 L 204 62 Z"
+          fill="#2d1f10" stroke="#120902" stroke-width=".6"/>
+
+    <rect x="30" y="65" width="190" height="8" fill="#c89b3d"/>
+    <g fill="#0a0806">
+      <rect x="40" y="68" width="4" height="4"/><rect x="58" y="68" width="4" height="4"/>
+      <rect x="76" y="68" width="4" height="4"/><rect x="94" y="68" width="4" height="4"/>
+      <rect x="112" y="68" width="4" height="4"/><rect x="130" y="68" width="4" height="4"/>
+      <rect x="148" y="68" width="4" height="4"/><rect x="166" y="68" width="4" height="4"/>
+      <rect x="184" y="68" width="4" height="4"/><rect x="200" y="68" width="4" height="4"/>
     </g>
-    <rect x="110" y="32" width="20" height="10" fill="#3d4a58" stroke="#000" stroke-width=".3"/>
-    <!-- mast tilted -->
-    <line x1="120" y1="32" x2="118" y2="10" stroke="#1c252e" stroke-width="1"/>
-    <line x1="115" y1="18" x2="121" y2="18" stroke="#1c252e" stroke-width=".4"/>
-    <!-- twin slim stacks -->
-    <rect x="84" y="36" width="8" height="20" fill="#2a3138" stroke="#000" stroke-width=".3"/>
-    <rect x="84" y="34" width="8" height="3" fill="#0a0e13"/>
-    <rect x="148" y="36" width="8" height="20" fill="#2a3138" stroke="#000" stroke-width=".3"/>
-    <rect x="148" y="34" width="8" height="3" fill="#0a0e13"/>
-    <g transform="translate(216 62)">
-      <line x1="0" y1="0" x2="0" y2="-22" stroke="#1c252e" stroke-width="1"/>
-      <g class="flag-cloth delay-a" transform-origin="0 -18">
-        <path d="M 0 -22 L 16 -21 L 12 -18 L 16 -15 L 0 -16 Z" fill="#7a2017" stroke="#3a0a05" stroke-width=".3"/>
-      </g>
+    <rect x="30" y="73.5" width="190" height="1.3" fill="#e8dcb8" opacity=".85"/>
+    <rect x="30" y="75" width="190" height="4" fill="#0a0806" opacity=".8"/>
+
+    <rect x="218" y="60" width="6" height="12" fill="#4a3520" stroke="#120a04" stroke-width=".3"/>
+    <g fill="#9ecbe5" opacity=".5">
+      <rect x="219" y="62" width="2" height="3.5"/><rect x="221.5" y="62" width="2" height="3.5"/>
+      <rect x="219" y="66" width="2" height="3.5"/><rect x="221.5" y="66" width="2" height="3.5"/>
     </g>
-    <text x="208" y="73" font-family="JetBrains Mono" font-size="5" fill="#f1e7cf" opacity=".7">DD-37</text>
+
+    <!-- bowsprit + jibs -->
+    <line x1="26" y1="63" x2="2" y2="52" stroke="#2a1c0a" stroke-width="1.4" stroke-linecap="round"/>
+    <path d="M 26 63 L 4 53 L 18 61 Z" fill="#e8dcb8" stroke="#241810" stroke-width=".3" opacity=".95"/>
+    <path d="M 34 50 L 8 52 L 32 62 Z" fill="#e8dcb8" stroke="#241810" stroke-width=".3" opacity=".9"/>
+
+    <!-- foremast x=78 (3 square sails) -->
+    <line x1="78" y1="62" x2="78" y2="4" stroke="#3d2a15" stroke-width="2"/>
+    <line x1="78" y1="28" x2="78" y2="4" stroke="#3d2a15" stroke-width="1.3"/>
+    <line x1="54" y1="36" x2="102" y2="36" stroke="#2a1c0a" stroke-width="1.3" stroke-linecap="round"/>
+    <line x1="60" y1="22" x2="96" y2="22" stroke="#2a1c0a" stroke-width="1" stroke-linecap="round"/>
+    <line x1="66" y1="10" x2="90" y2="10" stroke="#2a1c0a" stroke-width=".75" stroke-linecap="round"/>
+    <path d="M 54 37 L 102 37 L 104 52 Q 78 56 52 52 Z" fill="#e8dcb8" stroke="#241810" stroke-width=".4"/>
+    <path d="M 78 37 L 102 37 L 104 52 Q 91 54 78 52 Z" fill="#c9b98c" opacity=".35"/>
+    <path d="M 60 23 L 96 23 L 98 34 Q 78 37 58 34 Z" fill="#e8dcb8" stroke="#241810" stroke-width=".35"/>
+    <path d="M 78 23 L 96 23 L 98 34 Q 88 36 78 34 Z" fill="#c9b98c" opacity=".35"/>
+    <path d="M 66 11 L 90 11 L 92 20 Q 78 22 64 20 Z" fill="#e8dcb8" stroke="#241810" stroke-width=".3"/>
+
+    <!-- mainmast x=154 (square sails + gaff mainsail/spanker) -->
+    <line x1="154" y1="62" x2="154" y2="2" stroke="#3d2a15" stroke-width="2.1"/>
+    <line x1="154" y1="26" x2="154" y2="2" stroke="#3d2a15" stroke-width="1.3"/>
+    <line x1="128" y1="34" x2="180" y2="34" stroke="#2a1c0a" stroke-width="1.3" stroke-linecap="round"/>
+    <line x1="134" y1="20" x2="174" y2="20" stroke="#2a1c0a" stroke-width="1" stroke-linecap="round"/>
+    <line x1="142" y1="8" x2="166" y2="8" stroke="#2a1c0a" stroke-width=".75" stroke-linecap="round"/>
+    <path d="M 128 35 L 180 35 L 182 50 Q 154 54 126 50 Z" fill="#e8dcb8" stroke="#241810" stroke-width=".4"/>
+    <path d="M 154 35 L 180 35 L 182 50 Q 168 52 154 50 Z" fill="#c9b98c" opacity=".35"/>
+    <path d="M 134 21 L 174 21 L 176 32 Q 154 34 132 32 Z" fill="#e8dcb8" stroke="#241810" stroke-width=".35"/>
+    <path d="M 154 21 L 174 21 L 176 32 Q 165 33 154 32 Z" fill="#c9b98c" opacity=".35"/>
+    <path d="M 142 9 L 166 9 L 168 18 Q 154 20 140 18 Z" fill="#e8dcb8" stroke="#241810" stroke-width=".3"/>
+    <!-- spanker behind mainmast -->
+    <path d="M 154 56 L 154 40 L 192 44 L 186 58 Z" fill="#e8dcb8" stroke="#241810" stroke-width=".35"/>
+    <path d="M 154 56 L 154 40 L 192 44 Z" fill="#c9b98c" opacity=".3"/>
+
+    <g stroke="#1a120a" stroke-width=".35" opacity=".7" fill="none">
+      <line x1="66" y1="62" x2="78" y2="28"/><line x1="72" y1="62" x2="78" y2="30"/>
+      <line x1="90" y1="62" x2="78" y2="28"/><line x1="84" y1="62" x2="78" y2="30"/>
+      <line x1="140" y1="62" x2="154" y2="26"/><line x1="146" y1="62" x2="154" y2="28"/>
+      <line x1="168" y1="62" x2="154" y2="26"/><line x1="162" y1="62" x2="154" y2="28"/>
+      <line x1="4" y1="52" x2="78" y2="14"/>
+      <line x1="78" y1="8" x2="154" y2="6"/>
+    </g>
+
+    <!-- red ensign at stern -->
+    <g class="flag-cloth delay-a" transform-origin="224 44">
+      <line x1="224" y1="50" x2="224" y2="32" stroke="#2a1c0a" stroke-width=".7"/>
+      <path d="M 224 32 L 240 34 L 240 42 L 224 40 Z" fill="#7a2017" stroke="#3a0a05" stroke-width=".3"/>
+      <rect x="224" y="32" width="7" height="4.5" fill="#162338"/>
+      <path d="M 224 32 L 231 36.5 M 224 36.5 L 231 32" stroke="#e8dcb8" stroke-width=".4"/>
+    </g>
+
+    <text x="204" y="70" font-family="IM Fell English SC, serif" font-size="3.5" fill="#e8dcb8" opacity=".75">VI · L3</text>
   </symbol>
 
-  <!-- PT BOAT — length 2 -->
+  <!-- CUTTER — length 2 (single-masted, gaff-rigged) -->
   <symbol id="ship-2" viewBox="0 0 160 78">
-    <ellipse cx="80" cy="68" rx="78" ry="4" fill="#08172a" opacity=".4"/>
-    <path d="M 8 56 Q 18 66 50 67 L 116 67 Q 148 66 156 56 L 144 50 L 18 50 Z" fill="#26303a" stroke="#000" stroke-width=".5"/>
-    <path d="M 12 58 Q 20 64 50 65 L 116 65 Q 146 64 152 58 L 18 58 Z" fill="#5e2a18" opacity=".7"/>
-    <line x1="14" y1="53" x2="146" y2="53" stroke="#ffffff" stroke-opacity=".22" stroke-width=".5"/>
-    <rect x="20" y="46" width="120" height="4" fill="#3d3025"/>
-    <!-- pilothouse -->
-    <rect x="62" y="32" width="36" height="14" fill="#4b5663" stroke="#000" stroke-width=".3"/>
-    <rect x="66" y="36" width="28" height="3" fill="#0a0e13" opacity=".5"/>
-    <!-- machine gun forward -->
-    <rect x="40" y="42" width="6" height="4" fill="#1c252e"/>
-    <line x1="46" y1="44" x2="56" y2="44" stroke="#1c252e" stroke-width=".8"/>
-    <!-- mast -->
-    <line x1="80" y1="32" x2="80" y2="10" stroke="#1c252e" stroke-width="1"/>
-    <line x1="76" y1="20" x2="84" y2="20" stroke="#1c252e" stroke-width=".4"/>
-    <!-- single short stack -->
-    <rect x="104" y="36" width="8" height="12" fill="#2a3138" stroke="#000" stroke-width=".3"/>
-    <rect x="104" y="34" width="8" height="3" fill="#0a0e13"/>
-    <!-- flag on mast -->
-    <g transform="translate(80 12)">
-      <g class="flag-cloth delay-b" transform-origin="0 0">
-        <path d="M 0 -2 L 14 -1 L 14 6 L 0 5 Z" fill="#162338" stroke="#000" stroke-width=".3"/>
-        <line x1="0" y1="2" x2="14" y2="3" stroke="#fff" stroke-opacity=".4" stroke-width=".4"/>
-      </g>
+    <ellipse cx="80" cy="70" rx="76" ry="3" fill="#050d18" opacity=".5"/>
+
+    <path d="M 14 50 Q 12 58 18 64 L 24 68 L 42 70 L 128 70 Q 146 68 150 64 L 150 46 L 140 48 Z"
+          fill="#2d1f10" stroke="#120902" stroke-width=".55"/>
+
+    <rect x="20" y="52" width="128" height="6" fill="#c89b3d"/>
+    <g fill="#0a0806">
+      <rect x="28" y="54" width="3" height="3.5"/><rect x="42" y="54" width="3" height="3.5"/>
+      <rect x="56" y="54" width="3" height="3.5"/><rect x="70" y="54" width="3" height="3.5"/>
+      <rect x="84" y="54" width="3" height="3.5"/><rect x="98" y="54" width="3" height="3.5"/>
+      <rect x="112" y="54" width="3" height="3.5"/><rect x="126" y="54" width="3" height="3.5"/>
     </g>
-    <text x="138" y="56" font-family="JetBrains Mono" font-size="4.5" fill="#f1e7cf" opacity=".7">PT-08</text>
+    <rect x="20" y="58.5" width="128" height="1" fill="#e8dcb8" opacity=".85"/>
+    <rect x="20" y="59.5" width="128" height="3" fill="#0a0806" opacity=".8"/>
+
+    <!-- bowsprit + jib + staysail -->
+    <line x1="18" y1="52" x2="0" y2="44" stroke="#2a1c0a" stroke-width="1.3" stroke-linecap="round"/>
+    <path d="M 18 52 L 2 45 L 14 51 Z" fill="#e8dcb8" stroke="#241810" stroke-width=".3"/>
+    <path d="M 28 42 L 4 44 L 26 52 Z" fill="#e8dcb8" stroke="#241810" stroke-width=".3" opacity=".9"/>
+
+    <!-- single mast x=68 -->
+    <line x1="68" y1="52" x2="68" y2="4" stroke="#3d2a15" stroke-width="1.8"/>
+    <line x1="68" y1="22" x2="68" y2="4" stroke="#3d2a15" stroke-width="1.2"/>
+
+    <!-- gaff (upper slanted spar) + boom (lower horizontal spar) -->
+    <line x1="68" y1="18" x2="106" y2="12" stroke="#2a1c0a" stroke-width="1" stroke-linecap="round"/>
+    <line x1="68" y1="48" x2="118" y2="50" stroke="#2a1c0a" stroke-width="1.1" stroke-linecap="round"/>
+
+    <!-- gaff mainsail -->
+    <path d="M 68 18 L 106 12 L 118 50 L 68 48 Z" fill="#e8dcb8" stroke="#241810" stroke-width=".4"/>
+    <path d="M 68 18 L 106 12 L 118 50 L 90 32 Z" fill="#c9b98c" opacity=".25"/>
+
+    <!-- small topsail above gaff -->
+    <path d="M 68 18 L 68 6 L 94 10 Z" fill="#e8dcb8" stroke="#241810" stroke-width=".3" opacity=".95"/>
+
+    <g stroke="#1a120a" stroke-width=".3" opacity=".7" fill="none">
+      <line x1="54" y1="52" x2="68" y2="20"/>
+      <line x1="82" y1="52" x2="68" y2="20"/>
+      <line x1="2" y1="44" x2="68" y2="14"/>
+      <line x1="68" y1="6" x2="106" y2="12"/>
+    </g>
+
+    <!-- masthead pennant -->
+    <g class="flag-cloth delay-b" transform-origin="68 4">
+      <path d="M 68 4 L 92 5 L 96 6 L 92 7 L 68 6 Z" fill="#7a2017" stroke="#3a0a05" stroke-width=".25"/>
+    </g>
+    <!-- small stern jack -->
+    <g class="flag-cloth delay-a" transform-origin="150 40">
+      <line x1="150" y1="46" x2="150" y2="32" stroke="#2a1c0a" stroke-width=".6"/>
+      <path d="M 150 32 L 160 34 L 160 38 L 150 36 Z" fill="#162338" stroke="#000" stroke-width=".25"/>
+    </g>
+
+    <text x="128" y="57" font-family="IM Fell English SC, serif" font-size="3" fill="#e8dcb8" opacity=".75">L2</text>
   </symbol>
 </defs>
 </svg>
@@ -2091,55 +2203,32 @@ body[data-settings="open"] .settings-panel{transform:translateX(0)}
     <!-- THE FLEET -->
     <div class="fleet">
 
-      <!-- BB-04 — flagship, length 4 -->
+      <!-- F.S. Bayes Royal — first-rate, length 4 -->
       <div class="ship bob" style="left:6%;top:60%;width:300px">
-        <!-- smoke spawned in-place behind front stack -->
-        <div class="smoke-stack" style="position:absolute;left:36%;top:0;width:0;height:0">
-          <div class="puff p1"></div><div class="puff p2"></div><div class="puff p3"></div>
-          <div class="puff p4"></div><div class="puff p5"></div>
-        </div>
-        <div class="smoke-stack" style="position:absolute;left:69%;top:2px;width:0;height:0">
-          <div class="puff p2"></div><div class="puff p3"></div><div class="puff p4"></div>
-        </div>
         <svg viewBox="0 0 320 110" style="display:block;width:100%;height:auto;filter:drop-shadow(0 4px 2px rgba(8,23,42,.45))">
           <use href="#ship-4"/>
         </svg>
       </div>
       <div class="ship-label" style="left:6%;top:55%;transform:translateY(-100%)">F.S. <em>Bayes Royal</em><span class="len">·  L4</span></div>
 
-      <!-- CA-12 — cruiser, length 3 -->
+      <!-- C.S. Posterior — frigate, length 3 -->
       <div class="ship bob-late" style="left:42%;top:64%;width:230px">
-        <div class="smoke-stack" style="position:absolute;left:38%;top:0">
-          <div class="puff p1"></div><div class="puff p2"></div><div class="puff p3"></div><div class="puff p4"></div>
-        </div>
-        <div class="smoke-stack" style="position:absolute;left:64%;top:2px">
-          <div class="puff p2"></div><div class="puff p3"></div>
-        </div>
         <svg viewBox="0 0 240 100" style="display:block;width:100%;height:auto;filter:drop-shadow(0 4px 2px rgba(8,23,42,.45))">
           <use href="#ship-3"/>
         </svg>
       </div>
       <div class="ship-label" style="left:42%;top:60%;transform:translateY(-100%)">C.S. <em>Posterior</em><span class="len">·  L3</span></div>
 
-      <!-- DD-37 — destroyer, length 3 -->
+      <!-- D.D. Likelihood — brig-sloop, length 3 -->
       <div class="ship bob-slow" style="left:67%;top:74%;width:200px">
-        <div class="smoke-stack" style="position:absolute;left:38%;top:0">
-          <div class="puff p1"></div><div class="puff p2"></div><div class="puff p3"></div>
-        </div>
-        <div class="smoke-stack" style="position:absolute;left:65%;top:2px">
-          <div class="puff p2"></div><div class="puff p4"></div>
-        </div>
         <svg viewBox="0 0 240 100" style="display:block;width:100%;height:auto;filter:drop-shadow(0 4px 2px rgba(8,23,42,.45))">
           <use href="#ship-3b"/>
         </svg>
       </div>
       <div class="ship-label" style="left:67%;top:71%;transform:translateY(-100%)">D.D. <em>Likelihood</em><span class="len">·  L3</span></div>
 
-      <!-- PT-08 — picket boat, length 2 -->
+      <!-- P.T. Particle — cutter, length 2 -->
       <div class="ship bob-quick" style="left:23%;top:80%;width:140px">
-        <div class="smoke-stack" style="position:absolute;left:68%;top:8px">
-          <div class="puff p1"></div><div class="puff p3"></div>
-        </div>
         <svg viewBox="0 0 160 78" style="display:block;width:100%;height:auto;filter:drop-shadow(0 4px 2px rgba(8,23,42,.45))">
           <use href="#ship-2"/>
         </svg>
