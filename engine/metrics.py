@@ -173,6 +173,71 @@ def ellr_of_ask(*, answers: np.ndarray, weights: np.ndarray, eps: float) -> floa
 
 
 # --------------------------------------------------------------------------
+# Realized (per-observation) information gain — for post-hoc display.
+#
+# Whereas eig_of_ask / ellr_of_ask rank *candidate* questions before any
+# answer is known, these return the KL divergence of the posterior update
+# after the observation lands.  Used to surface "how much did we actually
+# learn from that turn?" in the UI.  In expectation over the observation,
+# info_gain_shot → H(μ) and info_gain_ask_bsc → EIG(q).
+# --------------------------------------------------------------------------
+
+def info_gain_shot(*, mu_c: float, observed: int) -> float:
+    """KL(π_new ‖ π_old) in nats for a noiseless shot at cell c.
+
+    μ_c is the prior probability that c contained a ship.  observed ∈ {0,1}
+    with 1 = hit, 0 = miss.  Because shots are noiseless, the posterior
+    update is a simple likelihood indicator, and the KL collapses to the
+    Shannon self-information: -log P(observed).
+    """
+    if not -_FP_SLACK <= mu_c <= 1.0 + _FP_SLACK:
+        raise ValueError(f"mu_c must be in [0, 1], got {mu_c}")
+    if observed not in (0, 1):
+        raise ValueError(f"observed must be 0 or 1, got {observed}")
+    mu_c = min(1.0, max(0.0, mu_c))
+    p = mu_c if observed == 1 else (1.0 - mu_c)
+    if p <= 0.0:
+        return math.inf
+    return -math.log(p)
+
+
+def info_gain_ask_bsc(*, p_hat: float, eps: float, observed: int) -> float:
+    """KL(π_new ‖ π_old) in nats for a BSC(ε) ask with answer marginal p_hat.
+
+    p_hat = P(a_s = 1 | π_old).  Uses the closed form
+        KL = E_{π_new}[log p(y|s)] − log P̄(y)
+    where π_new re-weights truth-mass by the BSC likelihood of ``observed``.
+    """
+    if not -_FP_SLACK <= p_hat <= 1.0 + _FP_SLACK:
+        raise ValueError(f"p_hat must be in [0, 1], got {p_hat}")
+    if not 0.0 <= eps <= 1.0:
+        raise ValueError(f"epsilon must be in [0, 1], got {eps}")
+    if observed not in (0, 1):
+        raise ValueError(f"observed must be 0 or 1, got {observed}")
+    p_hat = min(1.0, max(0.0, p_hat))
+
+    p_y = p_hat if observed == 1 else (1.0 - p_hat)
+    p_bar_y = (1.0 - eps) * p_y + eps * (1.0 - p_y)
+    if p_bar_y <= 0.0:
+        return math.inf
+
+    new_match = (1.0 - eps) * p_y / p_bar_y
+    new_flip = eps * (1.0 - p_y) / p_bar_y
+
+    e_log = 0.0
+    if new_match > 0.0:
+        if eps >= 1.0:
+            return math.inf
+        e_log += new_match * math.log(1.0 - eps)
+    if new_flip > 0.0:
+        if eps <= 0.0:
+            return math.inf
+        e_log += new_flip * math.log(eps)
+
+    return e_log - math.log(p_bar_y)
+
+
+# --------------------------------------------------------------------------
 # Shot information value — adaptive ask-vs-shoot comparator
 # --------------------------------------------------------------------------
 

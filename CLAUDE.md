@@ -2,16 +2,44 @@
 
 This file provides guidance to Claude Code (claude.ai/code) when working with code in this repository.
 
-## Repository status: pre-implementation
+## Repository status: implemented + playable
 
-This repo is currently a **design/research workspace**, not yet a codebase. Before writing code, confirm the open design questions below with the user — `battleship.md` lists five that shape the architecture and must be answered before implementation.
+The simulator is past MVP.  Five strategies run against the exact posterior over |S|=5,174,944 configurations (`thompson`, `eig`, `ellr`, `eig_approx`, `ellr_approx`, plus the interactive `user` strategy) and the full stack — engine, strategies, runner/benchmark, FastAPI bridge, single-page UI — is wired end-to-end.
 
-What's here:
-- `battleship.md` — the design spec for the project. Read this first; everything else is supporting material.
-- `eig_vs_ellr.jsx`, `eig_vs_ellr_v2.jsx` — **reference implementations** of the EIG and E[log LR] math on a toy 4×4 / 4-hypothesis problem. These are React prototypes; the math inside them (functions `computeEIG`, `computeELLR`, `pHYes`, `margYes`, `updateW`) is the ground truth any Python port must reproduce exactly.
-- `transcript.md` / `.tex` / `.html` / `.log` — the derivation transcripts. `transcript.md` is the canonical derivation of EIG vs E[log LR] as weighted KL divergences against different reference distributions; cite this when explaining the math.
-- `.venv/` — empty Python venv (only `pip` installed). No `requirements.txt`, `pyproject.toml`, or `package.json` yet.
-- No git, no tests, no build system, no Makefile.
+Layout:
+- `engine/` — board, question catalogue, exact posterior (`exact.py`), SMC fallback, metrics.
+- `strategies/` — one file per doctrine (`thompson.py`, `eig.py`, `ellr.py`, `_mbayes.py`, `user.py`).
+- `simulator/runner.py` — `GameSession.step()` state machine + `run_game` wrapper + CLI.
+- `simulator/benchmark.py` — multi-trial runner (shared-truth trials, deterministic per-strategy seeding, `--approx` flag).
+- `web/app.py` — FastAPI bridge: `POST /session`, `POST /session/{id}/action|step`, `GET /session/{id}/state|trajectory`, `GET /strategies|questions`. Serves `mockups/admiralty_dashboard.html` at `/ui/` and results JSONs at `/results/`.
+- `mockups/admiralty_dashboard.html` — single-page UI. Drop a trajectory JSON to replay; click the **Live** button to start an interactive session against the bridge. User strategy fires a shot on any board cell click; ask picker populates from `/questions`.
+- `tests/` — pytest suite. `@pytest.mark.slow` on anything that builds `ExactPosterior` (~30s cold start, cached for the session via `enumerate_all`).
+- `results/` — benchmark JSON + markdown reports. `benchmark_3x10.json` (exact), `benchmark_3x10_approx.json` (sample-backed).
+
+Design background worth knowing:
+- `battleship.md` — the design spec.
+- `eig_vs_ellr.jsx`, `eig_vs_ellr_v2.jsx` — toy 4×4 reference implementations of the EIG/ELLR math. Treat as executable math specs for the formulas in `engine/metrics.py`.
+- `transcript.md` / `.tex` / `.html` / `.log` — canonical derivation of EIG vs E[log LR] as weighted KL divergences.
+
+Commands:
+```bash
+# Tests (slow = fixtures that enumerate |S|)
+.venv/bin/pytest -q                       # fast suite
+.venv/bin/pytest -q -m slow               # slow suite
+.venv/bin/pytest tests/test_strategies.py::TestApproxStrategies -q
+
+# One-off game
+.venv/bin/python -m simulator.runner --strategy eig_approx --seed 0 --out /tmp/game.json
+
+# Benchmarks
+bash scripts/benchmark_3x10.sh results/benchmark_3x10.json   # exact (~58 min)
+.venv/bin/python -m simulator.benchmark --strategies thompson eig ellr --approx \
+    --trials 10 --seed 0 --out results/benchmark_3x10_approx.json   # ~5 min
+
+# Dev server + UI
+.venv/bin/uvicorn web.app:app --host 127.0.0.1 --port 8000 --reload
+# Then open http://127.0.0.1:8000/ui/  (redirect from /)
+```
 
 ## The project being built
 
@@ -24,14 +52,15 @@ A **Battleship strategy-comparison simulator** (not a game-first product). Four 
 | BO + EI (or UCB) | none — shoots every turn | acquisition over per-cell posterior |
 | User | interactive | interactive |
 
-Core rules: 8×8 grid, ships {4,3,3,2}, each turn pick **ask** (binary question, no state change, BSC(ε) noisy answer) or **shoot** (marks cell, hit/miss). Game ends when all 12 ship cells are hit; score = turn count. The ask-vs-shoot decision is the pivotal design axis — prefer an adaptive information-vs-action threshold over a fixed one (the spec argues for this explicitly at `battleship.md:106`).
+Core rules: 8×8 grid, ships {4,3,3,2}, each turn pick **ask** (binary question, no state change, BSC(ε) noisy answer) or **shoot** (marks cell, hit/miss). Game ends when all 12 ship cells are hit; score = turn count. The ask-vs-shoot decision is the pivotal design axis — currently resolved as a cost-aware expected-reward comparator (see "Architectural constraints" and the resolved open-question #5 below), not an entropy-balanced one as `battleship.md:106` originally argued.
 
 ## Architectural constraints that must carry through any implementation
 
 - **Hypothesis space is enumerable after all.** `engine/enumerate.py` computes $|\mathcal{S}| = 5{,}174{,}944$ exactly in ~30s via bitmask backtracking. SMC is still present (`engine/smc.py`) as a conceptual baseline and a fallback for fleet/board changes that blow the budget, but for the current 8×8 / {4,3,3,2} problem, **exact inference is feasible** — a precomputed $|S|\times 64$ occupancy matrix plus $|S|\times|Q|$ question-truth matrix turns each observation into a vectorised $O(|\mathcal{S}|)$ weight update and each question-scoring pass into a matrix multiply. When adding new strategies or question types, prefer the exact path; only fall back to SMC if profile-driven.
 - **Cell marginals come from the particle ensemble:** μ(c) = Σᵢ wᵢ · 𝟙[particle i has ship at c]. MBayes shot selection uses argmax μ(c); BO acquisition functions should use both μ(c) and its variance σ(c) across particles (otherwise EI on a Bernoulli degenerates to greedy MAP — see `battleship.md:45`).
 - **EIG ≤ E[log LR] always.** The gap is O(Σ πₛ²) and the two reference distributions differ by whether board s is included in the mixture. Both must be implemented with natural log (nats) to match `transcript.md`; the JSX uses log₂ for EIG and natural log for ELLR, so a Python port should standardize.
-- **Proposed layout** (from `battleship.md:80`): `engine/` (board, questions, smc, metrics) + `strategies/` (one file per strategy, common `choose_action` interface) + `simulator/` (single-run + multi-trial benchmark) + `ui/` as a separate consumer. A Python-only benchmark-mode MVP is the fastest path to producing comparison data; add UI only after the strategies work.
+- **Cost-aware ask-vs-shoot comparator.** The current rule (overriding the earlier info-vs-action threshold) is `shoot iff max_c μ(c) ≥ (M + C) / (R⁺ + M)`; canonical `(R⁺, M, C) = (2, 1, 1)` gives threshold 2/3. Lives in `strategies/_mbayes.py:MBayesStrategy` and applies to all four MBayes variants. Thompson still always shoots.
+- **Session = one game driven one turn at a time.** `simulator.runner.GameSession.step()` consults the strategy, applies the action, feeds the observation back, returns the JSON-ready turn record. `run_game` just loops `step()` to termination. The FastAPI bridge and the interactive `UserStrategy` both rely on this — do not collapse back into a single monolithic loop.
 
 ## Open design questions (from `battleship.md:99`)
 
@@ -41,7 +70,7 @@ Flag these to the user before implementing — they change the math and the code
 2. ~~Ships allowed to touch, or forbidden?~~ **Resolved: forbidden** (encoded in $\mathcal{S}$).
 3. ~~BO-with-EI: pure greedy MAP, UCB with exploration bonus, or Thompson sampling?~~ **Resolved: Thompson sampling.** Doctrine III file is `strategies/thompson.py`, not `bo_ei.py`.
 4. ~~Hard turn cap or no cap?~~ **Resolved: hard cap** $T_{\max}$ (default 80, user-configurable in UI). Trajectory score is the pair $(H, T)$ — hits in $\{0,\ldots,12\}$ and turns in $\{1,\ldots,T_{\max}\}$. Benchmark sort: primary by $T$ when $H=12$, else by $H$.
-5. ~~Ask-vs-shoot threshold: fixed or adaptive?~~ **Resolved: adaptive, information-vs-action comparison.** Shoot iff $\max_c H(\mu(c)) \ge \max_q I(q;s\mid\mathcal{O})$ (both in nats, $H$ = binary entropy). Parameter-free. Applies to EIG + MBayes and ELLR + MBayes; Thompson sampling always shoots (no ask branch).
+5. ~~Ask-vs-shoot threshold: fixed or adaptive?~~ **Resolved: cost-aware, expected-reward comparator** (supersedes the earlier entropy/EIG balance). Shoot iff $\max_c \mu(c) \ge (M + C) / (R^{+} + M)$; canonical $(R^{+}, M, C) = (2, 1, 1)$ gives threshold $2/3$. Equivalently: shoot iff the best-cell shot has non-negative expected net reward. Asks are zero-cost in the comparator — the question score (EIG/ELLR) only picks *which* ask to make if no shot pays. Applies to EIG + MBayes, ELLR + MBayes, and both approx variants; Thompson always shoots (no ask branch). Lives in `strategies/_mbayes.py`.
 
 **Deferred (not MVP):** POMCP / determinized-rollout 5th doctrine as a *performance ceiling* baseline. Add only after the four primary doctrines are validated end-to-end.
 

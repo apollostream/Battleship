@@ -67,6 +67,9 @@ class MBayesStrategy:
             )
         self.shoot_threshold: float = (self.miss_cost + self.shot_cost) / denom
         self.last_decision_value: float = 0.0
+        self.last_rationale: dict = {
+            "chosen": None, "shot": None, "ask": None,
+        }
 
     # --- decision logic -------------------------------------------------
 
@@ -84,17 +87,46 @@ class MBayesStrategy:
         assert best_cell is not None
         return best_cell, best_mu
 
-    def _best_question(self) -> tuple[Question, float]:   # subclasses override
+    # Subclasses override.  ``metric_label`` names the question score so the
+    # UI can tag it ("eig" / "ellr" / "bald" / "ellr_approx").
+    metric_label: str = "eig"
+
+    def _best_question(self) -> tuple[Question, float]:
         raise NotImplementedError
+
+    def _shot_branch(self, best_cell: Cell, max_mu: float) -> dict:
+        ev = (self.hit_reward + self.miss_cost) * max_mu - (
+            self.miss_cost + self.shot_cost
+        )
+        return {
+            "cell": best_cell,
+            "mu": max_mu,
+            "ev": ev,
+            "threshold": self.shoot_threshold,
+        }
 
     def choose_action(self, shots_fired: FrozenSet[Cell], turn: int) -> Action:
         mu = self.filter.cell_marginal_grid()
         best_cell, max_mu = self._best_unshot_cell(mu, shots_fired)
-        if max_mu >= self.shoot_threshold:
-            self.last_decision_value = max_mu     # μ at chosen shot cell
-            return ShotAction(cell=best_cell)
+        # Compute both branches every turn so the UI can show the road
+        # not taken (and so downstream code isn't coupled to the chosen side).
         best_q, best_v = self._best_question()
-        self.last_decision_value = best_v         # EIG/ELLR score of chosen ask
+        shot_info = self._shot_branch(best_cell, max_mu)
+        ask_info = {
+            "question_id": best_q.id,
+            "metric": self.metric_label,
+            "score": best_v,
+        }
+        if max_mu >= self.shoot_threshold:
+            self.last_decision_value = max_mu
+            self.last_rationale = {
+                "chosen": "shot", "shot": shot_info, "ask": ask_info,
+            }
+            return ShotAction(cell=best_cell)
+        self.last_decision_value = best_v
+        self.last_rationale = {
+            "chosen": "ask", "shot": shot_info, "ask": ask_info,
+        }
         return AskAction(question_id=best_q.id)
 
     def observe(self, action: Action, observed: int) -> None:
@@ -109,6 +141,8 @@ class MBayesStrategy:
 
 class EIGMBayesStrategy(MBayesStrategy):
     """EIG question pick — vectorised over the full catalogue."""
+
+    metric_label = "eig"
 
     def _best_question(self) -> tuple[Question, float]:
         A = self.filter.build_answer_matrix(QUESTION_CATALOGUE)
@@ -155,11 +189,23 @@ class _SampleBackedMBayes(MBayesStrategy):
     def choose_action(self, shots_fired: FrozenSet[Cell], turn: int) -> Action:
         self._p_hat, mu, _idx = self._sample_block()
         best_cell, max_mu = self._best_unshot_cell(mu, shots_fired)
+        best_q, best_v = self._best_question()
+        shot_info = self._shot_branch(best_cell, max_mu)
+        ask_info = {
+            "question_id": best_q.id,
+            "metric": self.metric_label,
+            "score": best_v,
+        }
         if max_mu >= self.shoot_threshold:
             self.last_decision_value = max_mu
+            self.last_rationale = {
+                "chosen": "shot", "shot": shot_info, "ask": ask_info,
+            }
             return ShotAction(cell=best_cell)
-        best_q, best_v = self._best_question()
         self.last_decision_value = best_v
+        self.last_rationale = {
+            "chosen": "ask", "shot": shot_info, "ask": ask_info,
+        }
         return AskAction(question_id=best_q.id)
 
 
@@ -174,6 +220,7 @@ class ApproxEIGMBayesStrategy(_SampleBackedMBayes):
     """
 
     K_SAMPLES: int = 200
+    metric_label = "bald"
 
     def _best_question(self) -> tuple[Question, float]:
         p_hat = self._p_hat
@@ -192,6 +239,7 @@ class ApproxELLRMBayesStrategy(_SampleBackedMBayes):
     """
 
     K_SAMPLES: int = 500
+    metric_label = "ellr_approx"
 
     def _best_question(self) -> tuple[Question, float]:
         p_hat = self._p_hat
@@ -221,6 +269,7 @@ class ELLRMBayesStrategy(MBayesStrategy):
     """
 
     SHORTLIST_K: int = 10
+    metric_label = "ellr"
 
     def _best_question(self) -> tuple[Question, float]:
         A = self.filter.build_answer_matrix(QUESTION_CATALOGUE)

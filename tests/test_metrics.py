@@ -30,6 +30,8 @@ from engine.metrics import (
     eig_of_all_asks,
     eig_of_ask,
     ellr_of_ask,
+    info_gain_ask_bsc,
+    info_gain_shot,
     shoot_information_value,
 )
 
@@ -237,3 +239,89 @@ class TestShootInformationValue:
         mu[:] = 0.5
         all_cells = frozenset((r, c) for r in range(8) for c in range(8))
         assert shoot_information_value(mu=mu, shots_fired=all_cells) == 0.0
+
+
+# --------------------------------------------------------------------------
+# info_gain_shot — realized KL of posterior update for noiseless shot
+# --------------------------------------------------------------------------
+
+class TestInfoGainShot:
+    def test_expected_miss(self):
+        assert math.isclose(
+            info_gain_shot(mu_c=0.1, observed=0),
+            -math.log(0.9), abs_tol=1e-12,
+        )
+
+    def test_surprising_miss(self):
+        assert math.isclose(
+            info_gain_shot(mu_c=0.9, observed=0),
+            -math.log(0.1), abs_tol=1e-12,
+        )
+
+    def test_hit_symmetric(self):
+        assert math.isclose(
+            info_gain_shot(mu_c=0.3, observed=1),
+            -math.log(0.3), abs_tol=1e-12,
+        )
+
+    def test_entropy_identity(self):
+        """E_y[info_gain_shot(μ, y)] = H(μ) — the prior's self-entropy."""
+        mu = 0.4
+        expected_h = -(mu * math.log(mu) + (1 - mu) * math.log(1 - mu))
+        observed_ev = (
+            mu * info_gain_shot(mu_c=mu, observed=1)
+            + (1 - mu) * info_gain_shot(mu_c=mu, observed=0)
+        )
+        assert math.isclose(observed_ev, expected_h, abs_tol=1e-12)
+
+    def test_invalid_observed_rejected(self):
+        with pytest.raises(ValueError):
+            info_gain_shot(mu_c=0.5, observed=2)
+
+    def test_invalid_mu_rejected(self):
+        with pytest.raises(ValueError):
+            info_gain_shot(mu_c=-0.01, observed=1)
+
+
+# --------------------------------------------------------------------------
+# info_gain_ask_bsc — realized KL of posterior update for BSC(ε) ask
+# --------------------------------------------------------------------------
+
+class TestInfoGainAskBSC:
+    def test_noiseless_limit(self):
+        """ε=0 with p_hat=0.5, y=1 ⇒ KL = -log p_hat = log 2."""
+        assert math.isclose(
+            info_gain_ask_bsc(p_hat=0.5, eps=0.0, observed=1),
+            math.log(2), abs_tol=1e-12,
+        )
+
+    def test_pure_noise_limit(self):
+        """ε=0.5 ⇒ BSC is uninformative ⇒ realized KL = 0 for any p_hat, y."""
+        assert math.isclose(
+            info_gain_ask_bsc(p_hat=0.3, eps=0.5, observed=1),
+            0.0, abs_tol=1e-12,
+        )
+
+    def test_expected_equals_eig(self):
+        """E_y[info_gain_ask_bsc(p_hat, ε, y)] = H(p̄) - H(ε) = EIG."""
+        p_hat, eps = 0.3, 0.1
+        p_bar_1 = (1 - eps) * p_hat + eps * (1 - p_hat)
+        H_bar = -(
+            p_bar_1 * math.log(p_bar_1)
+            + (1 - p_bar_1) * math.log(1 - p_bar_1)
+        )
+        H_eps = -(eps * math.log(eps) + (1 - eps) * math.log(1 - eps))
+        expected_eig = H_bar - H_eps
+        ev = (
+            p_bar_1 * info_gain_ask_bsc(p_hat=p_hat, eps=eps, observed=1)
+            + (1 - p_bar_1) * info_gain_ask_bsc(p_hat=p_hat, eps=eps, observed=0)
+        )
+        assert math.isclose(ev, expected_eig, abs_tol=1e-12)
+
+    def test_invalid_observed_rejected(self):
+        with pytest.raises(ValueError):
+            info_gain_ask_bsc(p_hat=0.5, eps=0.1, observed=2)
+
+    def test_invalid_eps_rejected(self):
+        with pytest.raises(ValueError):
+            info_gain_ask_bsc(p_hat=0.5, eps=1.5, observed=1)

@@ -258,3 +258,109 @@ class TestErrors:
                 strategy_name="no_such_strategy",
                 truth=truth, t_max=3, N=16, eps=0.10, seed=0,
             )
+
+
+# --------------------------------------------------------------------------
+# Realized info gain + rationale per turn (dock "Why?" + journal Δ-info column)
+# --------------------------------------------------------------------------
+
+@pytest.mark.slow
+class TestTurnRationaleAndInfoGain:
+    """Every turn record must carry `info_gain_nats` + `rationale`.
+
+    Rationale: snapshot of the strategy's decision at decision time — both
+    branches (shot + ask), plus which one was chosen.  info_gain_nats: the
+    realized KL of the posterior update, in nats; compared against each
+    branch's expected score this is "how much did the coin land teach us?"
+    """
+
+    def test_thompson_records_info_gain_and_rationale(self, truth):
+        traj = run_game(
+            strategy_name="thompson", truth=truth,
+            t_max=8, N=32, eps=0.10, seed=100,
+        )
+        for rec in traj["turns"]:
+            assert "info_gain_nats" in rec
+            assert isinstance(rec["info_gain_nats"], float)
+            assert rec["info_gain_nats"] >= -1e-10
+            rat = rec["rationale"]
+            assert rat["chosen"] == "shot"
+            assert rat["ask"] is None
+            shot = rat["shot"]
+            assert 0.0 <= shot["mu"] <= 1.0 + 1e-9
+            # Thompson's action must match the rationale's shot cell.
+            assert list(shot["cell"]) == rec["action"]["cell"]
+
+    def test_eig_records_both_branches(self, truth):
+        traj = run_game(
+            strategy_name="eig", truth=truth,
+            t_max=4, N=32, eps=0.10, seed=101,
+        )
+        for rec in traj["turns"]:
+            rat = rec["rationale"]
+            # Both branches present on every turn.
+            assert rat["shot"] is not None and rat["ask"] is not None
+            assert rat["shot"]["threshold"] == pytest.approx(2.0 / 3.0)
+            assert rat["ask"]["metric"] == "eig"
+            assert rat["chosen"] in ("shot", "ask")
+
+    def test_info_gain_shot_matches_formula(self, truth):
+        """GameSession.step: for a shot, info_gain_nats = -log μ_pre (hit) or
+        -log(1-μ_pre) (miss) with μ_pre = cell_marginal at decision time."""
+        from simulator.runner import GameSession
+        from engine.metrics import info_gain_shot
+
+        sess = GameSession(
+            strategy_name="thompson", truth=truth,
+            t_max=6, N=32, eps=0.10, seed=102,
+        )
+        # Peek at the cell marginal *before* stepping.
+        mu_pre = sess.strategy.filter.cell_marginal_grid().copy()
+        rec = sess.step()
+        assert rec["action"]["kind"] == "shot"
+        r, c = rec["action"]["cell"]
+        expected = info_gain_shot(mu_c=float(mu_pre[r, c]), observed=rec["observed"])
+        assert rec["info_gain_nats"] == pytest.approx(expected, abs=1e-10)
+
+    def test_info_gain_ask_matches_formula(self, truth):
+        from simulator.runner import GameSession
+        from engine.metrics import info_gain_ask_bsc
+        from engine.questions import question_by_id
+        import numpy as np
+
+        sess = GameSession(
+            strategy_name="eig", truth=truth,
+            t_max=4, N=32, eps=0.10, seed=103,
+        )
+        rec = sess.step()
+        if rec["action"]["kind"] != "ask":
+            pytest.skip("EIG shot this turn, not ask")
+        qid = rec["action"]["question_id"]
+        q = question_by_id(qid)
+        # The ask happens first; after observe, the posterior has shifted.
+        # We approximate p_hat by redoing the dot product on a fresh filter
+        # at the SAME seed but without stepping — the pre-action state.
+        fresh = GameSession(
+            strategy_name="eig", truth=truth,
+            t_max=4, N=32, eps=0.10, seed=103,
+        )
+        a = fresh.strategy.filter.answers_for(q)
+        p_hat = float(np.dot(fresh.strategy.filter.weights, a))
+        expected = info_gain_ask_bsc(
+            p_hat=p_hat, eps=0.10, observed=rec["observed"],
+        )
+        assert rec["info_gain_nats"] == pytest.approx(expected, abs=1e-10)
+
+    def test_trajectory_json_serializes_rationale(self, truth):
+        traj = run_game(
+            strategy_name="thompson", truth=truth,
+            t_max=4, N=32, eps=0.10, seed=104,
+        )
+        blob = trajectory_to_json(traj)
+        restored = json.loads(blob)
+        for rec in restored["turns"]:
+            assert "info_gain_nats" in rec
+            assert "rationale" in rec
+            # Cells come back as [r, c] lists.
+            if rec["rationale"]["shot"] is not None:
+                assert len(rec["rationale"]["shot"]["cell"]) == 2

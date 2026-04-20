@@ -1,0 +1,623 @@
+{
+  "strategy": "thompson",
+  "seed": 0,
+  "t_max": 80,
+  "N": 256,
+  "eps": 0.1,
+  "truth": {
+    "ships": [
+      {
+        "length": 4,
+        "row": 2,
+        "col": 7,
+        "orientation": "V"
+      },
+      {
+        "length": 3,
+        "row": 4,
+        "col": 4,
+        "orientation": "V"
+      },
+      {
+        "length": 3,
+        "row": 1,
+        "col": 1,
+        "orientation": "H"
+      },
+      {
+        "length": 2,
+        "row": 0,
+        "col": 6,
+        "orientation": "H"
+      }
+    ]
+  },
+  "turns": [
+    {
+      "turn": 0,
+      "action": {
+        "kind": "shot",
+        "cell": [
+          3,
+          1
+        ]
+      },
+      "observed": 0,
+      "result": "MISS",
+      "decision_value": 0.17910222796617647,
+      "cum_net_reward": -2.0
+    },
+    {
+      "turn": 1,
+      "action": {
+        "kind": "shot",
+        "cell": [
+          0,
+          5
+        ]
+      },
+      "observed": 0,
+      "result": "MISS",
+      "decision_value": 0.2128448012052092,
+      "cum_net_reward": -4.0
+    },
+    {
+      "turn": 2,
+      "action": {
+        "kind": "shot",
+        "cell": [
+          0,
+          2
+        ]
+      },
+      "observed": 0,
+      "result": "MISS",
+      "decision_value": 0.23253139883385676,
+      "cum_net_reward": -6.0
+    },
+    {
+      "turn": 3,
+      "action": {
+        "kind": "shot",
+        "cell": [
+          5,
+          7
+        ]
+      },
+      "observed": 1,
+      "result": "HIT",
+      "decision_value": 0.23313002245605494,
+      "cum_net_reward": -5.0
+    },
+    {
+      "turn": 4,
+      "action": {
+        "kind": "shot",
+        "cell": [
+          6,
+          3
+        ]
+      },
+      "observed": 0,
+      "result": "MISS",
+      "decision_value": 0.17559456654181332,
+      "cum_net_reward": -7.0
+    },
+    {
+      "turn": 5,
+      "action": {
+        "kind": "shot",
+        "cell": [
+          7,
+          1
+        ]
+      },
+      "observed": 0,
+      "result": "MISS",
+      "decision_value": 0.19001248895052686,
+      "cum_net_reward": -9.0
+    },
+    {
+      "turn": 6,
+      "action": {
+        "kind": "shot",
+        "cell": [
+          3,
+          0
+        ]
+      },
+      "observed": 0,
+      "result": "MISS",
+      "decision_value": 0.21843485225836495,
+      "cum_net_reward": -11.0
+    },
+    {
+      "turn": 7,
+      "action": {
+        "kind": "shot",
+        "cell": [
+          5,
+          3
+        ]
+      },
+      "observed": 0,
+      "result": "MISS",
+      "decision_value": 0.15205270186743314,
+      "cum_net_reward": -13.0
+    },
+    {
+      "turn": 8,
+      "action": {
+        "kind": "shot",
+        "cell": [
+          5,
+          1
+        ]
+      },
+      "observed": 0,
+      "result": "MISS",
+      "decision_value": 0.12382869595760762,
+      "cum_net_reward": -15.0
+    },
+    {
+      "turn": 9,
+      "action": {
+        "kind": "shot",
+        "cell": [
+          1,
+          2
+        ]
+      },
+      "observed": 1,
+      "result": "HIT",
+      "decision_value": 0.21308889013419133,
+      "cum_net_reward": -14.0
+    },
+    {
+      "turn": 10,
+      "action": {
+        "kind": "shot",
+        "cell": [
+          1,
+          1
+        ]
+      },
+      "observed": 1,
+      "result": "HIT",
+      "decision_value": 0.5355531729816045,
+      "cum_net_reward": -13.0
+    },
+    {
+      "turn": 11,
+      "action": {
+        "kind": "shot",
+        "cell": [
+          7,
+          5
+        ]
+      },
+      "observed": 0,
+      "result": "MISS",
+      "decision_value": 0.21398353101155873,
+      "cum_net_reward": -15.0
+    },
+    {
+      "turn": 12,
+      "action": {
+        "kind": "shot",
+        "cell": [
+          5,
+          0
+        ]
+      },
+      "observed": 0,
+      "result": "MISS",
+      "decision_value": 0.16536114181363853,
+      "cum_net_reward": -17.0
+    },
+    {
+      "turn": 13,
+      "action": {
+        "kind": "shot",
+        "cell": [
+          1,
+          3
+        ]
+      },
+      "observed": 1,
+      "result": "HIT",
+      "decision_value": 0.567134960847535,
+      "cum_net_reward": -16.0
+    },
+    {
+      "turn": 14,
+      "action": {
+        "kind": "shot",
+        "cell": [
+          1,
+          0
+        ]
+      },
+      "observed": 0,
+      "result": "MISS",
+      "decision_value": 0.3366497461928922,
+      "cum_net_reward": -18.0
+    },
+    {
+      "turn": 15,
+      "action": {
+        "kind": "shot",
+        "cell": [
+          4,
+          7
+        ]
+      },
+      "observed": 1,
+      "result": "HIT",
+      "decision_value": 0.5561677379859188,
+      "cum_net_reward": -17.0
+    },
+    {
+      "turn": 16,
+      "action": {
+        "kind": "shot",
+        "cell": [
+          7,
+          3
+        ]
+      },
+      "observed": 0,
+      "result": "MISS",
+      "decision_value": 0.1078701155751238,
+      "cum_net_reward": -19.0
+    },
+    {
+      "turn": 17,
+      "action": {
+        "kind": "shot",
+        "cell": [
+          5,
+          4
+        ]
+      },
+      "observed": 1,
+      "result": "HIT",
+      "decision_value": 0.2205428747686613,
+      "cum_net_reward": -18.0
+    },
+    {
+      "turn": 18,
+      "action": {
+        "kind": "shot",
+        "cell": [
+          6,
+          4
+        ]
+      },
+      "observed": 1,
+      "result": "HIT",
+      "decision_value": 0.6307692307692306,
+      "cum_net_reward": -17.0
+    },
+    {
+      "turn": 19,
+      "action": {
+        "kind": "shot",
+        "cell": [
+          6,
+          7
+        ]
+      },
+      "observed": 0,
+      "result": "MISS",
+      "decision_value": 0.5388026607538802,
+      "cum_net_reward": -19.0
+    },
+    {
+      "turn": 20,
+      "action": {
+        "kind": "shot",
+        "cell": [
+          3,
+          4
+        ]
+      },
+      "observed": 0,
+      "result": "MISS",
+      "decision_value": 0.21153846153846154,
+      "cum_net_reward": -21.0
+    },
+    {
+      "turn": 21,
+      "action": {
+        "kind": "shot",
+        "cell": [
+          3,
+          7
+        ]
+      },
+      "observed": 1,
+      "result": "HIT",
+      "decision_value": 0.74390243902439,
+      "cum_net_reward": -20.0
+    },
+    {
+      "turn": 22,
+      "action": {
+        "kind": "shot",
+        "cell": [
+          7,
+          4
+        ]
+      },
+      "observed": 0,
+      "result": "MISS",
+      "decision_value": 0.5327868852459017,
+      "cum_net_reward": -22.0
+    },
+    {
+      "turn": 23,
+      "action": {
+        "kind": "shot",
+        "cell": [
+          1,
+          7
+        ]
+      },
+      "observed": 0,
+      "result": "MISS",
+      "decision_value": 0.03508771929824561,
+      "cum_net_reward": -24.0
+    },
+    {
+      "turn": 24,
+      "action": {
+        "kind": "shot",
+        "cell": [
+          3,
+          5
+        ]
+      },
+      "observed": 0,
+      "result": "MISS",
+      "decision_value": 0.10909090909090909,
+      "cum_net_reward": -26.0
+    },
+    {
+      "turn": 25,
+      "action": {
+        "kind": "shot",
+        "cell": [
+          7,
+          6
+        ]
+      },
+      "observed": 0,
+      "result": "MISS",
+      "decision_value": 0.08163265306122448,
+      "cum_net_reward": -28.0
+    },
+    {
+      "turn": 26,
+      "action": {
+        "kind": "shot",
+        "cell": [
+          4,
+          4
+        ]
+      },
+      "observed": 1,
+      "result": "HIT",
+      "decision_value": 0.6444444444444443,
+      "cum_net_reward": -27.0
+    },
+    {
+      "turn": 27,
+      "action": {
+        "kind": "shot",
+        "cell": [
+          3,
+          2
+        ]
+      },
+      "observed": 0,
+      "result": "MISS",
+      "decision_value": 0.13793103448275862,
+      "cum_net_reward": -29.0
+    },
+    {
+      "turn": 28,
+      "action": {
+        "kind": "shot",
+        "cell": [
+          2,
+          5
+        ]
+      },
+      "observed": 0,
+      "result": "MISS",
+      "decision_value": 0.12,
+      "cum_net_reward": -31.0
+    },
+    {
+      "turn": 29,
+      "action": {
+        "kind": "shot",
+        "cell": [
+          5,
+          2
+        ]
+      },
+      "observed": 0,
+      "result": "MISS",
+      "decision_value": 0.1818181818181818,
+      "cum_net_reward": -33.0
+    },
+    {
+      "turn": 30,
+      "action": {
+        "kind": "shot",
+        "cell": [
+          2,
+          7
+        ]
+      },
+      "observed": 1,
+      "result": "HIT",
+      "decision_value": 0.5,
+      "cum_net_reward": -32.0
+    },
+    {
+      "turn": 31,
+      "action": {
+        "kind": "shot",
+        "cell": [
+          6,
+          1
+        ]
+      },
+      "observed": 0,
+      "result": "MISS",
+      "decision_value": 0.2222222222222222,
+      "cum_net_reward": -34.0
+    },
+    {
+      "turn": 32,
+      "action": {
+        "kind": "shot",
+        "cell": [
+          0,
+          6
+        ]
+      },
+      "observed": 1,
+      "result": "HIT",
+      "decision_value": 0.28571428571428575,
+      "cum_net_reward": -33.0
+    },
+    {
+      "turn": 33,
+      "action": {
+        "kind": "shot",
+        "cell": [
+          1,
+          6
+        ]
+      },
+      "observed": 0,
+      "result": "MISS",
+      "decision_value": 0.5,
+      "cum_net_reward": -35.0
+    },
+    {
+      "turn": 34,
+      "action": {
+        "kind": "shot",
+        "cell": [
+          0,
+          7
+        ]
+      },
+      "observed": 1,
+      "result": "HIT",
+      "decision_value": 1.0,
+      "cum_net_reward": -34.0
+    }
+  ],
+  "final_posterior": [
+    [
+      0.0,
+      0.0,
+      0.0,
+      0.0,
+      0.0,
+      0.0,
+      1.0,
+      1.0
+    ],
+    [
+      0.0,
+      1.0,
+      1.0,
+      1.0,
+      0.0,
+      0.0,
+      0.0,
+      0.0
+    ],
+    [
+      0.0,
+      0.0,
+      0.0,
+      0.0,
+      0.0,
+      0.0,
+      0.0,
+      1.0
+    ],
+    [
+      0.0,
+      0.0,
+      0.0,
+      0.0,
+      0.0,
+      0.0,
+      0.0,
+      1.0
+    ],
+    [
+      0.0,
+      0.0,
+      0.0,
+      0.0,
+      1.0,
+      0.0,
+      0.0,
+      1.0
+    ],
+    [
+      0.0,
+      0.0,
+      0.0,
+      0.0,
+      1.0,
+      0.0,
+      0.0,
+      1.0
+    ],
+    [
+      0.0,
+      0.0,
+      0.0,
+      0.0,
+      1.0,
+      0.0,
+      0.0,
+      0.0
+    ],
+    [
+      0.0,
+      0.0,
+      0.0,
+      0.0,
+      0.0,
+      0.0,
+      0.0,
+      0.0
+    ]
+  ],
+  "terminal": {
+    "hits": 12,
+    "turns": 35,
+    "sank": true,
+    "score_key": [
+      0,
+      35,
+      -12
+    ],
+    "n_shots": 35,
+    "n_asks": 0,
+    "n_misses": 23,
+    "net_reward": -34.0
+  }
+}

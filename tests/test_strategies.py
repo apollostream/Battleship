@@ -217,6 +217,94 @@ class TestApproxStrategies:
 
 
 @pytest.mark.slow
+class TestLastRationale:
+    """Every strategy must expose both branches of its decision each turn.
+
+    The UI's "Why?" panel reads `last_rationale` after every `choose_action`
+    to show shot-branch μ/E[shot] and ask-branch question/score side-by-side,
+    whether or not that branch was chosen.  Thompson omits the ask branch
+    (it has no ask option), but must still populate the shot branch.
+    """
+
+    def test_mbayes_diffuse_populates_both_branches(self):
+        """Uniform prior → ask is chosen, but shot-branch fields are still set."""
+        rng = np.random.default_rng(40)
+        s = EIGStrategy(eps=0.10, rng=rng)
+        a = s.choose_action(shots_fired=frozenset(), turn=0)
+        assert isinstance(a, AskAction)
+        r = s.last_rationale
+        assert r["chosen"] == "ask"
+        # shot branch: best candidate + μ + EV + threshold
+        shot = r["shot"]
+        assert isinstance(shot["cell"], tuple) and len(shot["cell"]) == 2
+        assert 0.0 <= shot["mu"] <= 1.0
+        assert shot["threshold"] == pytest.approx(2.0 / 3.0)
+        # EV = (R⁺+M)μ − (M+C) = 3μ − 2 at defaults
+        assert shot["ev"] == pytest.approx(3.0 * shot["mu"] - 2.0, abs=1e-10)
+        # ask branch
+        ask = r["ask"]
+        assert ask["question_id"] == a.question_id
+        assert ask["metric"] == "eig"
+        assert ask["score"] >= 0.0
+
+    def test_mbayes_certain_populates_both_branches(self):
+        """Collapsed posterior → shot is chosen, but ask-branch is still computed."""
+        rng = np.random.default_rng(41)
+        s = EIGStrategy(eps=0.10, rng=rng)
+        s.filter.weights = np.zeros_like(s.filter.weights)
+        s.filter.weights[0] = 1.0
+        a = s.choose_action(shots_fired=frozenset(), turn=0)
+        assert isinstance(a, ShotAction)
+        r = s.last_rationale
+        assert r["chosen"] == "shot"
+        assert r["shot"]["cell"] == a.cell
+        assert r["shot"]["mu"] == pytest.approx(1.0, abs=1e-10)
+        # ask branch must still be populated (for "here's the ask we *didn't* take")
+        assert r["ask"] is not None
+        assert r["ask"]["metric"] == "eig"
+
+    def test_ellr_rationale_labels_metric(self):
+        rng = np.random.default_rng(42)
+        s = ELLRStrategy(eps=0.10, rng=rng)
+        a = s.choose_action(shots_fired=frozenset(), turn=0)
+        assert s.last_rationale["ask"]["metric"] == "ellr"
+        # In either branch, ask score must be finite
+        assert np.isfinite(s.last_rationale["ask"]["score"])
+
+    def test_approx_rationale_labels_metric(self):
+        from strategies._mbayes import (
+            ApproxEIGMBayesStrategy, ApproxELLRMBayesStrategy,
+        )
+        a_eig = ApproxEIGMBayesStrategy(eps=0.10, rng=np.random.default_rng(43))
+        a_eig.choose_action(shots_fired=frozenset(), turn=0)
+        assert a_eig.last_rationale["ask"]["metric"] == "bald"
+
+        a_ellr = ApproxELLRMBayesStrategy(eps=0.10, rng=np.random.default_rng(44))
+        a_ellr.choose_action(shots_fired=frozenset(), turn=0)
+        assert a_ellr.last_rationale["ask"]["metric"] == "ellr_approx"
+
+    def test_thompson_has_no_ask_branch(self):
+        rng = np.random.default_rng(45)
+        s = ThompsonStrategy(eps=0.10, rng=rng)
+        a = s.choose_action(shots_fired=frozenset(), turn=0)
+        assert isinstance(a, ShotAction)
+        r = s.last_rationale
+        assert r["chosen"] == "shot"
+        assert r["shot"]["cell"] == a.cell
+        assert r["ask"] is None
+
+    def test_last_decision_value_backcompat(self):
+        """Keeping the legacy scalar in sync — ask branch → score; shot → μ."""
+        rng = np.random.default_rng(46)
+        s = EIGStrategy(eps=0.10, rng=rng)
+        a = s.choose_action(shots_fired=frozenset(), turn=0)
+        if isinstance(a, ShotAction):
+            assert s.last_decision_value == pytest.approx(s.last_rationale["shot"]["mu"])
+        else:
+            assert s.last_decision_value == pytest.approx(s.last_rationale["ask"]["score"])
+
+
+@pytest.mark.slow
 class TestELLRShortlist:
     def test_chosen_question_is_in_top_k_by_eig(self):
         """ELLR's _best_question must full-score only over the EIG top-K, so

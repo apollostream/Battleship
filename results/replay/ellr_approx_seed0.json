@@ -1,0 +1,563 @@
+{
+  "strategy": "ellr_approx",
+  "seed": 0,
+  "t_max": 80,
+  "N": 256,
+  "eps": 0.1,
+  "truth": {
+    "ships": [
+      {
+        "length": 4,
+        "row": 2,
+        "col": 7,
+        "orientation": "V"
+      },
+      {
+        "length": 3,
+        "row": 4,
+        "col": 4,
+        "orientation": "V"
+      },
+      {
+        "length": 3,
+        "row": 1,
+        "col": 1,
+        "orientation": "H"
+      },
+      {
+        "length": 2,
+        "row": 0,
+        "col": 6,
+        "orientation": "H"
+      }
+    ]
+  },
+  "turns": [
+    {
+      "turn": 0,
+      "action": {
+        "kind": "ask",
+        "question_id": "hparity:2"
+      },
+      "observed": 1,
+      "decision_value": 0.3675521197513526,
+      "cum_net_reward": 0.0
+    },
+    {
+      "turn": 1,
+      "action": {
+        "kind": "ask",
+        "question_id": "hparity:4"
+      },
+      "observed": 0,
+      "decision_value": 0.3679822849313884,
+      "cum_net_reward": 0.0
+    },
+    {
+      "turn": 2,
+      "action": {
+        "kind": "ask",
+        "question_id": "col:7"
+      },
+      "observed": 1,
+      "decision_value": 0.35572021154323075,
+      "cum_net_reward": 0.0
+    },
+    {
+      "turn": 3,
+      "action": {
+        "kind": "ask",
+        "question_id": "col:0"
+      },
+      "observed": 0,
+      "decision_value": 0.3640447389003384,
+      "cum_net_reward": 0.0
+    },
+    {
+      "turn": 4,
+      "action": {
+        "kind": "ask",
+        "question_id": "cell:3-7"
+      },
+      "observed": 0,
+      "decision_value": 0.3648607850669513,
+      "cum_net_reward": 0.0
+    },
+    {
+      "turn": 5,
+      "action": {
+        "kind": "ask",
+        "question_id": "cell:5-7"
+      },
+      "observed": 1,
+      "decision_value": 0.33898115317265975,
+      "cum_net_reward": 0.0
+    },
+    {
+      "turn": 6,
+      "action": {
+        "kind": "shot",
+        "cell": [
+          5,
+          7
+        ]
+      },
+      "observed": 1,
+      "result": "HIT",
+      "decision_value": 0.812,
+      "cum_net_reward": 1.0
+    },
+    {
+      "turn": 7,
+      "action": {
+        "kind": "shot",
+        "cell": [
+          6,
+          7
+        ]
+      },
+      "observed": 0,
+      "result": "MISS",
+      "decision_value": 0.72,
+      "cum_net_reward": -1.0
+    },
+    {
+      "turn": 8,
+      "action": {
+        "kind": "shot",
+        "cell": [
+          5,
+          6
+        ]
+      },
+      "observed": 0,
+      "result": "MISS",
+      "decision_value": 0.768,
+      "cum_net_reward": -3.0
+    },
+    {
+      "turn": 9,
+      "action": {
+        "kind": "shot",
+        "cell": [
+          4,
+          7
+        ]
+      },
+      "observed": 1,
+      "result": "HIT",
+      "decision_value": 1.0,
+      "cum_net_reward": -2.0
+    },
+    {
+      "turn": 10,
+      "action": {
+        "kind": "shot",
+        "cell": [
+          3,
+          7
+        ]
+      },
+      "observed": 1,
+      "result": "HIT",
+      "decision_value": 0.772,
+      "cum_net_reward": -1.0
+    },
+    {
+      "turn": 11,
+      "action": {
+        "kind": "ask",
+        "question_id": "row:7"
+      },
+      "observed": 0,
+      "decision_value": 0.3667529139048663,
+      "cum_net_reward": -1.0
+    },
+    {
+      "turn": 12,
+      "action": {
+        "kind": "ask",
+        "question_id": "cell:2-7"
+      },
+      "observed": 1,
+      "decision_value": 0.3671986774257524,
+      "cum_net_reward": -1.0
+    },
+    {
+      "turn": 13,
+      "action": {
+        "kind": "shot",
+        "cell": [
+          2,
+          7
+        ]
+      },
+      "observed": 1,
+      "result": "HIT",
+      "decision_value": 0.92,
+      "cum_net_reward": 0.0
+    },
+    {
+      "turn": 14,
+      "action": {
+        "kind": "ask",
+        "question_id": "row:6"
+      },
+      "observed": 1,
+      "decision_value": 0.36375208546451054,
+      "cum_net_reward": 0.0
+    },
+    {
+      "turn": 15,
+      "action": {
+        "kind": "ask",
+        "question_id": "row:1"
+      },
+      "observed": 1,
+      "decision_value": 0.36640440865469925,
+      "cum_net_reward": 0.0
+    },
+    {
+      "turn": 16,
+      "action": {
+        "kind": "ask",
+        "question_id": "row:0"
+      },
+      "observed": 1,
+      "decision_value": 0.3679362017066044,
+      "cum_net_reward": 0.0
+    },
+    {
+      "turn": 17,
+      "action": {
+        "kind": "ask",
+        "question_id": "cell:6-4"
+      },
+      "observed": 1,
+      "decision_value": 0.3524952402942914,
+      "cum_net_reward": 0.0
+    },
+    {
+      "turn": 18,
+      "action": {
+        "kind": "shot",
+        "cell": [
+          6,
+          4
+        ]
+      },
+      "observed": 1,
+      "result": "HIT",
+      "decision_value": 0.842,
+      "cum_net_reward": 1.0
+    },
+    {
+      "turn": 19,
+      "action": {
+        "kind": "ask",
+        "question_id": "cell:6-3"
+      },
+      "observed": 0,
+      "decision_value": 0.368059087159759,
+      "cum_net_reward": 1.0
+    },
+    {
+      "turn": 20,
+      "action": {
+        "kind": "ask",
+        "question_id": "quad:SW"
+      },
+      "observed": 1,
+      "decision_value": 0.36764942981857485,
+      "cum_net_reward": 1.0
+    },
+    {
+      "turn": 21,
+      "action": {
+        "kind": "ask",
+        "question_id": "col:6"
+      },
+      "observed": 1,
+      "decision_value": 0.3643270694441495,
+      "cum_net_reward": 1.0
+    },
+    {
+      "turn": 22,
+      "action": {
+        "kind": "shot",
+        "cell": [
+          6,
+          5
+        ]
+      },
+      "observed": 0,
+      "result": "MISS",
+      "decision_value": 0.786,
+      "cum_net_reward": -1.0
+    },
+    {
+      "turn": 23,
+      "action": {
+        "kind": "ask",
+        "question_id": "cell:0-6"
+      },
+      "observed": 1,
+      "decision_value": 0.3679362017066044,
+      "cum_net_reward": -1.0
+    },
+    {
+      "turn": 24,
+      "action": {
+        "kind": "shot",
+        "cell": [
+          0,
+          6
+        ]
+      },
+      "observed": 1,
+      "result": "HIT",
+      "decision_value": 0.934,
+      "cum_net_reward": 0.0
+    },
+    {
+      "turn": 25,
+      "action": {
+        "kind": "ask",
+        "question_id": "cell:0-7"
+      },
+      "observed": 1,
+      "decision_value": 0.3679822849313884,
+      "cum_net_reward": 0.0
+    },
+    {
+      "turn": 26,
+      "action": {
+        "kind": "shot",
+        "cell": [
+          0,
+          7
+        ]
+      },
+      "observed": 1,
+      "result": "HIT",
+      "decision_value": 0.9,
+      "cum_net_reward": 1.0
+    },
+    {
+      "turn": 27,
+      "action": {
+        "kind": "ask",
+        "question_id": "cell:6-3"
+      },
+      "observed": 0,
+      "decision_value": 0.3680590871597589,
+      "cum_net_reward": 1.0
+    },
+    {
+      "turn": 28,
+      "action": {
+        "kind": "shot",
+        "cell": [
+          5,
+          4
+        ]
+      },
+      "observed": 1,
+      "result": "HIT",
+      "decision_value": 0.892,
+      "cum_net_reward": 2.0
+    },
+    {
+      "turn": 29,
+      "action": {
+        "kind": "shot",
+        "cell": [
+          4,
+          4
+        ]
+      },
+      "observed": 1,
+      "result": "HIT",
+      "decision_value": 0.82,
+      "cum_net_reward": 3.0
+    },
+    {
+      "turn": 30,
+      "action": {
+        "kind": "ask",
+        "question_id": "col:2"
+      },
+      "observed": 1,
+      "decision_value": 0.3679362017066044,
+      "cum_net_reward": 3.0
+    },
+    {
+      "turn": 31,
+      "action": {
+        "kind": "ask",
+        "question_id": "row:1"
+      },
+      "observed": 1,
+      "decision_value": 0.3673267458676073,
+      "cum_net_reward": 3.0
+    },
+    {
+      "turn": 32,
+      "action": {
+        "kind": "shot",
+        "cell": [
+          1,
+          2
+        ]
+      },
+      "observed": 1,
+      "result": "HIT",
+      "decision_value": 0.77,
+      "cum_net_reward": 4.0
+    },
+    {
+      "turn": 33,
+      "action": {
+        "kind": "ask",
+        "question_id": "cell:1-3"
+      },
+      "observed": 1,
+      "decision_value": 0.3680181264606822,
+      "cum_net_reward": 4.0
+    },
+    {
+      "turn": 34,
+      "action": {
+        "kind": "shot",
+        "cell": [
+          1,
+          3
+        ]
+      },
+      "observed": 1,
+      "result": "HIT",
+      "decision_value": 0.888,
+      "cum_net_reward": 5.0
+    },
+    {
+      "turn": 35,
+      "action": {
+        "kind": "ask",
+        "question_id": "cell:1-1"
+      },
+      "observed": 1,
+      "decision_value": 0.3441988627561343,
+      "cum_net_reward": 5.0
+    },
+    {
+      "turn": 36,
+      "action": {
+        "kind": "shot",
+        "cell": [
+          1,
+          1
+        ]
+      },
+      "observed": 1,
+      "result": "HIT",
+      "decision_value": 0.802,
+      "cum_net_reward": 6.0
+    }
+  ],
+  "final_posterior": [
+    [
+      0.0,
+      0.0,
+      0.0,
+      0.0,
+      0.0,
+      0.0,
+      1.0,
+      1.0
+    ],
+    [
+      0.0,
+      1.0,
+      1.0,
+      1.0,
+      0.0,
+      0.0,
+      0.0,
+      0.0
+    ],
+    [
+      0.0,
+      0.0,
+      0.0,
+      0.0,
+      0.0,
+      0.0,
+      0.0,
+      1.0
+    ],
+    [
+      0.0,
+      0.0,
+      0.0,
+      0.0,
+      0.0,
+      0.0,
+      0.0,
+      1.0
+    ],
+    [
+      0.0,
+      0.0,
+      0.0,
+      0.0,
+      1.0,
+      0.0,
+      0.0,
+      1.0
+    ],
+    [
+      0.0,
+      0.0,
+      0.0,
+      0.0,
+      1.0,
+      0.0,
+      0.0,
+      1.0
+    ],
+    [
+      0.0,
+      0.0,
+      0.0,
+      0.0,
+      1.0,
+      0.0,
+      0.0,
+      0.0
+    ],
+    [
+      0.0,
+      0.0,
+      0.0,
+      0.0,
+      0.0,
+      0.0,
+      0.0,
+      0.0
+    ]
+  ],
+  "terminal": {
+    "hits": 12,
+    "turns": 37,
+    "sank": true,
+    "score_key": [
+      0,
+      37,
+      -12
+    ],
+    "n_shots": 15,
+    "n_asks": 22,
+    "n_misses": 3,
+    "net_reward": 6.0
+  }
+}
