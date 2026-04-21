@@ -4430,7 +4430,7 @@ body[data-live-done="true"] #board .cell:not(.hit):not(.miss){pointer-events:non
   modal.addEventListener('click', e => { if (e.target === modal) closeModal(); });
 
   /* --- Start session ----------------------------------------- */
-  document.getElementById('liveStart').addEventListener('click', async () => {
+  async function startSession(){
     const body = {
       strategy: document.getElementById('liveStrat').value,
       seed:     Number(document.getElementById('liveSeed').value),
@@ -4461,7 +4461,8 @@ body[data-live-done="true"] #board .cell:not(.hit):not(.miss){pointer-events:non
       showTrajBanner(`Live session ${st.session_id.slice(0,8)} · ${st.strategy} · seed ${st.seed}`);
       await refreshFromState(st);
     } catch (e){ showErr('start failed: ' + e.message); }
-  });
+  }
+  document.getElementById('liveStart').addEventListener('click', startSession);
 
   /* --- Dock open/close --------------------------------------- */
   function openDock(){
@@ -4710,6 +4711,15 @@ body[data-live-done="true"] #board .cell:not(.hit):not(.miss){pointer-events:non
 
   /* --- Boot --------------------------------------------------- */
   populateQuestions();
+  /* Auto-start a user-driven session on first load so the board is
+     immediately playable.  Skip if the user arrived with ?traj=URL
+     or ?src=URL — in that case they want to review a replay, not
+     begin a new game. */
+  (function autoStart(){
+    const qs = new URLSearchParams(location.search);
+    if (qs.get('traj') || qs.get('src')) return;
+    startSession();
+  })();
 })();
 </script>
 </body>
