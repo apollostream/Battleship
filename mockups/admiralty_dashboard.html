@@ -2488,7 +2488,7 @@ body[data-settings="open"] .settings-panel{transform:translateX(0)}
   <!-- ========================== DASHBOARD: BOARD + DOCTRINES ========================== -->
   <section class="dashboard">
 
-    <div class="board-pane" id="boardPane" data-mode="demo">
+    <div class="board-pane" id="boardPane" data-mode="play">
       <div class="board-header">
         <div class="section-rule">Engagement Chart · <span class="cur-strat" id="curStrat">EIG + MBayes</span></div>
         <div class="overlay-toggle" id="overlayToggle" role="tablist" aria-label="Overlay field">
@@ -2507,8 +2507,8 @@ body[data-settings="open"] .settings-panel{transform:translateX(0)}
           </select>
         </div>
         <div class="mode-toggle" role="tablist" aria-label="View mode">
-          <button class="mt-btn active" data-mode="demo" aria-pressed="true">Demo</button>
-          <button class="mt-btn" data-mode="play" aria-pressed="false">Play</button>
+          <button class="mt-btn active" data-mode="play" aria-pressed="true">Live</button>
+          <button class="mt-btn" data-mode="demo" aria-pressed="false">Demo</button>
         </div>
       </div>
       <div class="board-frame">
@@ -2538,6 +2538,27 @@ body[data-settings="open"] .settings-panel{transform:translateX(0)}
 
     <div class="doctrines">
       <div class="section-rule">Tactical Doctrines</div>
+
+      <article class="doctrine" data-strat="user" tabindex="0">
+        <div class="stamp">Captain</div>
+        <h3>Captain · User</h3>
+        <div class="formula">interactive  ·  human selection</div>
+        <div class="desc">A flesh-and-blood operator. Calibrated on intuition, vulnerable to fatigue, indispensable for ground truth.</div>
+        <svg class="spark" viewBox="0 0 200 24" preserveAspectRatio="none">
+          <polyline fill="none" stroke="#162338" stroke-width="1.4"
+            points="0,22 10,22 20,20 30,20 40,18 50,18 60,15 70,15 80,15 90,13 100,13 110,11 120,11 130,11 140,9 150,9 160,9 170,7 180,7 190,5 200,5"/>
+        </svg>
+        <div class="stats">
+          <div><span class="lbl">Turns</span><span class="val">18</span></div>
+          <div><span class="lbl">Hits</span><span class="val">6 / 12</span></div>
+          <div><span class="lbl">H(post)</span><span class="val">—</span></div>
+          <div><span class="lbl">Action</span><span class="val">Awaiting</span></div>
+        </div>
+        <details>
+          <summary>Ship's Log <span class="count">18 entries</span></summary>
+          <div class="log"><table><thead><tr><th>T</th><th>Action</th><th>Target</th><th>Result</th><th class="meta">Δinfo / note</th></tr></thead><tbody></tbody></table></div>
+        </details>
+      </article>
 
       <article class="doctrine selected" data-strat="eig" tabindex="0">
         <div class="stamp">Doctrine I</div>
@@ -2608,26 +2629,6 @@ body[data-settings="open"] .settings-panel{transform:translateX(0)}
         </details>
       </article>
 
-      <article class="doctrine" data-strat="user" tabindex="0">
-        <div class="stamp">Doctrine IV</div>
-        <h3>Captain · User</h3>
-        <div class="formula">interactive  ·  human selection</div>
-        <div class="desc">A flesh-and-blood operator. Calibrated on intuition, vulnerable to fatigue, indispensable for ground truth.</div>
-        <svg class="spark" viewBox="0 0 200 24" preserveAspectRatio="none">
-          <polyline fill="none" stroke="#162338" stroke-width="1.4"
-            points="0,22 10,22 20,20 30,20 40,18 50,18 60,15 70,15 80,15 90,13 100,13 110,11 120,11 130,11 140,9 150,9 160,9 170,7 180,7 190,5 200,5"/>
-        </svg>
-        <div class="stats">
-          <div><span class="lbl">Turns</span><span class="val">18</span></div>
-          <div><span class="lbl">Hits</span><span class="val">6 / 12</span></div>
-          <div><span class="lbl">H(post)</span><span class="val">—</span></div>
-          <div><span class="lbl">Action</span><span class="val">Awaiting</span></div>
-        </div>
-        <details>
-          <summary>Ship's Log <span class="count">18 entries</span></summary>
-          <div class="log"><table><thead><tr><th>T</th><th>Action</th><th>Target</th><th>Result</th><th class="meta">Δinfo / note</th></tr></thead><tbody></tbody></table></div>
-        </details>
-      </article>
     </div>
   </section>
 
@@ -3482,7 +3483,7 @@ document.getElementById('lensSelect').addEventListener('change', e => {
 });
 
 selectStrategy('eig');
-setMode('demo');
+setMode('play');
 renderTrajectoryChart();
 
 /* glints — random spawn timing */
@@ -4152,12 +4153,12 @@ body[data-live-done="true"] #board .cell:not(.hit):not(.miss){pointer-events:non
     <div class="live-row">
       <label for="liveStrat">Strategy</label>
       <select id="liveStrat">
-        <option value="eig_approx" selected>eig_approx · MBayes + BALD (fast)</option>
+        <option value="user" selected>user · manual (you play)</option>
+        <option value="eig_approx">eig_approx · MBayes + BALD (fast)</option>
         <option value="ellr_approx">ellr_approx · MBayes + sample-KL (fast)</option>
         <option value="eig">eig · MBayes exact</option>
         <option value="ellr">ellr · MBayes exact</option>
         <option value="thompson">thompson · posterior draw, always shoots</option>
-        <option value="user">user · manual (you play)</option>
       </select>
     </div>
     <div class="live-row">
@@ -4412,8 +4413,17 @@ body[data-live-done="true"] #board .cell:not(.hit):not(.miss){pointer-events:non
   }
 
   /* --- Modal open/close -------------------------------------- */
-  function openModal(){ modal.dataset.on = 'true'; }
+  /* Fresh random seed on every open so each session draws a new
+     fleet.  User can still override by typing a specific seed. */
+  function randomSeed(){ return Math.floor(Math.random() * 1e9); }
+  function openModal(){
+    document.getElementById('liveSeed').value = randomSeed();
+    modal.dataset.on = 'true';
+  }
   function closeModal(){ modal.dataset.on = 'false'; }
+
+  /* Seed the input at boot too, so the initial value isn't a stale 0. */
+  document.getElementById('liveSeed').value = randomSeed();
 
   document.getElementById('liveOpen').addEventListener('click', openModal);
   document.getElementById('liveCancel').addEventListener('click', closeModal);
